@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>BBAWash</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+/* ============ DESIGN TOKENS ============ */
+:root{
+  /* Brand renk skalasi — accent ailesi */
+  --brand-50:#eff6ff;
+  --brand-100:#dbeafe;
+  --brand-200:#bfdbfe;
+  --brand-300:#93c5fd;
+  --brand-400:#60a5fa;
+  --brand-500:#3b82f6;
+  --brand-600:#2563eb;   /* ana aksan */
+  --brand-700:#1d4ed8;
+  --brand-800:#1e40af;
+  --brand-900:#1e3a8a;
+  --brand-950:#172554;
+
+  /* Notr skala (slate) */
+  --slate-0:#ffffff;
+  --slate-50:#f8fafc;
+  --slate-100:#f1f5f9;
+  --slate-200:#e2e8f0;
+  --slate-300:#cbd5e1;
+  --slate-400:#94a3b8;
+  --slate-500:#64748b;
+  --slate-600:#475569;
+  --slate-700:#334155;
+  --slate-800:#1e293b;
+  --slate-900:#0f172a;
+  --slate-950:#020617;
+
+  /* Anlamsal renkler */
+  --success-50:#ecfdf5;  --success-500:#10b981; --success-600:#059669; --success-700:#047857;
+  --warning-50:#fffbeb;  --warning-500:#f59e0b; --warning-600:#d97706; --warning-700:#b45309;
+  --danger-50:#fef2f2;   --danger-500:#ef4444;  --danger-600:#dc2626;  --danger-700:#b91c1c;
+  --info-50:#eff6ff;     --info-500:#3b82f6;    --info-600:#2563eb;
+
+  /* ============ Tema (Light) ============ */
+  --bg:           var(--slate-0);
+  --bg-elevated: var(--slate-0);
+  --bg-subtle:   var(--slate-50);
+  --bg-muted:    var(--slate-100);
+  --surface:     #f5f5f3;
+
+  --text:         var(--slate-900);
+  --text-muted:   var(--slate-500);
+  --text-subtle:  var(--slate-400);
+  --muted:        var(--slate-400);   /* eski isim, geriye donuk uyumluluk */
+  --white:        var(--slate-0);
+
+  --border:        rgba(15,23,42,0.08);
+  --border-strong: rgba(15,23,42,0.14);
+
+  --accent:    var(--brand-600);
+  --accent-l:  var(--brand-50);
+  --accent-fg: #ffffff;
+
+  --green:    var(--success-600); --green-bg:  var(--success-50);
+  --yellow:   var(--warning-600); --yellow-bg: var(--warning-50);
+  --red:      var(--danger-600);  --red-bg:    var(--danger-50);
+
+  /* Gradient'lar */
+  --grad-brand: linear-gradient(135deg, var(--brand-500) 0%, var(--brand-700) 100%);
+  --grad-brand-soft: linear-gradient(135deg, var(--brand-50) 0%, var(--brand-100) 100%);
+  --grad-mesh: radial-gradient(at 20% 0%, var(--brand-100) 0px, transparent 50%),
+               radial-gradient(at 80% 100%, var(--brand-50) 0px, transparent 50%);
+
+  /* Golge sistemi (5 katman) */
+  --shadow-xs: 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-sm: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md: 0 4px 8px rgba(15,23,42,0.06), 0 2px 4px rgba(15,23,42,0.04);
+  --shadow-lg: 0 12px 24px rgba(15,23,42,0.08), 0 4px 8px rgba(15,23,42,0.04);
+  --shadow-xl: 0 24px 48px rgba(15,23,42,0.12), 0 8px 16px rgba(15,23,42,0.06);
+  --shadow-2xl: 0 40px 80px rgba(15,23,42,0.16);
+  --shadow-brand: 0 8px 24px rgba(37,99,235,0.24);
+
+  /* Spacing (4px taban) */
+  --space-1: 4px;   --space-2: 8px;   --space-3: 12px;
+  --space-4: 16px;  --space-5: 20px;  --space-6: 24px;
+  --space-7: 28px;  --space-8: 32px;  --space-10: 40px;
+  --space-12: 48px; --space-16: 64px;
+
+  /* Radius olcegi */
+  --radius-xs: 6px;   --radius-sm: 8px;
+  --radius-md: 10px;  --radius-lg: 12px;
+  --radius-xl: 14px;  --radius-2xl: 16px;
+  --radius-3xl: 20px; --radius-full: 9999px;
+
+  /* Tipografi */
+  --font:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',system-ui,sans-serif;
+  --font-mono:'SF Mono','Monaco','Cascadia Code','Roboto Mono',Consolas,monospace;
+
+  /* Motion / animasyon egrileri */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);     /* hizli giris, yumusak son */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);    /* simetrik */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* hafif zipla */
+  --ease-panel:  cubic-bezier(0.32, 0.72, 0, 1);    /* iOS bottom sheet */
+
+  --dur-fast:   140ms;
+  --dur-base:   220ms;
+  --dur-slow:   320ms;
+  --dur-slower: 480ms;
+
+  /* Layout */
+  --nav-h: 64px;
+  --app-max: 430px;        /* mobil mockup genisligi */
+  --content-max: 1280px;   /* gelecekteki masaustu icin */
+}
+
+/* ============ Tema (Dark) — toggle son ad\u0131mda eklenecek ============ */
+[data-theme="dark"]{
+  --bg:           var(--slate-950);
+  --bg-elevated:  var(--slate-900);
+  --bg-subtle:    var(--slate-900);
+  --bg-muted:     var(--slate-800);
+  --surface:      var(--slate-800);
+
+  --text:         var(--slate-50);
+  --text-muted:   var(--slate-400);
+  --text-subtle:  var(--slate-500);
+  --muted:        var(--slate-500);
+  --white:        var(--slate-900);
+
+  --border:        rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.14);
+
+  --accent:    var(--brand-400);
+  --accent-l:  rgba(59,130,246,0.12);
+  --accent-fg: var(--slate-950);
+
+  --green:    var(--success-500); --green-bg:  rgba(16,185,129,0.12);
+  --yellow:   var(--warning-500); --yellow-bg: rgba(245,158,11,0.12);
+  --red:      var(--danger-500);  --red-bg:    rgba(239,68,68,0.12);
+
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.5);
+  --shadow-xl: 0 24px 48px rgba(0,0,0,0.6);
+  --shadow-brand: 0 8px 24px rgba(59,130,246,0.32);
+
+  --grad-brand-soft: linear-gradient(135deg, rgba(59,130,246,0.12) 0%, rgba(37,99,235,0.18) 100%);
+  --grad-mesh: radial-gradient(at 20% 0%, rgba(59,130,246,0.12) 0px, transparent 50%),
+               radial-gradient(at 80% 100%, rgba(37,99,235,0.08) 0px, transparent 50%);
+}
+
+/* Otomatik dark mode (kullanici daha sonra elle override edebilecek) */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+  }
+}
+
+html,body{
+  height:100%;
+  overflow:hidden;
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  font-feature-settings:'cv11','ss01','ss03';   /* Inter ozellikleri (varsa) */
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  transition: background var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+}
+
+/* Tabular numbers — saat, fiyat, sayilar duzgun hizalansin */
+.tnum, .stat-val, .d-num, .appt-time, .hist-price, .cust-count{
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* Selection rengi marka */
+::selection{ background: var(--brand-200); color: var(--brand-900); }
+[data-theme="dark"] ::selection{ background: rgba(59,130,246,0.4); color: var(--slate-50); }
+.app{display:flex;flex-direction:column;height:100vh;max-width:var(--app-max);margin:0 auto;position:relative;background:var(--bg);box-shadow:var(--shadow-xl);transition:background var(--dur-base) var(--ease-out);}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:0.5px solid var(--border);background:var(--bg-elevated);flex-shrink:0;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);}
+.logo{font-size:18px;font-weight:700;letter-spacing:-0.5px;color:var(--text);}
+.logo span{background:var(--grad-brand);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:300;}
+.lang-toggle{display:flex;gap:2px;background:var(--bg-muted);border-radius:var(--radius-sm);padding:3px;}
+.lang-btn{padding:4px 11px;border-radius:var(--radius-xs);border:none;background:transparent;font-size:12px;font-weight:500;color:var(--text-muted);cursor:pointer;font-family:var(--font);transition:color var(--dur-fast) var(--ease-out);}
+.lang-btn.active{background:var(--bg-elevated);color:var(--text);box-shadow:var(--shadow-sm);}
+.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--bg);}
+.bottom-nav{display:flex;background:var(--bg-elevated);border-top:0.5px solid var(--border);height:var(--nav-h);flex-shrink:0;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;cursor:pointer;font-family:var(--font);position:relative;transition:color var(--dur-fast) var(--ease-out);}
+.nav-btn.active{color:var(--accent);}
+.nav-btn:not(.active){color:var(--text-muted);}
+.nav-ico{font-size:20px;line-height:1;}
+.nav-lbl{font-size:9px;font-weight:500;}
+.nav-badge{position:absolute;top:8px;right:calc(50% - 14px);width:8px;height:8px;background:var(--red);border-radius:50%;border:2px solid var(--bg-elevated);display:none;box-shadow:0 0 0 2px rgba(239,68,68,0.3);}
+.screen{display:none;flex-direction:column;min-height:100%;}
+.screen.active{display:flex;animation:fi var(--dur-base) var(--ease-out);}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page-head{padding:20px 18px 12px;}
+.page-head h2{font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--text);}
+.page-head p{font-size:12px;color:var(--text-muted);margin-top:3px;}
+.sec-title{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;padding:0 18px;margin-bottom:8px;}
+.card{background:var(--bg-elevated);border:0.5px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;transition:background var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);}
+.btn{width:100%;padding:14px;border:none;border-radius:var(--radius-lg);font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;transition:transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), filter var(--dur-fast) var(--ease-out);position:relative;overflow:hidden;letter-spacing:-0.1px;}
+.btn:active{transform:scale(0.97);}
+.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+.btn-primary{background:var(--text);color:var(--bg);box-shadow:var(--shadow-sm);}
+.btn-primary:hover:not(:disabled){filter:brightness(1.1);box-shadow:var(--shadow-md);}
+.btn-accent{background:var(--grad-brand);color:#fff;box-shadow:var(--shadow-brand);}
+.btn-accent:hover:not(:disabled){filter:brightness(1.05);box-shadow:var(--shadow-lg), var(--shadow-brand);}
+.f-label{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}
+.f-input{width:100%;padding:12px 14px;border:0.5px solid var(--border);border-radius:var(--radius-md);font-size:14px;background:var(--bg-subtle);font-family:var(--font);color:var(--text);outline:none;-webkit-appearance:none;transition:border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);}
+.f-input::placeholder{color:var(--text-subtle);}
+.f-input:focus{border-color:var(--accent);background:var(--bg-elevated);box-shadow:0 0 0 3px var(--accent-l);}
+.back-btn{display:flex;align-items:center;gap:5px;background:none;border:none;color:var(--text-muted);font-size:13px;cursor:pointer;font-family:var(--font);padding:0;margin-bottom:10px;transition:color var(--dur-fast) var(--ease-out);}
+.back-btn:hover{color:var(--text);}
+.badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:var(--radius-full);display:inline-block;letter-spacing:0.2px;}
+.badge-green{background:var(--green-bg);color:var(--green);}
+.badge-yellow{background:var(--yellow-bg);color:var(--yellow);}
+.badge-red{background:var(--red-bg);color:var(--red);}
+.badge-blue{background:var(--accent-l);color:var(--accent);}
+.badge-gray{background:var(--bg-muted);color:var(--text-muted);}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center;color:var(--text-muted);}
+.empty-ico{font-size:40px;margin-bottom:12px;opacity:0.5;}
+
+/* LOGIN */
+.login-wrap{position:fixed;inset:0;background:var(--bg);background-image:var(--grad-mesh);z-index:100;display:flex;flex-direction:column;max-width:var(--app-max);margin:0 auto;}
+.login-wrap.hidden{display:none;}
+.login-top{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px 20px;text-align:center;}
+.login-logo{width:80px;height:80px;background:var(--grad-brand);border-radius:var(--radius-3xl);display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:24px;box-shadow:var(--shadow-brand);animation:logoFloat 3s var(--ease-in-out) infinite;}
+@keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.login-title{font-size:32px;font-weight:700;letter-spacing:-1px;margin-bottom:8px;color:var(--text);}
+.login-title span{background:var(--grad-brand);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:300;}
+.login-sub{font-size:14px;color:var(--text-muted);line-height:1.6;max-width:280px;}
+.login-bottom{padding:20px 24px 44px;display:flex;flex-direction:column;gap:10px;}
+.btn-social{width:100%;padding:14px 16px;border-radius:var(--radius-lg);border:0.5px solid var(--border);background:var(--bg-elevated);display:flex;align-items:center;gap:12px;cursor:pointer;font-family:var(--font);font-size:14px;font-weight:500;color:var(--text);transition:transform var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);}
+.btn-social:hover{border-color:var(--border-strong);box-shadow:var(--shadow-sm);}
+.btn-social:active{transform:scale(0.98);background:var(--bg-subtle);}
+.divider-or{display:flex;align-items:center;gap:10px;}
+.divider-or::before,.divider-or::after{content:'';flex:1;height:0.5px;background:var(--border);}
+.divider-or span{font-size:11px;color:var(--text-muted);}
+.phone-step{display:none;flex-direction:column;gap:10px;}
+.phone-step.active{display:flex;}
+.login-main.hidden{display:none;}
+.otp-row{display:flex;gap:8px;justify-content:center;}
+.otp-inp{width:46px;height:54px;border:0.5px solid var(--border);border-radius:var(--radius-lg);background:var(--bg-subtle);text-align:center;font-size:22px;font-weight:700;font-family:var(--font);color:var(--text);outline:none;transition:border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);font-variant-numeric:tabular-nums;}
+.otp-inp:focus{border-color:var(--accent);background:var(--bg-elevated);box-shadow:0 0 0 3px var(--accent-l);}
+
+/* ROL */
+.role-wrap{position:fixed;inset:0;background:var(--bg);background-image:var(--grad-mesh);z-index:101;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;max-width:var(--app-max);margin:0 auto;}
+.role-wrap.hidden{display:none;}
+.role-cards{display:flex;flex-direction:column;gap:12px;width:100%;}
+.role-card{background:var(--bg-elevated);border:0.5px solid var(--border);border-radius:var(--radius-2xl);padding:20px 18px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:transform var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);}
+.role-card:hover{border-color:var(--accent);background:var(--accent-l);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.role-card:active{transform:translateY(0) scale(0.99);}
+.role-ico{width:52px;height:52px;border-radius:var(--radius-xl);background:var(--bg-muted);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.role-info{flex:1;}
+.role-name{font-size:16px;font-weight:600;margin-bottom:3px;color:var(--text);}
+.role-desc{font-size:12px;color:var(--text-muted);line-height:1.4;}
+
+/* HOME */
+.home-hero{padding:28px 18px 20px;}
+.home-hero h1{font-size:24px;font-weight:700;letter-spacing:-0.6px;margin-bottom:4px;}
+.home-hero h1 em{font-style:italic;color:var(--accent);font-weight:300;}
+.home-hero p{font-size:13px;color:var(--muted);}
+.active-appt-card{margin:0 18px 20px;background:var(--accent-l);border:0.5px solid rgba(37,99,235,0.15);border-radius:16px;padding:16px;}
+.progress-bar{background:rgba(37,99,235,0.15);border-radius:100px;height:6px;overflow:hidden;margin-bottom:8px;}
+.progress-fill{height:100%;background:var(--accent);border-radius:100px;transition:width 0.6s ease;}
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px 24px;}
+.qa-card{background:var(--surface);border:0.5px solid var(--border);border-radius:14px;padding:16px 14px;cursor:pointer;transition:all 0.15s;}
+.qa-card:active{transform:scale(0.98);}
+.qa-ico{font-size:24px;margin-bottom:8px;}
+.qa-name{font-size:13px;font-weight:600;}
+.qa-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* RANDEVU */
+.shop-list{display:flex;flex-direction:column;gap:10px;padding:0 18px 24px;}
+.shop-card{border-radius:14px;overflow:hidden;cursor:pointer;transition:all 0.15s;}
+.shop-card:active{transform:scale(0.99);}
+.shop-img{width:100%;height:88px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:32px;border-bottom:0.5px solid var(--border);}
+.shop-body{padding:10px 13px 0;}
+.shop-name{font-size:14px;font-weight:600;margin-bottom:2px;}
+.shop-addr{font-size:11px;color:var(--muted);margin-bottom:7px;}
+.shop-footer{padding:8px 13px;display:flex;align-items:center;justify-content:space-between;}
+.shop-cta{font-size:12px;font-weight:600;color:var(--accent);}
+.step-ind{display:flex;align-items:center;gap:6px;padding:0 18px 16px;}
+.step-d{width:8px;height:8px;border-radius:50%;background:var(--border);}
+.step-d.active{background:var(--accent);width:20px;border-radius:4px;}
+.step-d.done{background:var(--accent);}
+.date-row{display:flex;gap:6px;}
+.d-chip{flex:1;padding:10px 3px;border:0.5px solid var(--border);border-radius:10px;background:var(--surface);text-align:center;cursor:pointer;}
+.d-chip.sel{border-color:var(--accent);background:var(--accent-l);}
+.d-day{font-size:9px;color:var(--muted);}
+.d-num{font-size:17px;font-weight:700;}
+.d-chip.sel .d-day,.d-chip.sel .d-num{color:var(--accent);}
+.slot-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.s-chip{padding:12px;border:0.5px solid var(--border);border-radius:10px;background:var(--surface);text-align:center;cursor:pointer;font-size:13px;font-weight:500;}
+.s-chip.sel{border-color:var(--accent);background:var(--accent-l);color:var(--accent);}
+.s-chip.busy{opacity:0.35;cursor:not-allowed;text-decoration:line-through;}
+.svc-grid{display:flex;flex-direction:column;gap:8px;}
+.svc-row{display:flex;align-items:center;gap:12px;padding:13px 14px;border:0.5px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;}
+.svc-row.sel{border-color:var(--accent);background:var(--accent-l);}
+.svc-row-check{margin-left:auto;color:var(--accent);opacity:0;font-size:16px;}
+.svc-row.sel .svc-row-check{opacity:1;}
+.vehicle-row{display:flex;align-items:center;gap:12px;padding:13px 14px;border:0.5px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;}
+.vehicle-row.sel{border-color:var(--accent);background:var(--accent-l);}
+.booking-body{padding:0 18px 100px;display:flex;flex-direction:column;gap:18px;}
+.pill{display:flex;align-items:center;gap:10px;background:var(--accent-l);border:0.5px solid rgba(37,99,235,0.15);border-radius:11px;padding:10px 14px;}
+.pill-name{font-size:13px;font-weight:600;color:var(--accent);}
+.pill-sub{font-size:11px;color:var(--muted);}
+
+/* TAKİP */
+.track-bar-wrap{margin:0 18px 20px;background:var(--accent-l);border:0.5px solid rgba(37,99,235,0.15);border-radius:16px;padding:16px;}
+.track-steps{display:flex;flex-direction:column;padding:0 18px 24px;}
+.t-step{display:flex;gap:14px;padding:14px 0;border-bottom:0.5px solid var(--border);position:relative;}
+.t-step:last-child{border-bottom:none;}
+.t-line{position:absolute;left:15px;top:36px;bottom:-1px;width:1px;background:var(--border);}
+.t-step:last-child .t-line{display:none;}
+.t-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;z-index:1;}
+.t-dot.done{background:var(--accent);color:#fff;}
+.t-dot.active{background:var(--accent-l);border:2px solid var(--accent);color:var(--accent);font-weight:700;}
+.t-dot.pend{background:var(--surface);border:1.5px solid var(--border);color:var(--muted);}
+.t-info{flex:1;padding-top:4px;}
+.t-title{font-size:14px;font-weight:600;margin-bottom:2px;}
+.t-title.done{color:var(--muted);}
+.t-title.active{color:var(--accent);}
+.t-title.pend{color:var(--muted);font-weight:400;}
+.pulse-badge{display:inline-flex;align-items:center;gap:5px;background:var(--accent-l);color:var(--accent);font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;margin-top:4px;}
+.pulse{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* GEÇMİŞ */
+.hist-card{padding:14px 16px;display:flex;gap:12px;}
+.hist-card:not(:last-child){border-bottom:0.5px solid var(--border);}
+.hist-ico{width:40px;height:40px;border-radius:11px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.hist-info{flex:1;}
+.hist-shop{font-size:13px;font-weight:600;}
+.hist-svc{font-size:11px;color:var(--muted);margin-top:1px;}
+.hist-right{text-align:right;}
+.hist-price{font-size:13px;font-weight:700;}
+.hist-date{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* PROFİL */
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:var(--accent);margin:0 auto 12px;}
+.profile-row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:0.5px solid var(--border);cursor:pointer;}
+.profile-row:last-child{border-bottom:none;}
+
+/* DASHBOARD */
+.dash-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 18px 16px;}
+.stat-card{background:var(--surface);border-radius:12px;padding:14px;}
+.stat-lbl{font-size:10px;color:var(--muted);font-weight:500;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;}
+.stat-val{font-size:26px;font-weight:700;letter-spacing:-0.5px;}
+.stat-val.blue{color:var(--accent);}
+.stat-val.green{color:var(--green);}
+.stat-val.yellow{color:var(--yellow);}
+.appt-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:0.5px solid var(--border);}
+.appt-row:last-child{border-bottom:none;}
+.appt-time{font-size:13px;font-weight:700;min-width:42px;}
+.appt-info{flex:1;}
+.appt-plate{font-size:13px;font-weight:600;}
+.appt-name{font-size:11px;color:var(--muted);margin-top:1px;}
+.status-btn{font-size:10px;font-weight:600;padding:6px 10px;border-radius:8px;border:none;cursor:pointer;font-family:var(--font);white-space:nowrap;}
+.status-btn.pending{background:var(--yellow-bg);color:var(--yellow);}
+.status-btn.confirmed{background:var(--accent-l);color:var(--accent);}
+.status-btn.received{background:#e0f2fe;color:#0284c7;}
+.status-btn.washing{background:#f0fdf4;color:#16a34a;}
+.status-btn.drying{background:#fdf4ff;color:#9333ea;}
+.status-btn.ready{background:var(--green-bg);color:var(--green);}
+.pending-card{margin:0 18px 10px;background:var(--yellow-bg);border:0.5px solid rgba(202,138,4,0.2);border-radius:14px;padding:14px 16px;}
+.pend-actions{display:flex;gap:8px;margin-top:10px;}
+.pend-btn{flex:1;padding:10px;border:none;border-radius:10px;font-size:12px;font-weight:600;font-family:var(--font);cursor:pointer;}
+.pend-btn.approve{background:var(--green);color:#fff;}
+.pend-btn.reject{background:var(--red-bg);color:var(--red);}
+
+/* MÜŞTERİLER */
+.cust-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:0.5px solid var(--border);cursor:pointer;}
+.cust-row:last-child{border-bottom:none;}
+.cust-avatar{width:40px;height:40px;border-radius:50%;background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--accent);flex-shrink:0;}
+.cust-info{flex:1;}
+.cust-name{font-size:13px;font-weight:600;}
+.cust-meta{font-size:11px;color:var(--muted);margin-top:1px;}
+.cust-right{text-align:right;}
+.cust-count{font-size:13px;font-weight:700;color:var(--accent);}
+.cust-date{font-size:10px;color:var(--muted);}
+
+/* DETAY */
+.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:50;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+.detail-overlay.open{opacity:1;pointer-events:auto;}
+.detail-panel{position:absolute;bottom:0;left:0;right:0;background:var(--white);border-radius:20px 20px 0 0;max-height:82vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);}
+.detail-overlay.open .detail-panel{transform:translateY(0);}
+.detail-handle{width:36px;height:4px;background:var(--border);border-radius:100px;margin:12px auto 0;}
+.detail-head{padding:16px 18px 12px;border-bottom:0.5px solid var(--border);}
+
+/* BİLDİRİM */
+.notif-overlay{position:fixed;top:0;left:0;right:0;z-index:200;pointer-events:none;display:flex;flex-direction:column;align-items:center;padding-top:14px;}
+.notif-popup{background:rgba(26,26,26,0.92);backdrop-filter:blur(12px);color:#fff;border-radius:16px;padding:13px 15px;width:calc(100% - 28px);max-width:380px;display:flex;align-items:center;gap:12px;transform:translateY(-130px);opacity:0;transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);pointer-events:auto;box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.notif-popup.show{transform:translateY(0);opacity:1;}
+.notif-ico-wrap{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.notif-ico-wrap.blue{background:rgba(37,99,235,0.3);}
+.notif-ico-wrap.green{background:rgba(5,150,105,0.3);}
+.notif-ico-wrap.yellow{background:rgba(202,138,4,0.3);}
+.notif-text{flex:1;}
+.notif-title{font-size:13px;font-weight:600;margin-bottom:1px;}
+.notif-body{font-size:11px;opacity:0.7;}
+
+/* SUCCESS */
+.success-wrap{display:flex;flex-direction:column;align-items:center;padding:60px 24px;text-align:center;}
+.success-ico{width:72px;height:72px;background:var(--green-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:20px;}
+.success-wrap h2{font-size:24px;font-weight:700;letter-spacing:-0.5px;margin-bottom:8px;}
+.success-wrap p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:24px;}
+.sms-box{background:var(--surface);border-radius:12px;padding:13px;font-size:12px;color:var(--muted);width:100%;text-align:left;border:0.5px solid var(--border);margin-bottom:20px;}
+.apply-form{padding:0 18px 100px;display:flex;flex-direction:column;gap:16px;}
+
+/* ============ ICONS ============ */
+.icon{
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: -0.125em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+.icon-xs{ font-size: 12px; }
+.icon-sm{ font-size: 14px; }
+.icon-md{ font-size: 16px; }
+.icon-lg{ font-size: 20px; }
+.icon-xl{ font-size: 24px; }
+.icon-2xl{ font-size: 28px; }
+.icon-3xl{ font-size: 36px; }
+
+/* SVG sprite: gizle, sadece referans icin */
+.svg-sprite{ position:absolute; width:0; height:0; overflow:hidden; pointer-events:none; }
+
+/* Spin animasyonu (loader icin) */
+@keyframes spin{ to{ transform: rotate(360deg); } }
+.spin{ animation: spin 1s linear infinite; }
+
+/* ============ RESPONSIVE ============ */
+
+/* Masaustu arka plan dekoru (>=768px) */
+@media (min-width: 768px){
+  body{
+    background:
+      radial-gradient(at 0% 0%, var(--brand-50) 0px, transparent 40%),
+      radial-gradient(at 100% 100%, var(--brand-50) 0px, transparent 40%),
+      var(--bg-subtle);
+  }
+  [data-theme="dark"] body{
+    background:
+      radial-gradient(at 0% 0%, rgba(59,130,246,0.08) 0px, transparent 40%),
+      radial-gradient(at 100% 100%, rgba(59,130,246,0.05) 0px, transparent 40%),
+      var(--bg);
+  }
+
+  /* Mockup'a yuvarlak koseler */
+  .app{
+    height: calc(100vh - 48px);
+    max-height: 920px;
+    margin: 24px auto;
+    border-radius: var(--radius-3xl);
+    overflow: hidden;
+    border: 0.5px solid var(--border);
+  }
+  .topbar{ border-radius: var(--radius-3xl) var(--radius-3xl) 0 0; }
+  .bottom-nav{ border-radius: 0 0 var(--radius-3xl) var(--radius-3xl); }
+
+  /* Login & rol ekranlari ayni mockup'in icine sigsin */
+  .login-wrap, .role-wrap{
+    border-radius: var(--radius-3xl);
+    height: calc(100vh - 48px);
+    max-height: 920px;
+    inset: auto;
+    margin: 24px auto;
+    box-shadow: var(--shadow-xl);
+    border: 0.5px solid var(--border);
+    position: relative;
+  }
+}
+
+/* Genis masaustu (>=1024px): yan yana layout */
+@media (min-width: 1024px){
+  /* Login: 2 kolon */
+  .login-wrap{
+    max-width: 960px;
+    flex-direction: row;
+    overflow: hidden;
+  }
+  .login-top{
+    flex: 1.1;
+    background: var(--grad-brand);
+    color: #fff;
+    padding: 60px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .login-top::before{
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(at 30% 20%, rgba(255,255,255,0.15) 0px, transparent 50%),
+      radial-gradient(at 80% 80%, rgba(255,255,255,0.10) 0px, transparent 50%);
+    pointer-events: none;
+  }
+  .login-top > *{ position: relative; z-index: 1; }
+  .login-logo{
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+  .login-title{ color: #fff; font-size: 40px; }
+  .login-title span{
+    background: none;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    color: rgba(255,255,255,0.85);
+  }
+  .login-sub{ color: rgba(255,255,255,0.85); font-size: 15px; max-width: 320px; }
+  .login-bottom{
+    flex: 1;
+    justify-content: center;
+    padding: 60px 48px;
+    background: var(--bg-elevated);
+  }
+
+  /* Rol secim: kartlari grid yap */
+  .role-wrap{
+    max-width: 720px;
+    padding: 60px;
+    justify-content: center;
+  }
+  .role-cards{
+    flex-direction: row;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .role-card{
+    flex: 1;
+    min-width: 200px;
+    flex-direction: column;
+    text-align: center;
+    padding: 28px 20px;
+    gap: 12px;
+  }
+  .role-card > span:last-child{ display: none; }
+  .role-ico{ margin: 0 auto; width: 64px; height: 64px; font-size: 30px; }
+
+  /* Bottom nav -> sidebar */
+  .app:has(.bottom-nav:not([hidden])){
+    /* iceride */
+  }
+  .app.desktop-shell{
+    max-width: var(--content-max);
+    height: calc(100vh - 48px);
+    max-height: 920px;
+    flex-direction: row;
+    border-radius: var(--radius-3xl);
+  }
+  .app.desktop-shell .topbar{
+    flex-direction: column;
+    width: 240px;
+    height: 100%;
+    border-bottom: none;
+    border-right: 0.5px solid var(--border);
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 24px 18px;
+    gap: 24px;
+    border-radius: var(--radius-3xl) 0 0 var(--radius-3xl);
+  }
+  .app.desktop-shell .scroll-area{
+    flex: 1;
+    border-radius: 0 var(--radius-3xl) var(--radius-3xl) 0;
+  }
+  .app.desktop-shell .bottom-nav{
+    order: 2;
+    flex-direction: column;
+    width: 240px;
+    height: auto;
+    margin-top: auto;
+    border-top: none;
+    border-right: 0.5px solid var(--border);
+    padding: 12px;
+    gap: 4px;
+    background: transparent;
+    border-radius: 0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+  }
+  .app.desktop-shell .nav-btn{
+    flex: none;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    transition: background var(--dur-fast) var(--ease-out);
+  }
+  .app.desktop-shell .nav-btn:hover{ background: var(--bg-muted); }
+  .app.desktop-shell .nav-btn.active{ background: var(--accent-l); }
+  .app.desktop-shell .nav-ico{ font-size: 18px; }
+  .app.desktop-shell .nav-lbl{ font-size: 13px; font-weight: 500; }
+  .app.desktop-shell .nav-badge{ top: 14px; right: 14px; }
+
+  /* Genis ekranda icerik daha rahat nefes alsin */
+  .app.desktop-shell .page-head{ padding: 32px 40px 16px; }
+  .app.desktop-shell .page-head h2{ font-size: 28px; }
+  .app.desktop-shell .home-hero{ padding: 40px 40px 24px; }
+  .app.desktop-shell .home-hero h1{ font-size: 32px; }
+  .app.desktop-shell .quick-actions{ padding: 0 40px 24px; grid-template-columns: repeat(4, 1fr); }
+  .app.desktop-shell .shop-list{ padding: 0 40px 32px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .app.desktop-shell .dash-stats{ padding: 0 40px 24px; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .app.desktop-shell .sec-title{ padding: 0 40px; }
+  .app.desktop-shell .booking-body,
+  .app.desktop-shell .apply-form{ padding-left: 40px; padding-right: 40px; max-width: 720px; }
+}
+
+/* Cok genis ekranlarda overflow olmasin */
+@media (min-width: 1400px){
+  .app.desktop-shell{ max-width: 1400px; }
+}
+
+/* Reduced motion: animasyonlari kapat */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ SVG ICON SPRITE ============ -->
+<svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Marka / Araç -->
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+
+    <!-- Navigasyon -->
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 9 12 2l9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+    <symbol id="i-store" viewBox="0 0 24 24"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-2.5-2a2.7 2.7 0 0 1-5 0 2.7 2.7 0 0 1-5 0 2.7 2.7 0 0 1-5 0a2 2 0 0 1-2-2V7"/></symbol>
+
+    <!-- Aksiyon -->
+    <symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></symbol>
+    <symbol id="i-chevron-left" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></symbol>
+
+    <!-- Iletisim -->
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M20 10c0 7-8 12-8 12s-8-5-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+
+    <!-- Hizmet -->
+    <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></symbol>
+    <symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" x2="12" y1="22.08" y2="12"/></symbol>
+
+    <!-- Durum -->
+    <symbol id="i-check-circle" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+    <symbol id="i-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" x2="9" y1="9" y2="15"/><line x1="9" x2="15" y1="9" y2="15"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="16" y2="12"/><line x1="12" x2="12.01" y1="8" y2="8"/></symbol>
+    <symbol id="i-alert-triangle" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></symbol>
+    <symbol id="i-loader" viewBox="0 0 24 24"><line x1="12" x2="12" y1="2" y2="6"/><line x1="12" x2="12" y1="18" y2="22"/><line x1="4.93" x2="7.76" y1="4.93" y2="7.76"/><line x1="16.24" x2="19.07" y1="16.24" y2="19.07"/><line x1="2" x2="6" y1="12" y2="12"/><line x1="18" x2="22" y1="12" y2="12"/><line x1="4.93" x2="7.76" y1="19.07" y2="16.24"/><line x1="16.24" x2="19.07" y1="7.76" y2="4.93"/></symbol>
+
+    <!-- Tema -->
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+
+    <!-- Akis -->
+    <symbol id="i-truck-wash" viewBox="0 0 24 24"><path d="M3 12h11l4-4v8h2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></symbol>
+    <symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></symbol>
+  </defs>
+</svg>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="login-wrap">
+  <div class="login-top">
+    <div class="login-logo"><svg class="icon" style="font-size:40px;color:#fff" stroke-width="1.6"><use href="#i-car"/></svg></div>
+    <div class="login-title">BBA<span>Wash</span></div>
+    <p class="login-sub">Araç yıkama randevunuzu kolayca alın.</p>
+  </div>
+  <div class="login-bottom">
+    <div class="login-main" id="login-main">
+      <button class="btn-social" onclick="socialLogin()">
+        <div style="width:22px;height:22px;display:flex;align-items:center;justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
+        </div>
+        <span>Google ile Giriş Yap</span>
+        <span style="color:var(--muted);margin-left:auto">›</span>
+      </button>
+      <div class="divider-or"><span>veya</span></div>
+      <button class="btn btn-primary" onclick="showPhoneStep()" style="display:flex;align-items:center;justify-content:center;gap:10px;"><svg class="icon icon-md"><use href="#i-phone"/></svg><span data-i18n="login-phone">Telefon ile Giriş</span></button>
+    </div>
+    <div class="phone-step" id="phone-step">
+      <button class="back-btn" onclick="hidePhoneStep()">← Geri</button>
+      <div class="f-label">Telefon Numaranız</div>
+      <input class="f-input" type="tel" id="phone-inp" placeholder="+90 5XX XXX XX XX">
+      <button class="btn btn-primary" onclick="sendOTP()">Kod Gönder</button>
+    </div>
+    <div class="phone-step" id="otp-step">
+      <button class="back-btn" onclick="showPhoneStep()">← Geri</button>
+      <div class="f-label" style="text-align:center">SMS Kodunu Girin</div>
+      <div class="otp-row">
+        <input class="otp-inp" maxlength="1" type="tel" oninput="otpNext(this,0)">
+        <input class="otp-inp" maxlength="1" type="tel" oninput="otpNext(this,1)">
+        <input class="otp-inp" maxlength="1" type="tel" oninput="otpNext(this,2)">
+        <input class="otp-inp" maxlength="1" type="tel" oninput="otpNext(this,3)">
+        <input class="otp-inp" maxlength="1" type="tel" oninput="otpNext(this,4)">
+        <input class="otp-inp" maxlength="1" type="tel" oninput="otpNext(this,5)">
+      </div>
+      <button class="btn btn-primary" onclick="verifyOTP()">Onayla</button>
+    </div>
+    <p style="font-size:11px;color:var(--muted);text-align:center;line-height:1.6;margin-top:4px;">Devam ederek Kullanım Koşullarını kabul edersiniz.</p>
+    <div id="recaptcha-container"></div>
+  </div>
+</div>
+
+<!-- ROL -->
+<div class="role-wrap hidden" id="role-wrap">
+  <div style="font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:6px;text-align:center;" data-i18n="role-title">Hesap Türünüzü Seçin</div>
+  <p style="font-size:13px;color:var(--muted);text-align:center;margin-bottom:32px;" data-i18n="role-sub">Ne yapmak istiyorsunuz?</p>
+  <div class="role-cards" id="role-cards">
+    <div class="role-card" onclick="enterAsRole('customer')">
+      <div class="role-ico"><svg class="icon icon-xl" style="color:var(--accent)"><use href="#i-user"/></svg></div>
+      <div class="role-info">
+        <div class="role-name" data-i18n="role-cust-name">Müşteri</div>
+        <div class="role-desc" data-i18n="role-cust-desc">Randevu al, aracını takip et</div>
+      </div>
+      <span style="color:var(--text-muted)"><svg class="icon icon-md"><use href="#i-chevron-right"/></svg></span>
+    </div>
+    <div class="role-card" onclick="enterAsRole('owner')">
+      <div class="role-ico"><svg class="icon icon-xl" style="color:var(--accent)"><use href="#i-store"/></svg></div>
+      <div class="role-info">
+        <div class="role-name" data-i18n="role-owner-name">İşletme Sahibi</div>
+        <div class="role-desc" data-i18n="role-owner-desc">Dükkanınızı yönetin, randevuları onaylayın</div>
+      </div>
+      <span style="color:var(--text-muted)"><svg class="icon icon-md"><use href="#i-chevron-right"/></svg></span>
+    </div>
+    <!-- Admin kartı - sadece admin UID'inde görünür -->
+    <div class="role-card" id="admin-role-card" style="display:none;border-color:rgba(220,38,38,0.3);background:var(--red-bg);" onclick="enterAsRole('admin')">
+      <div class="role-ico" style="background:var(--red-bg);"><svg class="icon icon-xl" style="color:var(--red)"><use href="#i-shield-check"/></svg></div>
+      <div class="role-info">
+        <div class="role-name" style="color:var(--red)">Admin Paneli</div>
+        <div class="role-desc">İşletme başvurularını yönet</div>
+      </div>
+      <span style="color:var(--red)"><svg class="icon icon-md"><use href="#i-chevron-right"/></svg></span>
+    </div>
+  </div>
+</div>
+
+<!-- ANA UYGULAMA -->
+<div class="app" id="main-app" style="display:none">
+  <div class="topbar">
+    <div class="logo">BBA<span>Wash</span></div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('tr')">TR</button>
+      <button class="lang-btn" onclick="setLang('ru')">RU</button>
+    </div>
+  </div>
+
+  <div class="scroll-area" id="scroll-area">
+
+    <!-- ANA SAYFA -->
+    <div class="screen" id="s-home">
+      <div class="home-hero">
+        <h1 data-i18n="home-title">Merhaba! <em>Hoş geldiniz.</em></h1>
+        <p data-i18n="home-sub">Aracınız için randevu alın veya takip edin.</p>
+      </div>
+      <div id="active-appt-area"></div>
+      <div class="sec-title" data-i18n="qa-book-name">Ne Yapmak İstersiniz?</div>
+      <div class="quick-actions">
+        <div class="qa-card" onclick="goBooking()">
+          <div class="qa-ico"><svg class="icon icon-xl" style="color:var(--accent)"><use href="#i-calendar"/></svg></div>
+          <div class="qa-name" data-i18n="qa-book-name">Randevu Al</div>
+          <div class="qa-desc" data-i18n="qa-book-desc">Dükkan seç, saat belirle</div>
+        </div>
+        <div class="qa-card" onclick="goTrack()">
+          <div class="qa-ico"><svg class="icon icon-xl" style="color:var(--accent)"><use href="#i-map-pin"/></svg></div>
+          <div class="qa-name" data-i18n="qa-track-name">Takip Et</div>
+          <div class="qa-desc" data-i18n="qa-track-desc">Aktif randevunu izle</div>
+        </div>
+        <div class="qa-card" onclick="navTo('s-history','nav-history')">
+          <div class="qa-ico"><svg class="icon icon-xl" style="color:var(--accent)"><use href="#i-clock"/></svg></div>
+          <div class="qa-name" data-i18n="qa-hist-name">Geçmiş</div>
+          <div class="qa-desc" data-i18n="qa-hist-desc">Önceki randevular</div>
+        </div>
+        <div class="qa-card" onclick="navTo('s-profile','nav-profile')">
+          <div class="qa-ico"><svg class="icon icon-xl" style="color:var(--accent)"><use href="#i-user"/></svg></div>
+          <div class="qa-name" data-i18n="qa-prof-name">Profil</div>
+          <div class="qa-desc" data-i18n="qa-prof-desc">Araçlarım, bilgilerim</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RANDEVU: DÜKKAN -->
+    <div class="screen" id="s-book-shop">
+      <div class="page-head">
+        <button class="back-btn" onclick="navTo('s-home','nav-home')">← Geri</button>
+        <h2>Dükkan Seçin</h2><p>Size en yakın noktayı seçin</p>
+      </div>
+      <div class="step-ind"><div class="step-d active"></div><div class="step-d"></div><div class="step-d"></div><div class="step-d"></div></div>
+      <div class="shop-list" id="shop-list"></div>
+    </div>
+
+    <!-- RANDEVU: HİZMET -->
+    <div class="screen" id="s-book-service">
+      <div class="page-head">
+        <button class="back-btn" onclick="navTo('s-book-shop')">← Geri</button>
+        <h2>Hizmet Seçin</h2>
+      </div>
+      <div class="step-ind"><div class="step-d done"></div><div class="step-d active"></div><div class="step-d"></div><div class="step-d"></div></div>
+      <div class="booking-body">
+        <div id="pill-1"></div>
+        <div class="svc-grid" id="svc-grid"></div>
+        <button class="btn btn-primary" onclick="goToStep3()">Devam Et →</button>
+      </div>
+    </div>
+
+    <!-- RANDEVU: TARİH/SAAT -->
+    <div class="screen" id="s-book-datetime">
+      <div class="page-head">
+        <button class="back-btn" onclick="navTo('s-book-service')">← Geri</button>
+        <h2>Tarih & Saat</h2>
+      </div>
+      <div class="step-ind"><div class="step-d done"></div><div class="step-d done"></div><div class="step-d active"></div><div class="step-d"></div></div>
+      <div class="booking-body">
+        <div id="pill-2"></div>
+        <div><div class="f-label">Tarih Seçin</div><div class="date-row" id="date-chips"></div></div>
+        <div><div class="f-label">Saat Seçin</div><div class="slot-grid" id="slot-chips"></div></div>
+        <button class="btn btn-primary" onclick="goToStep4()">Devam Et →</button>
+      </div>
+    </div>
+
+    <!-- RANDEVU: ARAÇ -->
+    <div class="screen" id="s-book-vehicle">
+      <div class="page-head">
+        <button class="back-btn" onclick="navTo('s-book-datetime')">← Geri</button>
+        <h2>Araç Seçin</h2>
+      </div>
+      <div class="step-ind"><div class="step-d done"></div><div class="step-d done"></div><div class="step-d done"></div><div class="step-d active"></div></div>
+      <div class="booking-body">
+        <div class="vehicle-list" id="vehicle-list"></div>
+        <div style="border-top:0.5px solid var(--border);padding-top:16px;">
+          <div class="f-label">Veya Yeni Araç Ekle</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+            <input class="f-input" type="text" id="new-plate" placeholder="Plaka (01 ABC 123)">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <input class="f-input" type="text" id="new-brand" placeholder="Marka">
+              <input class="f-input" type="text" id="new-model" placeholder="Model">
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="confirmBooking()">Randevuyu Onayla</button>
+      </div>
+    </div>
+
+    <!-- RANDEVU BAŞARI -->
+    <div class="screen" id="s-book-success">
+      <div class="success-wrap">
+        <div class="success-ico"><svg class="icon icon-3xl" style="color:var(--green)" stroke-width="2.5"><use href="#i-check-circle"/></svg></div>
+        <h2>Randevunuz Alındı!</h2>
+        <p>İşletme onayladığında bildirim alacaksınız.</p>
+        <div class="sms-box" style="display:flex;align-items:flex-start;gap:10px;"><svg class="icon icon-md" style="color:var(--accent);margin-top:2px;flex-shrink:0;"><use href="#i-message"/></svg><span><strong>SMS Gönderildi:</strong> Randevu bilgileriniz telefonunuza iletildi.</span></div>
+        <button class="btn btn-primary" onclick="navTo('s-home','nav-home')">Ana Sayfaya Dön</button>
+      </div>
+    </div>
+
+    <!-- TAKİP -->
+    <div class="screen" id="s-track">
+      <div class="page-head"><h2>Canlı Takip</h2><p id="track-sub">—</p></div>
+      <div class="track-bar-wrap">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span style="font-size:12px;color:var(--muted);">İlerleme</span>
+          <span style="font-size:14px;font-weight:700;color:var(--accent);" id="track-pct">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="track-bar" style="width:0%"></div></div>
+        <div style="font-size:11px;color:var(--muted);text-align:right;margin-top:4px;" id="track-eta">—</div>
+      </div>
+      <div class="track-steps" id="track-steps"></div>
+    </div>
+
+    <!-- GEÇMİŞ -->
+    <div class="screen" id="s-history">
+      <div class="page-head"><h2>Randevu Geçmişim</h2></div>
+      <div class="card" style="margin:0 18px 24px;" id="history-list">
+        <div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-clipboard"/></svg></div><p>Henüz randevunuz yok.</p></div>
+      </div>
+    </div>
+
+    <!-- PROFİL -->
+    <div class="screen" id="s-profile">
+      <div style="padding:28px 18px 20px;text-align:center;">
+        <div class="profile-avatar" id="profile-avatar"><svg class="icon icon-2xl"><use href="#i-user"/></svg></div>
+        <div style="font-size:18px;font-weight:700;" id="profile-name">—</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-top:3px;" id="profile-email">—</div>
+      </div>
+      <div class="card" style="margin:0 18px 12px;">
+        <div class="profile-row" onclick="navTo('s-my-vehicles')">
+          <svg class="icon icon-md" style="color:var(--text-muted)"><use href="#i-car"/></svg><span style="flex:1;font-size:14px">Araçlarım</span><svg class="icon icon-sm" style="color:var(--text-muted)"><use href="#i-chevron-right"/></svg>
+        </div>
+        <div class="profile-row" onclick="navTo('s-history','nav-history')">
+          <svg class="icon icon-md" style="color:var(--text-muted)"><use href="#i-clipboard"/></svg><span style="flex:1;font-size:14px">Randevu Geçmişim</span><svg class="icon icon-sm" style="color:var(--text-muted)"><use href="#i-chevron-right"/></svg>
+        </div>
+      </div>
+      <div class="card" style="margin:0 18px 24px;">
+        <div class="profile-row" onclick="logout()" style="color:var(--red)">
+          <svg class="icon icon-md"><use href="#i-logout"/></svg><span style="flex:1;font-size:14px">Çıkış Yap</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARAÇLARIM -->
+    <div class="screen" id="s-my-vehicles">
+      <div class="page-head">
+        <button class="back-btn" onclick="navTo('s-profile')">← Geri</button>
+        <h2>Araçlarım</h2>
+      </div>
+      <div class="card" style="margin:0 18px 16px;" id="my-vehicles-list"></div>
+      <div style="padding:0 18px;">
+        <div class="f-label">Yeni Araç Ekle</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+          <input class="f-input" type="text" id="v-plate" placeholder="Plaka">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <input class="f-input" type="text" id="v-brand" placeholder="Marka">
+            <input class="f-input" type="text" id="v-model" placeholder="Model">
+          </div>
+          <button class="btn btn-accent" onclick="addVehicle()">Araç Ekle</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="screen" id="s-dash">
+      <div class="page-head"><h2>Dükkan Paneli</h2><p id="dash-shop-name">—</p></div>
+      <div class="dash-stats">
+        <div class="stat-card"><div class="stat-lbl">Bekleyen</div><div class="stat-val yellow" id="st-pending">0</div></div>
+        <div class="stat-card"><div class="stat-lbl">Aktif</div><div class="stat-val blue" id="st-active">0</div></div>
+        <div class="stat-card"><div class="stat-lbl">Tamamlanan</div><div class="stat-val green" id="st-done">0</div></div>
+        <div class="stat-card"><div class="stat-lbl">Bugün Toplam</div><div class="stat-val" id="st-total">0</div></div>
+      </div>
+      <div id="pending-section"></div>
+      <div class="sec-title">Aktif Randevular</div>
+      <div class="card" style="margin:0 18px 24px;" id="active-appts"></div>
+    </div>
+
+    <!-- MÜŞTERİLER -->
+    <div class="screen" id="s-customers">
+      <div class="page-head"><h2>Müşteriler</h2></div>
+      <div style="padding:0 18px 12px;">
+        <input class="f-input" type="search" id="cust-search" placeholder="Ad, plaka veya telefon..." oninput="filterCustomers()">
+      </div>
+      <div class="card" style="margin:0 18px 24px;" id="cust-list"></div>
+    </div>
+
+    <!-- BAŞVURU FORMU -->
+    <div class="screen" id="s-apply">
+      <div class="page-head"><h2>İşletme Başvurusu</h2><p>Bilgilerinizi doldurun, onaylayalım.</p></div>
+      <div class="apply-form">
+        <div><div class="f-label">Dükkan Adı (TR)</div><input class="f-input" id="ap-name-tr" placeholder="DML Araç Yıkama"></div>
+        <div><div class="f-label">Dükkan Adı (RU)</div><input class="f-input" id="ap-name-ru" placeholder="DML мойка"></div>
+        <div><div class="f-label">Adres</div><input class="f-input" id="ap-addr" placeholder="Silifke Merkez, Atatürk Cad."></div>
+        <div><div class="f-label">Telefon</div><input class="f-input" id="ap-phone" type="tel" placeholder="+90 324 000 0000"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div><div class="f-label">Açılış</div><input class="f-input" id="ap-open" value="09:00"></div>
+          <div><div class="f-label">Kapanış</div><input class="f-input" id="ap-close" value="18:00"></div>
+        </div>
+        <button class="btn btn-accent" onclick="submitApply()">Başvuruyu Gönder</button>
+      </div>
+    </div>
+
+    <!-- ONAY BEKLİYOR -->
+    <div class="screen" id="s-pending-approval">
+      <div class="success-wrap">
+        <div class="success-ico" style="background:var(--yellow-bg);"><svg class="icon icon-3xl" style="color:var(--yellow)"><use href="#i-clock"/></svg></div>
+        <h2>Başvurunuz İnceleniyor</h2>
+        <p>Başvurunuz onaylandığında bildirim alacaksınız.</p>
+      </div>
+    </div>
+
+    <!-- ADMIN PANELİ -->
+    <div class="screen" id="s-admin">
+      <div class="page-head">
+        <h2 style="display:flex;align-items:center;gap:10px;"><svg class="icon icon-xl" style="color:var(--red)"><use href="#i-shield-check"/></svg>Admin Paneli</h2>
+        <p>İşletme başvurularını yönet</p>
+      </div>
+      <!-- SEKMELER -->
+      <div style="display:flex;border-bottom:0.5px solid var(--border);margin:0 18px 16px;">
+        <button id="tab-pending" onclick="switchAdminTab('pending')" style="flex:1;padding:10px;border:none;background:transparent;font-family:var(--font);font-size:13px;font-weight:600;color:var(--accent);border-bottom:2px solid var(--accent);cursor:pointer;">Bekleyen</button>
+        <button id="tab-approved" onclick="switchAdminTab('approved')" style="flex:1;padding:10px;border:none;background:transparent;font-family:var(--font);font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;">Onaylanan</button>
+        <button id="tab-rejected" onclick="switchAdminTab('rejected')" style="flex:1;padding:10px;border:none;background:transparent;font-family:var(--font);font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;">Reddedilen</button>
+      </div>
+      <div class="card" style="margin:0 18px 24px;" id="admin-list"></div>
+    </div>
+
+  </div>
+
+  <!-- MÜŞTERİ NAV -->
+  <div class="bottom-nav" id="customer-nav">
+    <button class="nav-btn active" id="nav-home" onclick="navTo('s-home','nav-home')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-home"/></svg></span><span class="nav-lbl" data-i18n="nav-home">Ana</span></button>
+    <button class="nav-btn" id="nav-book" onclick="goBooking()"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-calendar"/></svg></span><span class="nav-lbl" data-i18n="nav-book">Randevu</span></button>
+    <button class="nav-btn" id="nav-track" onclick="goTrack()"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-map-pin"/></svg></span><span class="nav-lbl" data-i18n="nav-track">Takip</span></button>
+    <button class="nav-btn" id="nav-history" onclick="navTo('s-history','nav-history')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-clock"/></svg></span><span class="nav-lbl" data-i18n="nav-hist">Geçmiş</span></button>
+    <button class="nav-btn" id="nav-profile" onclick="navTo('s-profile','nav-profile')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-user"/></svg></span><span class="nav-lbl" data-i18n="nav-prof">Profil</span></button>
+  </div>
+
+  <!-- İŞLETME NAV -->
+  <div class="bottom-nav" id="owner-nav" style="display:none">
+    <button class="nav-btn active" id="onav-dash" onclick="ownerNavTo('s-dash','onav-dash')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-package"/></svg></span><span class="nav-lbl" data-i18n="onav-dash">Panel</span><span class="nav-badge" id="pending-badge"></span></button>
+    <button class="nav-btn" id="onav-cust" onclick="ownerNavTo('s-customers','onav-cust')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-users"/></svg></span><span class="nav-lbl" data-i18n="onav-cust">Müşteriler</span></button>
+    <button class="nav-btn" id="onav-profile" onclick="ownerNavTo('s-profile','onav-profile')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-user"/></svg></span><span class="nav-lbl" data-i18n="onav-prof">Profil</span></button>
+  </div>
+
+  <!-- ADMİN NAV -->
+  <div class="bottom-nav" id="admin-nav" style="display:none">
+    <button class="nav-btn active" id="anav-apps" onclick="adminNavTo('s-admin','anav-apps')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-clipboard"/></svg></span><span class="nav-lbl">Başvurular</span><span class="nav-badge" id="admin-badge"></span></button>
+    <button class="nav-btn" id="anav-profile" onclick="adminNavTo('s-profile','anav-profile')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-user"/></svg></span><span class="nav-lbl">Profil</span></button>
+  </div>
+</div>
+
+<!-- DETAY PANELİ -->
+<div class="detail-overlay" id="detail-overlay" onclick="closeDetail(event)">
+  <div class="detail-panel" id="detail-panel">
+    <div class="detail-handle"></div>
+    <div class="detail-head">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="cust-avatar" id="dp-av">AK</div>
+        <div><div style="font-size:16px;font-weight:700;" id="dp-name">—</div><div style="font-size:12px;color:var(--muted);" id="dp-phone">—</div></div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;" id="dp-chips"></div>
+    </div>
+    <div style="padding:14px 18px;"><div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">İşlem Geçmişi</div><div id="dp-txns"></div></div>
+  </div>
+</div>
+
+<!-- BİLDİRİM -->
+<div class="notif-overlay"><div class="notif-popup" id="notif-popup">
+  <div class="notif-ico-wrap blue" id="notif-ico"><svg class="icon icon-md" style="color:#fff"><use href="#i-bell"/></svg></div>
+  <div class="notif-text"><div class="notif-title" id="notif-title">—</div><div class="notif-body" id="notif-body">—</div></div>
+</div></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber, signOut } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+
+const fbApp = initializeApp({
+  apiKey:"AIzaSyAtXK1dtUvFJ8Gdij29V07LsoRLECRkq08",
+  authDomain:"bbawash-a4551.firebaseapp.com",
+  projectId:"bbawash-a4551",
+  storageBucket:"bbawash-a4551.firebasestorage.app",
+  messagingSenderId:"429687572157",
+  appId:"1:429687572157:web:78ffbba2d0d8ff171559d4"
+});
+const auth = getAuth(fbApp);
+
+const API = 'https://bbawash-backend-production.up.railway.app/api';
+let TOKEN=null, CURRENT_USER=null, lang='tr';
+let shops=[], selectedShop=null, selectedService=null, selectedDate=0, selectedSlot=null, selectedVehicle=null;
+let myVehicles=[], allCustomers=[], customers=[];
+let confirmationResult=null;
+
+async function api(method,path,body){
+  const o={method,headers:{'Authorization':`Bearer ${TOKEN}`,'Content-Type':'application/json'}};
+  if(body) o.body=JSON.stringify(body);
+  const r=await fetch(API+path,o);
+  if(!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+const GET=(p)=>api('GET',p);
+const POST=(p,b)=>api('POST',p,b);
+const PATCH=(p,b)=>api('PATCH',p,b);
+const DEL=(p)=>api('DELETE',p);
+
+const SVCS=[
+  {key:'dis_yikama',name:'Dış Yıkama',price:'₺150',ico:'i-droplet',time:'~30 dk'},
+  {key:'ic_dis',name:'İç + Dış Yıkama',price:'₺280',ico:'i-sparkles',time:'~60 dk'},
+  {key:'detayli',name:'Detaylı Temizlik',price:'₺450',ico:'i-shield-check',time:'~90 dk'},
+  {key:'special_4x4',name:'4x4 Özel',price:'₺380',ico:'i-truck-wash',time:'~75 dk'},
+];
+const STATUS_PCT={pending:5,confirmed:15,received:30,washing:55,drying:75,ready:90,delivered:100};
+const STATUS_LBL={pending:'Onay Bekleniyor',confirmed:'Onaylandı',received:'Teslim Alındı',washing:'Yıkanıyor',drying:'Kurulanıyor',ready:'Hazır',delivered:'Teslim Edildi',cancelled:'İptal'};
+const STEPS=['Onay Bekleniyor','Onaylandı','Araç Teslim Alındı','Yıkama Başladı','Kurulanıyor','Teslime Hazır','Teslim Edildi'];
+const STEP_KEYS=['pending','confirmed','received','washing','drying','ready','delivered'];
+const ETA=['','','~30 dk','~20 dk','~10 dk','Hazır!','Tamamlandı'];
+const SHOP_ICONS=['i-droplet','i-sparkles','i-shield-check','i-car','i-store'];
+const DAYS=['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
+const NEXT_STATUS={confirmed:'received',received:'washing',washing:'drying',drying:'ready',ready:'delivered'};
+const NEXT_LBL={received:'Teslim Aldık',washing:'Yıkıyoruz',drying:'Kuruluyoruz',ready:'Hazır',delivered:'Teslim Ettik'};
+
+// SVG ikon helper'i
+function svgIcon(id, size='lg', extraStyle=''){
+  return `<svg class="icon icon-${size}" style="${extraStyle}"><use href="#${id}"/></svg>`;
+}
+
+// LANG
+window.setLang=function(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent===l.toUpperCase()));
+
+  const TX={
+    tr:{
+      'home-title':'Merhaba! <em>Hoş geldiniz.</em>',
+      'home-sub':'Aracınız için randevu alın veya takip edin.',
+      'qa-book-name':'Randevu Al','qa-book-desc':'Dükkan seç, saat belirle',
+      'qa-track-name':'Takip Et','qa-track-desc':'Aktif randevunu izle',
+      'qa-hist-name':'Geçmiş','qa-hist-desc':'Önceki randevular',
+      'qa-prof-name':'Profil','qa-prof-desc':'Araçlarım, bilgilerim',
+      'nav-home':'Ana','nav-book':'Randevu','nav-track':'Takip','nav-hist':'Geçmiş','nav-prof':'Profil',
+      'onav-dash':'Panel','onav-cust':'Müşteriler','onav-prof':'Profil',
+      'book-shop-title':'Dükkan Seçin','book-shop-sub':'Size en yakın noktayı seçin',
+      'book-svc-title':'Hizmet Seçin','book-dt-title':'Tarih & Saat',
+      'book-v-title':'Araç Seçin','book-new-vehicle':'Veya Yeni Araç Ekle',
+      'plate-ph':'Plaka (01 ABC 123)','brand-ph':'Marka','model-ph':'Model',
+      'confirm-btn':'Randevuyu Onayla',
+      'success-title':'Randevunuz Alındı!','success-sub':'İşletme onayladığında bildirim alacaksınız.',
+      'sms-sent':'SMS Gönderildi:','sms-body':'Randevu bilgileriniz telefonunuza iletildi.',
+      'back-home':'Ana Sayfaya Dön',
+      'track-title':'Canlı Takip','track-progress':'İlerleme',
+      'hist-title':'Randevu Geçmişim','hist-empty':'Henüz geçmiş randevunuz yok.',
+      'my-vehicles':'Araçlarım','my-vehicles-empty':'Araç eklemediniz.',
+      'add-vehicle':'Araç Ekle',
+      'dash-title':'Dükkan Paneli',
+      'stat-pending':'Bekleyen','stat-active':'Aktif','stat-done':'Tamamlanan','stat-total':'Bugün Toplam',
+      'pending-section-title':'Onay Bekleyen',
+      'active-appts-title':'Aktif Randevular','active-empty':'Aktif randevu yok',
+      'cust-title':'Müşteriler','cust-search-ph':'Ad, plaka veya telefon...',
+      'cust-empty':'Henüz müşteri yok.',
+      'apply-title':'İşletme Başvurusu','apply-sub':'Bilgilerinizi doldurun, onaylayalım.',
+      'apply-btn':'Başvuruyu Gönder',
+      'pending-approval-title':'Başvurunuz İnceleniyor','pending-approval-sub':'Başvurunuz onaylandığında bildirim alacaksınız.',
+      'profile-vehicles':'Araçlarım','profile-history':'Randevu Geçmişim','profile-logout':'Çıkış Yap',
+      'role-title':'Hesap Türünüzü Seçin','role-sub':'Ne yapmak istiyorsunuz?',
+      'role-cust-name':'Müşteri','role-cust-desc':'Randevu al, aracını takip et',
+      'role-owner-name':'İşletme Sahibi','role-owner-desc':'Dükkanınızı yönetin, randevuları onaylayın',
+      'login-sub':'Araç yıkama randevunuzu kolayca alın.',
+      'login-google':'Google ile Giriş Yap','login-phone':'Telefon ile Giriş',
+      'login-note':'Devam ederek Kullanım Koşullarını kabul edersiniz.',
+      'open-label':'Açık','busy-label':'Yoğun','select-label':'Seç →',
+      'date-label':'Tarih Seçin','time-label':'Saat Seçin',
+      'continue-btn':'Devam Et →','back-btn':'← Geri',
+      'today':'Bugün','full':'dolu',
+      'status-pending':'Onay Bekleniyor','status-confirmed':'Onaylandı','status-received':'Teslim Alındı',
+      'status-washing':'Yıkanıyor','status-drying':'Kurulanıyor','status-ready':'Hazır','status-delivered':'Teslim Edildi','status-cancelled':'İptal',
+      'approve-btn':'Onayla','reject-btn':'Reddet',
+      'active-appt-label':'🔵 Aktif Randevu','track-btn':'Takip Et →',
+      'next-received':'Teslim Aldık','next-washing':'Yıkıyoruz','next-drying':'Kuruluyoruz','next-ready':'Hazır','next-delivered':'Teslim Ettik',
+      'in-progress':'Devam ediyor','no-active':'Aktif randevu yok','no-active-sub':'Aktif randevunuz bulunmuyor.',
+      'txn-history':'İşlem Geçmişi',
+      'notif-confirmed-title':'Onaylandı','notif-confirmed-body':'Randevunuz onaylandı',
+      'notif-received-title':'Araç Teslim Alındı','notif-received-body':'Aracınız teslim alındı',
+      'notif-washing-title':'Yıkama Başladı','notif-washing-body':'Aracınız yıkanıyor',
+      'notif-drying-title':'Kurulanıyor','notif-drying-body':'Neredeyse hazır!',
+      'notif-ready-title':'Hazır!','notif-ready-body':'Aracınız teslime hazır',
+      'notif-delivered-title':'Teslim Edildi','notif-delivered-body':'İyi yolculuklar!',
+    },
+    ru:{
+      'home-title':'Привет! <em>Добро пожаловать.</em>',
+      'home-sub':'Запишитесь на мойку или следите за авто.',
+      'qa-book-name':'Запись','qa-book-desc':'Выберите мойку и время',
+      'qa-track-name':'Отслеживание','qa-track-desc':'Следите за авто',
+      'qa-hist-name':'История','qa-hist-desc':'Предыдущие записи',
+      'qa-prof-name':'Профиль','qa-prof-desc':'Мои авто, данные',
+      'nav-home':'Главная','nav-book':'Запись','nav-track':'Статус','nav-hist':'История','nav-prof':'Профиль',
+      'onav-dash':'Панель','onav-cust':'Клиенты','onav-prof':'Профиль',
+      'book-shop-title':'Выберите мойку','book-shop-sub':'Найдите ближайшую точку',
+      'book-svc-title':'Выберите услугу','book-dt-title':'Дата и Время',
+      'book-v-title':'Выберите авто','book-new-vehicle':'Или добавить новое авто',
+      'plate-ph':'Номер авто','brand-ph':'Марка','model-ph':'Модель',
+      'confirm-btn':'Подтвердить запись',
+      'success-title':'Запись создана!','success-sub':'Вы получите уведомление после подтверждения.',
+      'sms-sent':'SMS отправлено:','sms-body':'Данные записи отправлены на ваш номер.',
+      'back-home':'На главную',
+      'track-title':'Отслеживание','track-progress':'Прогресс',
+      'hist-title':'Мои записи','hist-empty':'Нет завершённых записей.',
+      'my-vehicles':'Мои автомобили','my-vehicles-empty':'Нет автомобилей.',
+      'add-vehicle':'Добавить авто',
+      'dash-title':'Панель управления',
+      'stat-pending':'Ожидают','stat-active':'Активных','stat-done':'Завершено','stat-total':'Всего сегодня',
+      'pending-section-title':'Ожидают подтверждения',
+      'active-appts-title':'Активные записи','active-empty':'Нет активных записей',
+      'cust-title':'Клиенты','cust-search-ph':'Имя, номер авто или телефон...',
+      'cust-empty':'Нет клиентов.',
+      'apply-title':'Заявка на регистрацию','apply-sub':'Заполните форму, мы рассмотрим заявку.',
+      'apply-btn':'Отправить заявку',
+      'pending-approval-title':'Заявка на рассмотрении','pending-approval-sub':'Вы получите уведомление после одобрения.',
+      'profile-vehicles':'Мои автомобили','profile-history':'История записей','profile-logout':'Выйти',
+      'role-title':'Выберите тип аккаунта','role-sub':'Что хотите сделать?',
+      'role-cust-name':'Клиент','role-cust-desc':'Запишитесь, следите за авто',
+      'role-owner-name':'Владелец бизнеса','role-owner-desc':'Управляйте мойкой',
+      'login-sub':'Запишитесь на мойку легко.',
+      'login-google':'Войти через Google','login-phone':'Войти по телефону',
+      'login-note':'Продолжая, вы принимаете Условия использования.',
+      'open-label':'Открыто','busy-label':'Занято','select-label':'Выбрать →',
+      'date-label':'Выберите дату','time-label':'Выберите время',
+      'continue-btn':'Далее →','back-btn':'← Назад',
+      'today':'Сегодня','full':'занято',
+      'status-pending':'Ожидает','status-confirmed':'Подтверждено','status-received':'Принят',
+      'status-washing':'Моется','status-drying':'Сушим','status-ready':'Готово','status-delivered':'Передан','status-cancelled':'Отменено',
+      'approve-btn':'Принять','reject-btn':'Отклонить',
+      'active-appt-label':'🔵 Активная запись','track-btn':'Следить →',
+      'next-received':'Приняли','next-washing':'Моем','next-drying':'Сушим','next-ready':'Готово','next-delivered':'Передали',
+      'in-progress':'В процессе','no-active':'Нет активной записи','no-active-sub':'Нет активной записи.',
+      'txn-history':'История',
+      'notif-confirmed-title':'Подтверждено','notif-confirmed-body':'Запись подтверждена',
+      'notif-received-title':'Авто принят','notif-received-body':'Ваш автомобиль принят',
+      'notif-washing-title':'Мойка началась','notif-washing-body':'Ваше авто моется',
+      'notif-drying-title':'Сушим','notif-drying-body':'Почти готово!',
+      'notif-ready-title':'Готово!','notif-ready-body':'Авто готово к выдаче',
+      'notif-delivered-title':'Передан','notif-delivered-body':'Счастливого пути!',
+    }
+  };
+
+  const t=TX[l];
+  // Tüm data-i18n elementlerini güncelle
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.dataset.i18n;
+    if(!t[key]) return;
+    if(el.tagName==='INPUT') el.placeholder=t[key];
+    else el.innerHTML=t[key];
+  });
+
+  // Dinamik render fonksiyonlarını yeniden çalıştır
+  if(typeof renderShops==='function') renderShops();
+  if(typeof renderServices==='function') renderServices();
+  if(typeof renderDateChips==='function') renderDateChips();
+  if(typeof renderSlotChips==='function') renderSlotChips();
+};
+
+// NAV
+window.navTo=function(screenId,navId){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  document.getElementById('scroll-area').scrollTo(0,0);
+  if(navId){document.querySelectorAll('#customer-nav .nav-btn').forEach(b=>b.classList.remove('active'));const el=document.getElementById(navId);if(el)el.classList.add('active');}
+  if(screenId==='s-history') loadHistory();
+  if(screenId==='s-my-vehicles') loadMyVehicles();
+  if(screenId==='s-track') loadTrack();
+};
+window.ownerNavTo=function(screenId,navId){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  document.getElementById('scroll-area').scrollTo(0,0);
+  document.querySelectorAll('#owner-nav .nav-btn').forEach(b=>b.classList.remove('active'));
+  const el=document.getElementById(navId);if(el)el.classList.add('active');
+  if(screenId==='s-dash') loadDashboard();
+  if(screenId==='s-customers') loadCustomers();
+};
+
+// LOGIN
+window.showPhoneStep=function(){
+  document.getElementById('login-main').classList.add('hidden');
+  document.getElementById('phone-step').classList.add('active');
+  document.getElementById('otp-step').classList.remove('active');
+  if(!window.recaptchaVerifier) window.recaptchaVerifier=new RecaptchaVerifier(auth,'recaptcha-container',{size:'invisible'});
+};
+window.hidePhoneStep=function(){document.getElementById('login-main').classList.remove('hidden');document.getElementById('phone-step').classList.remove('active');};
+window.sendOTP=async function(){
+  const phone=document.getElementById('phone-inp').value.trim();if(!phone) return;
+  try{confirmationResult=await signInWithPhoneNumber(auth,phone,window.recaptchaVerifier);document.getElementById('phone-step').classList.remove('active');document.getElementById('otp-step').classList.add('active');setTimeout(()=>document.querySelectorAll('.otp-inp')[0].focus(),100);}
+  catch(e){alert('SMS gönderilemedi: '+e.message);}
+};
+window.otpNext=function(el,idx){if(el.value.length===1){const inputs=document.querySelectorAll('.otp-inp');if(idx<5)inputs[idx+1].focus();if(idx===5)window.verifyOTP();}};
+window.verifyOTP=async function(){
+  const code=[...document.querySelectorAll('.otp-inp')].map(i=>i.value).join('');if(code.length<6) return;
+  try{const r=await confirmationResult.confirm(code);TOKEN=await r.user.getIdToken();showRoleScreen();}
+  catch(e){alert('Kod hatalı: '+e.message);}
+};
+window.socialLogin=async function(){
+  try{const r=await signInWithPopup(auth,new GoogleAuthProvider());TOKEN=await r.user.getIdToken();showRoleScreen();}
+  catch(e){alert('Giriş hatası: '+e.message);}
+};
+function showRoleScreen(){
+  document.getElementById('login-wrap').classList.add('hidden');
+  document.getElementById('role-wrap').classList.remove('hidden');
+  // Admin UID kontrolü — sadece sen görürsün
+  const ADMIN_UID = 'rc02itaegSVDfxLWCHFFJKIQrZZ2';
+  if(auth.currentUser?.uid === ADMIN_UID){
+    document.getElementById('admin-role-card').style.display='flex';
+  }
+}
+window.enterAsRole=async function(role){
+  document.getElementById('role-wrap').classList.add('hidden');
+  try{const d=await POST('/auth/login',{id_token:TOKEN,role});CURRENT_USER=d.user;}catch(e){console.warn(e);}
+  document.getElementById('main-app').style.display='flex';
+  applyResponsiveLayout();
+  if(role==='admin') setupAdminView();
+  else if(role==='owner') setupOwnerView();
+  else setupCustomerView();
+};
+
+// Genis ekranda sidebar layout, dar ekranda klasik mobil layout
+function applyResponsiveLayout(){
+  const app = document.getElementById('main-app');
+  if(!app) return;
+  const apply = ()=>{
+    if(window.innerWidth >= 1024){
+      app.classList.add('desktop-shell');
+    } else {
+      app.classList.remove('desktop-shell');
+    }
+  };
+  apply();
+  if(!window._respHooked){
+    window._respHooked = true;
+    window.addEventListener('resize', apply);
+  }
+}
+
+window.logout=async function(){await signOut(auth);location.reload();};
+
+// ADMİN KURULUM
+async function setupAdminView(){
+  document.getElementById('customer-nav').style.display='none';
+  document.getElementById('owner-nav').style.display='none';
+  document.getElementById('admin-nav').style.display='flex';
+  if(CURRENT_USER){
+    document.getElementById('profile-avatar').innerHTML='<svg class="icon icon-2xl" style="color:var(--red)"><use href="#i-shield-check"/></svg>';
+    document.getElementById('profile-name').textContent=CURRENT_USER.name||'Admin';
+    document.getElementById('profile-email').textContent=CURRENT_USER.email||'—';
+  }
+  adminNavTo('s-admin','anav-apps');
+  loadAdminApps('pending');
+}
+
+function adminNavTo(screenId,navId){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  document.getElementById('scroll-area').scrollTo(0,0);
+  document.querySelectorAll('#admin-nav .nav-btn').forEach(b=>b.classList.remove('active'));
+  const el=document.getElementById(navId);if(el)el.classList.add('active');
+}
+window.adminNavTo=adminNavTo;
+
+let currentAdminTab='pending';
+window.switchAdminTab=function(status){
+  currentAdminTab=status;
+  ['pending','approved','rejected'].forEach(s=>{
+    const btn=document.getElementById('tab-'+s);
+    if(s===status){btn.style.color='var(--accent)';btn.style.borderBottom='2px solid var(--accent)';btn.style.fontWeight='600';}
+    else{btn.style.color='var(--muted)';btn.style.borderBottom='none';btn.style.fontWeight='500';}
+  });
+  loadAdminApps(status);
+};
+
+async function loadAdminApps(status){
+  const wrap=document.getElementById('admin-list');
+  wrap.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle);animation:spin 1s linear infinite;"><use href="#i-loader"/></svg></div><p>Yükleniyor...</p></div>`;
+  try{
+    const apps=await GET(`/shops/admin/applications?status=${status}`);
+    if(!apps.length){
+      const emptyIco=status==='pending'?'i-clipboard':status==='approved'?'i-check-circle':'i-x-circle';
+      const emptyColor=status==='pending'?'var(--text-subtle)':status==='approved'?'var(--green)':'var(--red)';
+      wrap.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:${emptyColor}"><use href="#${emptyIco}"/></svg></div><p>${status==='pending'?'Bekleyen başvuru yok':status==='approved'?'Onaylanan başvuru yok':'Reddedilen başvuru yok'}</p></div>`;
+      return;
+    }
+    wrap.innerHTML='';
+    apps.forEach(shop=>{
+      const div=document.createElement('div');
+      div.style.cssText='padding:14px 16px;border-bottom:0.5px solid var(--border);';
+      div.innerHTML=`
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div style="font-size:15px;font-weight:700;">${shop.name}</div>
+          <span class="badge ${status==='pending'?'badge-yellow':status==='approved'?'badge-green':'badge-red'}">${status==='pending'?'Bekleyen':status==='approved'?'Onaylı':'Reddedildi'}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);margin-bottom:4px;"><svg class="icon icon-xs"><use href="#i-map-pin"/></svg><span>${shop.address||'—'}</span></div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);margin-bottom:4px;"><svg class="icon icon-xs"><use href="#i-phone"/></svg><span>${shop.owner_phone||'—'}</span></div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);margin-bottom:4px;"><svg class="icon icon-xs"><use href="#i-mail"/></svg><span>${shop.owner_email||'—'}</span></div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);margin-bottom:12px;"><svg class="icon icon-xs"><use href="#i-clock"/></svg><span>${shop.open_time||'09:00'} – ${shop.close_time||'18:00'}</span></div>
+        ${status==='pending'?`
+        <div style="display:flex;gap:8px;">
+          <button class="pend-btn approve" style="flex:1;padding:10px;border:none;border-radius:10px;font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;" onclick="adminApprove(${shop.id})"><svg class="icon icon-sm"><use href="#i-check"/></svg>Onayla</button>
+          <button class="pend-btn reject" style="flex:1;padding:10px;border:none;border-radius:10px;font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;background:var(--red-bg);color:var(--red);display:flex;align-items:center;justify-content:center;gap:6px;" onclick="adminReject(${shop.id})"><svg class="icon icon-sm"><use href="#i-x"/></svg>Reddet</button>
+        </div>`:''}`;
+      wrap.appendChild(div);
+    });
+
+    // Bekleyen sayısını badge'e yaz
+    if(status==='pending'){
+      const badge=document.getElementById('admin-badge');
+      if(apps.length>0) badge.style.display='block'; else badge.style.display='none';
+    }
+  }catch(e){
+    wrap.innerHTML=`<div class="empty-state"><div class="empty-ico">⚠️</div><p>Yüklenemedi: ${e.message}</p></div>`;
+  }
+}
+
+window.adminApprove=async function(shopId){
+  try{
+    await PATCH(`/shops/admin/${shopId}/approve`,{});
+    showNotif('confirmed');
+    loadAdminApps('pending');
+  }catch(e){alert('Onaylanamadı: '+e.message);}
+};
+window.adminReject=async function(shopId){
+  if(!confirm('Bu başvuruyu reddetmek istediğinizden emin misiniz?')) return;
+  try{
+    await PATCH(`/shops/admin/${shopId}/reject`,{});
+    loadAdminApps('pending');
+  }catch(e){alert('Reddedilemedi: '+e.message);}
+};
+
+// MÜŞTERİ KURULUM
+async function setupCustomerView(){
+  document.getElementById('customer-nav').style.display='flex';
+  document.getElementById('owner-nav').style.display='none';
+  if(CURRENT_USER){
+    const init=(CURRENT_USER.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    document.getElementById('profile-avatar').textContent=init;
+    document.getElementById('profile-name').textContent=CURRENT_USER.name||'—';
+    document.getElementById('profile-email').textContent=CURRENT_USER.email||CURRENT_USER.phone||'—';
+  }
+  navTo('s-home','nav-home');
+  loadHomeAppt();
+  loadShops();
+}
+
+// İŞLETME KURULUM
+async function setupOwnerView(){
+  document.getElementById('customer-nav').style.display='none';
+  document.getElementById('owner-nav').style.display='flex';
+  if(CURRENT_USER){
+    document.getElementById('profile-avatar').textContent=(CURRENT_USER.name||'?').slice(0,2).toUpperCase();
+    document.getElementById('profile-name').textContent=CURRENT_USER.name||'—';
+    document.getElementById('profile-email').textContent=CURRENT_USER.email||'—';
+  }
+  if(!CURRENT_USER?.shop_id){ownerNavTo('s-apply','onav-dash');return;}
+  try{const s=await GET(`/shops/${CURRENT_USER.shop_id}`);if(s.status==='pending'){ownerNavTo('s-pending-approval','onav-dash');return;}document.getElementById('dash-shop-name').textContent=s.name;}catch(e){}
+  ownerNavTo('s-dash','onav-dash');
+}
+
+// ANA SAYFA AKTİF RANDEVU
+async function loadHomeAppt(){
+  try{
+    const appts=await GET('/appointments/');
+    const active=appts.find(a=>!['delivered','cancelled'].includes(a.status));
+    const area=document.getElementById('active-appt-area');
+    if(!active){area.innerHTML='';return;}
+    const pct=STATUS_PCT[active.status]||0;
+    area.innerHTML=`<div class="active-appt-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><span style="font-size:13px;font-weight:600;color:var(--accent)">🔵 Aktif Randevu</span><span class="badge badge-blue">${STATUS_LBL[active.status]||active.status}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div><div style="font-size:11px;color:var(--accent);text-align:right;margin-top:4px;">${pct}%</div><button class="btn btn-accent" style="margin-top:12px;padding:10px;" onclick="goTrack()">Takip Et →</button></div>`;
+  }catch(e){}
+}
+
+// DÜKKANLAR
+async function loadShops(){
+  try{const d=await GET('/shops/');shops=d.map((s,i)=>({...s,icon:SHOP_ICONS[i%SHOP_ICONS.length],busy:[]}));}
+  catch(e){shops=[{id:1,icon:'i-droplet',name:'DML Araç Yıkama',address:'Silifke Merkez',open_time:'09:00',close_time:'18:00',slot_duration:60,busy:[]}];}
+  renderShops();
+}
+function renderShops(){
+  const wrap=document.getElementById('shop-list');if(!wrap) return;
+  wrap.innerHTML='';
+  shops.forEach(s=>{
+    const c=document.createElement('div');c.className='card shop-card';
+    c.innerHTML=`<div class="shop-img">${svgIcon(s.icon,'2xl','color:var(--accent)')}</div><div class="shop-body"><div class="shop-name">${s.name}</div><div class="shop-addr">${s.address||''}</div><div style="display:flex;gap:10px;align-items:center;"><svg class="icon icon-xs" style="color:var(--text-muted)"><use href="#i-clock"/></svg><span style="font-size:11px;color:var(--text-muted)">${s.open_time}–${s.close_time}</span></div></div><div class="shop-footer"><span class="badge badge-green">Açık</span><span class="shop-cta" style="display:flex;align-items:center;gap:4px;">Seç<svg class="icon icon-xs"><use href="#i-arrow-right"/></svg></span></div>`;
+    c.onclick=()=>{selectedShop=s;navTo('s-book-service');renderPills();renderServices();};
+    wrap.appendChild(c);
+  });
+}
+window.goBooking=function(){navTo('s-book-shop','nav-book');renderShops();};
+window.goTrack=function(){navTo('s-track','nav-track');loadTrack();};
+
+// HİZMETLER
+function renderServices(){
+  const g=document.getElementById('svc-grid');if(!g) return;g.innerHTML='';
+  SVCS.forEach(s=>{
+    const r=document.createElement('div');r.className='svc-row'+(selectedService?.key===s.key?' sel':'');
+    r.innerHTML=`${svgIcon(s.ico,'lg','color:var(--accent)')}<div style="flex:1"><div style="font-size:13px;font-weight:600">${s.name}</div><div style="font-size:12px;color:var(--accent);margin-top:1px">${s.price} · ${s.time}</div></div><span class="svc-row-check"><svg class="icon icon-md"><use href="#i-check"/></svg></span>`;
+    r.onclick=()=>{selectedService=s;renderServices();};g.appendChild(r);
+  });
+}
+window.goToStep3=function(){
+  if(!selectedService){alert('Lütfen hizmet seçin');return;}
+  navTo('s-book-datetime');renderPills();renderDateChips();renderSlotChips();
+};
+
+// TARİH/SAAT
+function renderDateChips(){
+  const wrap=document.getElementById('date-chips');if(!wrap) return;wrap.innerHTML='';
+  const today=new Date();
+  for(let i=0;i<5;i++){
+    const d=new Date(today);d.setDate(today.getDate()+i);
+    const chip=document.createElement('div');chip.className='d-chip'+(i===selectedDate?' sel':'');
+    chip.innerHTML=`<div class="d-day">${i===0?'Bugün':DAYS[d.getDay()]}</div><div class="d-num">${d.getDate()}</div>`;
+    chip.onclick=async()=>{
+      selectedDate=i;selectedSlot=null;renderDateChips();
+      if(selectedShop?.id){const ds=new Date(today);ds.setDate(today.getDate()+i);const str=ds.toISOString().split('T')[0];try{const r=await GET(`/shops/${selectedShop.id}/slots?date=${str}`);selectedShop.busy=r.slots.filter(s=>!s.available).map(s=>s.slot);}catch(e){}}
+      renderSlotChips();
+    };
+    wrap.appendChild(chip);
+  }
+}
+function renderSlotChips(){
+  const wrap=document.getElementById('slot-chips');if(!wrap||!selectedShop) return;wrap.innerHTML='';
+  const open=selectedShop.open_time||'09:00',close=selectedShop.close_time||'18:00',dur=selectedShop.slot_duration||60;
+  const slots=[];let cur=parseInt(open.split(':')[0])*60+parseInt(open.split(':')[1]);const end=parseInt(close.split(':')[0])*60+parseInt(close.split(':')[1]);
+  while(cur+dur<=end){const h=Math.floor(cur/60),m=cur%60;slots.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);cur+=dur;}
+  slots.forEach(s=>{
+    const isBusy=(selectedShop.busy||[]).includes(s);
+    const chip=document.createElement('div');chip.className='s-chip'+(isBusy?' busy':'')+(selectedSlot===s&&!isBusy?' sel':'');
+    chip.textContent=isBusy?`${s} (dolu)`:s;
+    if(!isBusy) chip.onclick=()=>{selectedSlot=s;renderSlotChips();};
+    wrap.appendChild(chip);
+  });
+}
+window.goToStep4=function(){if(!selectedSlot){alert('Lütfen saat seçin');return;}navTo('s-book-vehicle');renderPills();loadVehiclesForBooking();};
+
+// ARAÇ
+async function loadVehiclesForBooking(){
+  try{myVehicles=await GET('/vehicles/');}catch(e){myVehicles=[];}
+  const wrap=document.getElementById('vehicle-list');wrap.innerHTML='';
+  myVehicles.forEach(v=>{
+    const r=document.createElement('div');r.className='vehicle-row'+(selectedVehicle?.id===v.id?' sel':'');
+    r.innerHTML=`<div><div style="font-size:15px;font-weight:700;letter-spacing:1px">${v.plate}</div><div style="font-size:11px;color:var(--text-muted)">${v.brand||''} ${v.model||''}</div></div><span style="margin-left:auto;color:var(--accent);opacity:${selectedVehicle?.id===v.id?1:0}"><svg class="icon icon-md"><use href="#i-check"/></svg></span>`;
+    r.onclick=()=>{selectedVehicle=v;loadVehiclesForBooking();};wrap.appendChild(r);
+  });
+}
+window.confirmBooking=async function(){
+  const newPlate=document.getElementById('new-plate').value.trim();
+  if(!selectedVehicle&&!newPlate){alert('Araç seçin veya ekleyin');return;}
+  if(!selectedVehicle&&newPlate){
+    try{const v=await POST('/vehicles/',{plate:newPlate,brand:document.getElementById('new-brand').value.trim(),model:document.getElementById('new-model').value.trim()});selectedVehicle=v.vehicle;}
+    catch(e){alert('Araç eklenemedi');return;}
+  }
+  const today=new Date();today.setDate(today.getDate()+selectedDate);
+  const dateStr=today.toISOString().split('T')[0];
+  try{
+    await POST('/appointments/',{shop_id:selectedShop.id,vehicle_id:selectedVehicle.id,appt_date:dateStr,appt_slot:selectedSlot,service_type:selectedService.key,price:parseInt(selectedService.price.replace('₺',''))});
+    selectedVehicle=null;selectedService=null;selectedSlot=null;
+    navTo('s-book-success');
+  }catch(e){alert('Randevu oluşturulamadı: '+e.message);}
+};
+
+// PILL
+function renderPills(){
+  ['pill-1','pill-2'].forEach(id=>{
+    const el=document.getElementById(id);if(!el||!selectedShop) return;
+    el.innerHTML=`<div class="pill"><span style="font-size:20px">${selectedShop.icon}</span><div><div class="pill-name">${selectedShop.name}</div>${selectedService?`<div class="pill-sub">${selectedService.name} · ${selectedService.price}</div>`:''}</div></div>`;
+  });
+}
+
+// TAKİP
+async function loadTrack(){
+  try{
+    const appts=await GET('/appointments/');
+    const active=appts.find(a=>!['delivered','cancelled'].includes(a.status));
+    if(!active){document.getElementById('track-sub').textContent='Aktif randevu yok';document.getElementById('track-steps').innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-map-pin"/></svg></div><p>Aktif randevunuz bulunmuyor.</p></div>`;return;}
+    const si=STEP_KEYS.indexOf(active.status);
+    const pct=STATUS_PCT[active.status]||0;
+    document.getElementById('track-bar').style.width=pct+'%';
+    document.getElementById('track-pct').textContent=pct+'%';
+    document.getElementById('track-eta').textContent=ETA[si]||'';
+    document.getElementById('track-sub').textContent=`${active.appt_date} ${active.appt_slot}`;
+    const wrap=document.getElementById('track-steps');wrap.innerHTML='';
+    STEPS.forEach((title,i)=>{
+      const state=i<si?'done':i===si?'active':'pend';
+      const div=document.createElement('div');div.className='t-step';
+      div.innerHTML=`<div class="t-dot ${state}">${state==='done'?'<svg class="icon icon-sm"><use href="#i-check"/></svg>':state==='active'?'●':'○'}</div><div class="t-info"><div class="t-title ${state}">${title}</div>${state==='active'?`<div class="pulse-badge"><div class="pulse"></div><span>Devam ediyor</span></div>`:''}</div><div class="t-line"></div>`;
+      wrap.appendChild(div);
+    });
+  }catch(e){console.warn(e);}
+}
+
+// GEÇMİŞ
+async function loadHistory(){
+  try{
+    const appts=await GET('/appointments/');
+    const wrap=document.getElementById('history-list');
+    const done=appts.filter(a=>['delivered','cancelled'].includes(a.status));
+    if(!done.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-clipboard"/></svg></div><p>Henüz geçmiş randevunuz yok.</p></div>`;return;}
+    wrap.innerHTML=done.map(a=>`<div class="hist-card"><div class="hist-ico"><svg class="icon icon-lg" style="color:var(--text-muted)"><use href="#i-car"/></svg></div><div class="hist-info"><div class="hist-shop">${a.appt_date} ${a.appt_slot}</div><div class="hist-svc">${SVCS.find(s=>s.key===a.service_type)?.name||a.service_type}</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">${STATUS_LBL[a.status]||a.status}</div></div><div class="hist-right"><div class="hist-price">${a.price?'₺'+a.price:'—'}</div></div></div>`).join('');
+  }catch(e){}
+}
+
+// ARAÇLARIM
+async function loadMyVehicles(){
+  try{myVehicles=await GET('/vehicles/');}catch(e){myVehicles=[];}
+  const wrap=document.getElementById('my-vehicles-list');
+  if(!myVehicles.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-car"/></svg></div><p>Araç eklemediniz.</p></div>`;return;}
+  wrap.innerHTML=myVehicles.map(v=>`<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:0.5px solid var(--border);"><div><div style="font-size:14px;font-weight:700;letter-spacing:1px">${v.plate}</div><div style="font-size:11px;color:var(--muted)">${v.brand||''} ${v.model||''}</div></div><button onclick="deleteVehicle(${v.id})" style="margin-left:auto;background:var(--red-bg);color:var(--red);border:none;border-radius:8px;padding:6px 10px;font-size:11px;cursor:pointer;">Sil</button></div>`).join('');
+}
+window.addVehicle=async function(){
+  const plate=document.getElementById('v-plate').value.trim();if(!plate) return;
+  try{await POST('/vehicles/',{plate,brand:document.getElementById('v-brand').value.trim(),model:document.getElementById('v-model').value.trim()});document.getElementById('v-plate').value='';document.getElementById('v-brand').value='';document.getElementById('v-model').value='';loadMyVehicles();}
+  catch(e){alert('Eklenemedi');}
+};
+window.deleteVehicle=async function(id){try{await DEL(`/vehicles/${id}`);loadMyVehicles();}catch(e){}};
+
+// BAŞVURU
+window.submitApply=async function(){
+  const name_tr=document.getElementById('ap-name-tr').value.trim();if(!name_tr){alert('Dükkan adı gerekli');return;}
+  try{
+    await POST('/shops/apply',{name_tr,name_ru:document.getElementById('ap-name-ru').value.trim(),address_tr:document.getElementById('ap-addr').value.trim(),phone:document.getElementById('ap-phone').value.trim(),open_time:document.getElementById('ap-open').value,close_time:document.getElementById('ap-close').value});
+    ownerNavTo('s-pending-approval','onav-dash');
+  }catch(e){alert('Başvuru gönderilemedi: '+e.message);}
+};
+
+// DASHBOARD
+async function loadDashboard(){
+  try{
+    const today=new Date().toISOString().split('T')[0];
+    const appts=await GET(`/appointments/?date=${today}`);
+    const pending=appts.filter(a=>a.status==='pending');
+    const active=appts.filter(a=>['confirmed','received','washing','drying','ready'].includes(a.status));
+    const delivered=appts.filter(a=>a.status==='delivered');
+    document.getElementById('st-pending').textContent=pending.length;
+    document.getElementById('st-active').textContent=active.length;
+    document.getElementById('st-done').textContent=delivered.length;
+    document.getElementById('st-total').textContent=appts.length;
+    const badge=document.getElementById('pending-badge');
+    badge.style.display=pending.length?'block':'none';
+    const psec=document.getElementById('pending-section');
+    if(pending.length){
+      psec.innerHTML=`<div class="sec-title" style="color:var(--yellow);display:flex;align-items:center;gap:6px;"><svg class="icon icon-xs"><use href="#i-clock"/></svg><span>Onay Bekleyen (${pending.length})</span></div>`;
+      pending.forEach(a=>{
+        const div=document.createElement('div');div.className='pending-card';
+        div.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:14px;font-weight:700">${a.appt_slot} · ${a.appt_date}</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px">${SVCS.find(s=>s.key===a.service_type)?.name||a.service_type}</div></div></div><div class="pend-actions"><button class="pend-btn approve" style="display:flex;align-items:center;justify-content:center;gap:6px;" onclick="changeStatus(${a.id},'confirmed')"><svg class="icon icon-sm"><use href="#i-check"/></svg>Onayla</button><button class="pend-btn reject" style="display:flex;align-items:center;justify-content:center;gap:6px;" onclick="changeStatus(${a.id},'cancelled')"><svg class="icon icon-sm"><use href="#i-x"/></svg>Reddet</button></div>`;
+        psec.appendChild(div);
+      });
+    }else{psec.innerHTML='';}
+    const wrap=document.getElementById('active-appts');
+    if(!active.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-clipboard"/></svg></div><p>Aktif randevu yok</p></div>`;return;}
+    wrap.innerHTML='';
+    active.forEach(a=>{
+      const row=document.createElement('div');row.className='appt-row';
+      const ns=NEXT_STATUS[a.status];
+      row.innerHTML=`<div class="appt-time">${a.appt_slot}</div><div class="appt-info"><div class="appt-plate">Araç #${a.vehicle_id}</div><div class="appt-name">${STATUS_LBL[a.status]||a.status}</div></div>${ns?`<button class="status-btn ${a.status}" onclick="changeStatus(${a.id},'${ns}')">${NEXT_LBL[ns]||ns}</button>`:''}`;
+      wrap.appendChild(row);
+    });
+  }catch(e){console.warn(e);}
+}
+window.changeStatus=async function(id,status){
+  try{await PATCH(`/appointments/${id}/status`,{status});showNotif(status);loadDashboard();}catch(e){alert('Güncellenemedi');}
+};
+
+// MÜŞTERİLER
+async function loadCustomers(){
+  try{allCustomers=await GET('/customers/');customers=[...allCustomers];renderCustomers();}catch(e){console.warn(e);}
+}
+function renderCustomers(){
+  const wrap=document.getElementById('cust-list');
+  if(!customers.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-users"/></svg></div><p>Henüz müşteri yok.</p></div>`;return;}
+  wrap.innerHTML='';
+  customers.forEach(c=>{
+    const row=document.createElement('div');row.className='cust-row';
+    const init=(c.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const plates=(c.vehicles||[]).map(v=>v.plate).join(', ')||'—';
+    row.innerHTML=`<div class="cust-avatar">${init}</div><div class="cust-info"><div class="cust-name">${c.name||'—'}</div><div class="cust-meta">${c.phone||''} · ${plates}</div></div><div class="cust-right"><div class="cust-count">${c.total_appts||0} işlem</div><div class="cust-date">${c.last_date||'—'}</div></div>`;
+    row.onclick=()=>openDetail(c);wrap.appendChild(row);
+  });
+}
+window.filterCustomers=function(){
+  const q=document.getElementById('cust-search').value.toLowerCase().trim();
+  customers=q?allCustomers.filter(c=>`${c.name||''} ${c.phone||''} ${(c.vehicles||[]).map(v=>v.plate).join(' ')}`.toLowerCase().includes(q)):[...allCustomers];
+  renderCustomers();
+};
+
+function openDetail(c){
+  const init=(c.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('dp-av').textContent=init;
+  document.getElementById('dp-name').textContent=c.name||'—';
+  document.getElementById('dp-phone').textContent=c.phone||'—';
+  document.getElementById('dp-chips').innerHTML=(c.vehicles||[]).map(v=>`<span class="badge badge-blue">${v.brand||''} ${v.model||''} · ${v.plate}</span>`).join('')+`<span class="badge badge-gray">${c.total_appts||0} işlem</span>`;
+  document.getElementById('dp-txns').innerHTML=(c.appointments||[]).map(a=>`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:4px;flex-shrink:0;"></div><div style="flex:1"><div style="font-size:13px;font-weight:500">${SVCS.find(s=>s.key===a.service_type)?.name||a.service_type}</div><div style="font-size:11px;color:var(--muted)">${a.appt_date} ${a.appt_slot}</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700">${a.price?'₺'+a.price:'—'}</div></div></div>`).join('');
+  document.getElementById('detail-overlay').classList.add('open');
+}
+window.closeDetail=function(e){if(e.target===document.getElementById('detail-overlay'))document.getElementById('detail-overlay').classList.remove('open');};
+
+// BİLDİRİM
+const NOTIFS={
+  confirmed:{ico:'i-check-circle',color:'green',title:'Onaylandı',body:'Randevunuz onaylandı'},
+  received:{ico:'i-car',color:'blue',title:'Araç Teslim Alındı',body:'Aracınız teslim alındı'},
+  washing:{ico:'i-droplet',color:'blue',title:'Yıkama Başladı',body:'Aracınız yıkanıyor'},
+  drying:{ico:'i-sparkles',color:'yellow',title:'Kurulanıyor',body:'Neredeyse hazır!'},
+  ready:{ico:'i-check-circle',color:'green',title:'Hazır!',body:'Aracınız teslime hazır'},
+  delivered:{ico:'i-package',color:'green',title:'Teslim Edildi',body:'İyi yolculuklar!'}
+};
+let notifTimer;
+function showNotif(status){
+  const d=NOTIFS[status];if(!d) return;
+  const popup=document.getElementById('notif-popup');
+  const ico=document.getElementById('notif-ico');
+  ico.innerHTML=`<svg class="icon icon-md" style="color:#fff"><use href="#${d.ico}"/></svg>`;
+  ico.className=`notif-ico-wrap ${d.color}`;
+  document.getElementById('notif-title').textContent=d.title;
+  document.getElementById('notif-body').textContent=d.body;
+  popup.classList.add('show');clearTimeout(notifTimer);notifTimer=setTimeout(()=>popup.classList.remove('show'),3500);
+}
+</script>
+</body>
+</html>
