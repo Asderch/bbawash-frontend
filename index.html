@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>BBAWash</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 
@@ -638,6 +639,81 @@ html,body{
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============ LEAFLET MAP ============ */
+.map-host{ width:100%; height:280px; border-radius:var(--radius-xl); overflow:hidden; border:0.5px solid var(--border); background:var(--bg-muted); }
+.leaflet-container{ font-family:var(--font); background:var(--bg-muted); }
+[data-theme="dark"] .leaflet-tile-pane{ filter: invert(0.92) hue-rotate(180deg) brightness(0.95) saturate(0.85); }
+.leaflet-control-attribution{ font-size:9px !important; background:rgba(255,255,255,0.85) !important; }
+[data-theme="dark"] .leaflet-control-attribution{ background:rgba(15,23,42,0.85) !important; color:var(--text-muted) !important; }
+.map-wrap{ position:relative; }
+.map-pin-hint{ position:absolute; top:12px; left:50%; transform:translateX(-50%); background:rgba(15,23,42,0.92); color:#fff; font-size:11px; font-weight:500; padding:7px 14px; border-radius:var(--radius-full); z-index:500; pointer-events:none; display:flex; align-items:center; gap:6px; box-shadow:var(--shadow-md); animation:hintFade 4s var(--ease-out) forwards; }
+@keyframes hintFade{ 0%,70%{opacity:1} 100%{opacity:0} }
+.map-locate-btn{ position:absolute; bottom:14px; right:12px; z-index:500; background:var(--bg-elevated); border:0.5px solid var(--border); border-radius:var(--radius-md); padding:8px; box-shadow:var(--shadow-sm); cursor:pointer; color:var(--accent); display:flex; align-items:center; justify-content:center; }
+
+/* Saat secim */
+.time-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:0 0 12px; }
+.time-pill{ padding:11px 4px; font-size:13px; font-weight:500; text-align:center; background:var(--bg-subtle); border:0.5px solid var(--border); border-radius:var(--radius-md); cursor:pointer; font-family:var(--font); color:var(--text); transition:all var(--dur-fast) var(--ease-out); font-variant-numeric:tabular-nums; }
+.time-pill:hover:not(:disabled){ border-color:var(--accent); }
+.time-pill.sel{ background:var(--accent); color:#fff; border-color:var(--accent); box-shadow:var(--shadow-brand); }
+.time-pill:disabled{ opacity:0.35; cursor:not-allowed; text-decoration:line-through; }
+.time-section-tab{ display:flex; gap:6px; margin-bottom:12px; background:var(--bg-muted); padding:4px; border-radius:var(--radius-md); }
+.time-section-tab button{ flex:1; padding:10px; border:none; background:transparent; border-radius:var(--radius-sm); font-family:var(--font); font-size:12px; font-weight:600; color:var(--text-muted); cursor:pointer; transition:all var(--dur-fast) var(--ease-out); display:flex; align-items:center; justify-content:center; gap:6px; }
+.time-section-tab button.active{ background:var(--bg-elevated); color:var(--text); box-shadow:var(--shadow-sm); }
+.time-section-tab button .pill-time{ font-variant-numeric:tabular-nums; }
+
+/* ETA kart */
+.eta-card{ background:linear-gradient(135deg,var(--info-50),var(--brand-50)); border:0.5px solid var(--brand-200); border-radius:var(--radius-xl); padding:16px; margin:0 18px 16px; display:flex; align-items:center; gap:14px; animation:pulse-border 2s var(--ease-in-out) infinite; }
+[data-theme="dark"] .eta-card{ background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(37,99,235,0.18)); border-color:rgba(59,130,246,0.3); }
+@keyframes pulse-border{ 0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,0)} 50%{box-shadow:0 0 0 6px rgba(37,99,235,0.08)} }
+.eta-ico{ width:48px;height:48px;border-radius:var(--radius-lg); background:var(--accent);color:#fff; display:flex;align-items:center;justify-content:center; flex-shrink:0;font-size:18px;font-weight:700; font-variant-numeric:tabular-nums; line-height:1; }
+.eta-info{flex:1;}
+.eta-title{font-size:13px;font-weight:600;color:var(--accent);}
+.eta-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+
+.eta-trigger{ display:flex;gap:6px;margin-top:8px;flex-wrap:wrap; }
+.eta-quick-btn{ flex:1; min-width:60px; padding:8px 4px; font-size:11px; font-weight:600; background:var(--accent-l); color:var(--accent); border:0.5px solid var(--brand-200); border-radius:var(--radius-sm); cursor:pointer; font-family:var(--font); transition:all var(--dur-fast) var(--ease-out); font-variant-numeric:tabular-nums; }
+.eta-quick-btn:hover{ background:var(--brand-200); }
+.eta-quick-btn.cancel{ background:var(--bg-muted); color:var(--text-muted); border-color:var(--border); }
+
+.addr-textarea{ width:100%; padding:12px 14px; border:0.5px solid var(--border); border-radius:var(--radius-md); font-size:13px; background:var(--bg-subtle); font-family:var(--font); color:var(--text); outline:none; resize:vertical; min-height:70px; line-height:1.5; }
+.addr-textarea:focus{ border-color:var(--accent); background:var(--bg-elevated); box-shadow:0 0 0 3px var(--accent-l); }
+
+/* Hizmetlerim */
+.svc-edit-card{ background:var(--bg-elevated); border:0.5px solid var(--border); border-radius:var(--radius-lg); padding:14px; display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+.svc-edit-card .se-ico{ width:40px; height:40px; border-radius:var(--radius-md); background:var(--bg-muted); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--accent); }
+.svc-edit-card .se-info{ flex:1; min-width:0; }
+.svc-edit-card .se-name{ font-size:14px; font-weight:600; color:var(--text); }
+.svc-edit-card .se-meta{ font-size:11px; color:var(--text-muted); margin-top:2px; }
+.svc-edit-card .se-actions{ display:flex; gap:6px; }
+.svc-edit-card .se-actions button{ width:32px; height:32px; border:none; background:var(--bg-muted); border-radius:var(--radius-sm); cursor:pointer; color:var(--text-muted); display:flex; align-items:center; justify-content:center; transition:all var(--dur-fast) var(--ease-out); }
+.svc-edit-card .se-actions button:hover{ background:var(--accent-l); color:var(--accent); }
+.svc-edit-card .se-actions button.del:hover{ background:var(--red-bg); color:var(--red); }
+
+/* Modal */
+.modal-back{ position:fixed; inset:0; background:rgba(15,23,42,0.5); z-index:300; display:none; align-items:flex-end; justify-content:center; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+.modal-back.show{ display:flex; animation:fi var(--dur-fast) var(--ease-out); }
+.modal-card{ width:100%; max-width:var(--app-max); background:var(--bg-elevated); border-radius:var(--radius-3xl) var(--radius-3xl) 0 0; padding:20px 18px 32px; max-height:85vh; overflow-y:auto; animation:slideUp var(--dur-base) var(--ease-panel); }
+@keyframes slideUp{ from{transform:translateY(100%)} to{transform:translateY(0)} }
+.modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.modal-head h3{ font-size:18px; font-weight:700; letter-spacing:-0.3px; }
+.modal-close{ width:32px; height:32px; border:none; background:var(--bg-muted); border-radius:50%; cursor:pointer; color:var(--text-muted); display:flex; align-items:center; justify-content:center; }
+@media (min-width:1024px){ .modal-back{ align-items:center; } .modal-card{ max-width:480px; border-radius:var(--radius-3xl); } }
+
+/* Toast */
+.toast-host{ position:fixed; top:16px; right:16px; left:16px; z-index:400; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
+@media (min-width:768px){ .toast-host{ left:auto; right:24px; top:24px; max-width:380px; } }
+.toast{ background:var(--bg-elevated); border:0.5px solid var(--border); border-radius:var(--radius-lg); padding:12px 14px; display:flex; align-items:center; gap:10px; box-shadow:var(--shadow-lg); pointer-events:auto; animation:toastIn var(--dur-base) var(--ease-spring); font-size:13px; }
+@keyframes toastIn{ from{opacity:0;transform:translateY(-8px) scale(0.96)} to{opacity:1;transform:translateY(0) scale(1)} }
+.toast.fade{ animation:toastOut var(--dur-base) var(--ease-out) forwards; }
+@keyframes toastOut{ to{opacity:0; transform:translateX(20px)} }
+.toast .t-ico{ width:28px; height:28px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fff; }
+.toast.success .t-ico{ background:var(--green); }
+.toast.error   .t-ico{ background:var(--red); }
+.toast.info    .t-ico{ background:var(--accent); }
+.toast.warn    .t-ico{ background:var(--yellow); }
+.toast .t-msg{ flex:1; color:var(--text); line-height:1.4; }
+
 </style>
 </head>
 <body>
@@ -835,7 +911,7 @@ html,body{
         <button class="back-btn" onclick="navTo('s-book-shop')">← Geri</button>
         <h2>Hizmet Seçin</h2>
       </div>
-      <div class="step-ind"><div class="step-d done"></div><div class="step-d active"></div><div class="step-d"></div><div class="step-d"></div></div>
+      <div class="step-ind"><div class="step-d done"></div><div class="step-d active"></div><div class="step-d"></div><div class="step-d"></div><div class="step-d"></div><div class="step-d"></div></div>
       <div class="booking-body">
         <div id="pill-1"></div>
         <div class="svc-grid" id="svc-grid"></div>
@@ -843,18 +919,51 @@ html,body{
       </div>
     </div>
 
-    <!-- RANDEVU: TARİH/SAAT -->
-    <div class="screen" id="s-book-datetime">
+    <!-- RANDEVU: ADRES + HARİTA -->
+    <div class="screen" id="s-book-address">
       <div class="page-head">
         <button class="back-btn" onclick="navTo('s-book-service')">← Geri</button>
-        <h2>Tarih & Saat</h2>
+        <h2>Aracınızı Nereden Alalım?</h2>
+        <p>Haritada konum seçin, gerekirse not ekleyin.</p>
       </div>
-      <div class="step-ind"><div class="step-d done"></div><div class="step-d done"></div><div class="step-d active"></div><div class="step-d"></div></div>
+      <div class="step-ind"><div class="step-d done"></div><div class="step-d done"></div><div class="step-d active"></div><div class="step-d"></div><div class="step-d"></div><div class="step-d"></div></div>
+      <div class="booking-body">
+        <div class="map-wrap">
+          <div id="addr-map" class="map-host"></div>
+          <div class="map-pin-hint"><svg class="icon icon-sm"><use href="#i-map-pin"/></svg>Tıklayıp pin koyun veya konumumu kullan</div>
+          <button class="map-locate-btn" type="button" onclick="locateMe()" title="Konumumu kullan"><svg class="icon icon-md"><use href="#i-map-pin"/></svg></button>
+        </div>
+        <div>
+          <div class="f-label">Adres Tarifi (kapı no, kat, daire, dikkat)</div>
+          <textarea class="addr-textarea" id="addr-note" placeholder="Örn: 5. kat 12 nolu daire, kapıda zilim çalışmıyor, 0532..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="goToStep4()">Devam Et →</button>
+      </div>
+    </div>
+
+    <!-- RANDEVU: TARİH + ALIŞ/TESLİM SAATLERİ -->
+    <div class="screen" id="s-book-datetime">
+      <div class="page-head">
+        <button class="back-btn" onclick="navTo('s-book-address')">← Geri</button>
+        <h2>Tarih & Saat</h2>
+        <p>Aracın alış ve teslim saatlerini seçin.</p>
+      </div>
+      <div class="step-ind"><div class="step-d done"></div><div class="step-d done"></div><div class="step-d done"></div><div class="step-d active"></div><div class="step-d"></div><div class="step-d"></div></div>
       <div class="booking-body">
         <div id="pill-2"></div>
         <div><div class="f-label">Tarih Seçin</div><div class="date-row" id="date-chips"></div></div>
-        <div><div class="f-label">Saat Seçin</div><div class="slot-grid" id="slot-chips"></div></div>
-        <button class="btn btn-primary" onclick="goToStep4()">Devam Et →</button>
+        <div class="time-section-tab">
+          <button id="tab-pickup" class="active" onclick="switchTimeTab('pickup')">
+            <svg class="icon icon-sm"><use href="#i-arrow-right"/></svg>
+            <span>Alış: <span class="pill-time" id="lbl-pickup">—</span></span>
+          </button>
+          <button id="tab-dropoff" onclick="switchTimeTab('dropoff')">
+            <svg class="icon icon-sm"><use href="#i-package"/></svg>
+            <span>Teslim: <span class="pill-time" id="lbl-dropoff">—</span></span>
+          </button>
+        </div>
+        <div class="time-grid" id="slot-chips"></div>
+        <button class="btn btn-primary" onclick="goToStep5()">Devam Et →</button>
       </div>
     </div>
 
@@ -864,7 +973,7 @@ html,body{
         <button class="back-btn" onclick="navTo('s-book-datetime')">← Geri</button>
         <h2>Araç Seçin</h2>
       </div>
-      <div class="step-ind"><div class="step-d done"></div><div class="step-d done"></div><div class="step-d done"></div><div class="step-d active"></div></div>
+      <div class="step-ind"><div class="step-d done"></div><div class="step-d done"></div><div class="step-d done"></div><div class="step-d done"></div><div class="step-d active"></div><div class="step-d"></div></div>
       <div class="booking-body">
         <div class="vehicle-list" id="vehicle-list"></div>
         <div style="border-top:0.5px solid var(--border);padding-top:16px;">
@@ -876,6 +985,25 @@ html,body{
               <input class="f-input" type="text" id="new-model" placeholder="Model">
             </div>
           </div>
+        </div>
+        <button class="btn btn-primary" onclick="goToStep6()">Devam Et →</button>
+      </div>
+    </div>
+
+    <!-- RANDEVU: İLETİŞİM -->
+    <div class="screen" id="s-book-contact">
+      <div class="page-head">
+        <button class="back-btn" onclick="navTo('s-book-vehicle')">← Geri</button>
+        <h2>İletişim Bilgileri</h2>
+        <p>Firma sizinle bu numaradan iletişime geçecek.</p>
+      </div>
+      <div class="step-ind"><div class="step-d done"></div><div class="step-d done"></div><div class="step-d done"></div><div class="step-d done"></div><div class="step-d done"></div><div class="step-d active"></div></div>
+      <div class="booking-body">
+        <div><div class="f-label">Ad Soyad</div><input class="f-input" type="text" id="ct-name" placeholder="Adınız Soyadınız"></div>
+        <div><div class="f-label">Telefon</div><input class="f-input" type="tel" id="ct-phone" placeholder="0532 123 45 67"></div>
+        <div class="card" style="background:var(--bg-subtle);padding:14px;border:0.5px solid var(--border);">
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Randevu Özeti</div>
+          <div id="confirm-summary" style="font-size:13px;line-height:1.7;color:var(--text);"></div>
         </div>
         <button class="btn btn-primary" onclick="confirmBooking()">Randevuyu Onayla</button>
       </div>
@@ -1019,6 +1147,18 @@ html,body{
       <div class="card" style="margin:0 18px 24px;" id="admin-list"></div>
     </div>
 
+    <!-- HİZMETLERİM (OWNER) -->
+    <div class="screen" id="s-services">
+      <div class="page-head">
+        <h2>Hizmetlerim</h2>
+        <p>Müşterilere sunduğunuz hizmetler ve fiyatlar.</p>
+      </div>
+      <div style="padding:0 18px 24px;">
+        <button class="btn btn-accent" style="margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;" onclick="openServiceModal()"><svg class="icon icon-md"><use href="#i-plus"/></svg>Yeni Hizmet Ekle</button>
+        <div id="my-services-list"></div>
+      </div>
+    </div>
+
   </div>
 
   <!-- MÜŞTERİ NAV -->
@@ -1032,9 +1172,10 @@ html,body{
 
   <!-- İŞLETME NAV -->
   <div class="bottom-nav" id="owner-nav" style="display:none">
-    <button class="nav-btn active" id="onav-dash" onclick="ownerNavTo('s-dash','onav-dash')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-package"/></svg></span><span class="nav-lbl" data-i18n="onav-dash">Panel</span><span class="nav-badge" id="pending-badge"></span></button>
-    <button class="nav-btn" id="onav-cust" onclick="ownerNavTo('s-customers','onav-cust')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-users"/></svg></span><span class="nav-lbl" data-i18n="onav-cust">Müşteriler</span></button>
-    <button class="nav-btn" id="onav-profile" onclick="ownerNavTo('s-profile','onav-profile')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-user"/></svg></span><span class="nav-lbl" data-i18n="onav-prof">Profil</span></button>
+    <button class="nav-btn active" id="onav-dash" onclick="ownerNavTo('s-dash','onav-dash')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-package"/></svg></span><span class="nav-lbl">Panel</span><span class="nav-badge" id="pending-badge"></span></button>
+    <button class="nav-btn" id="onav-svc" onclick="ownerNavTo('s-services','onav-svc')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-sparkles"/></svg></span><span class="nav-lbl">Hizmetler</span></button>
+    <button class="nav-btn" id="onav-cust" onclick="ownerNavTo('s-customers','onav-cust')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-users"/></svg></span><span class="nav-lbl">Müşteriler</span></button>
+    <button class="nav-btn" id="onav-profile" onclick="ownerNavTo('s-profile','onav-profile')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-user"/></svg></span><span class="nav-lbl">Profil</span></button>
   </div>
 
   <!-- ADMİN NAV -->
@@ -1065,6 +1206,36 @@ html,body{
   <div class="notif-text"><div class="notif-title" id="notif-title">—</div><div class="notif-body" id="notif-body">—</div></div>
 </div></div>
 
+<!-- TOAST HOST -->
+<div class="toast-host" id="toast-host"></div>
+
+<!-- HİZMET FORMU MODAL -->
+<div class="modal-back" id="svc-modal-back" onclick="if(event.target===this)closeServiceModal()">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3 id="svc-modal-title">Yeni Hizmet</h3>
+      <button class="modal-close" onclick="closeServiceModal()"><svg class="icon icon-md"><use href="#i-x"/></svg></button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <input type="hidden" id="svc-id">
+      <div><div class="f-label">Hizmet Adı (TR)</div><input class="f-input" type="text" id="svc-name-tr" placeholder="Dış Yıkama"></div>
+      <div><div class="f-label">Adı (RU, opsiyonel)</div><input class="f-input" type="text" id="svc-name-ru" placeholder="Внешняя мойка"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div><div class="f-label">Fiyat (₺)</div><input class="f-input" type="number" id="svc-price" placeholder="150" min="0" step="10"></div>
+        <div><div class="f-label">Süre (dk)</div><input class="f-input" type="number" id="svc-duration" placeholder="60" min="15" step="15"></div>
+      </div>
+      <div>
+        <div class="f-label">İkon</div>
+        <div id="svc-icon-picker" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;"></div>
+      </div>
+      <div><div class="f-label">Açıklama (opsiyonel)</div><textarea class="addr-textarea" id="svc-desc" placeholder="Detaylı temizlik, iç-dış komple yıkama..."></textarea></div>
+      <button class="btn btn-accent" onclick="saveService()" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-md"><use href="#i-check"/></svg>Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber, signOut } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
@@ -1081,15 +1252,30 @@ const auth = getAuth(fbApp);
 
 const API = 'https://bbawash-backend-production.up.railway.app/api';
 let TOKEN=null, CURRENT_USER=null, lang='tr';
-let shops=[], selectedShop=null, selectedService=null, selectedDate=0, selectedSlot=null, selectedVehicle=null;
+let shops=[], selectedShop=null, selectedService=null, selectedDate=0;
+let selectedPickup=null, selectedDropoff=null, timeTab='pickup';
+let pickupAddress={lat:null, lng:null, note:''};
+let selectedVehicle=null;
 let myVehicles=[], allCustomers=[], customers=[];
 let confirmationResult=null;
+let shopServices=[];          // dukkana ait dinamik hizmet listesi
+let myShopServices=[];        // owner kendi hizmetleri
+let editingServiceId=null;
+let addrMap=null, addrMarker=null;
+
+// Silifke merkez koordinatlari (default harita merkezi)
+const DEFAULT_CENTER = [36.3776, 33.9376];
+const DEFAULT_ZOOM = 14;
 
 async function api(method,path,body){
   const o={method,headers:{'Authorization':`Bearer ${TOKEN}`,'Content-Type':'application/json'}};
   if(body) o.body=JSON.stringify(body);
   const r=await fetch(API+path,o);
-  if(!r.ok) throw new Error(await r.text());
+  if(!r.ok){
+    let msg='Hata oluştu';
+    try{ const j=await r.json(); msg=j.error||j.message||msg; }catch(_){ try{ msg=await r.text(); }catch(__){} }
+    throw new Error(msg);
+  }
   return r.json();
 }
 const GET=(p)=>api('GET',p);
@@ -1097,21 +1283,31 @@ const POST=(p,b)=>api('POST',p,b);
 const PATCH=(p,b)=>api('PATCH',p,b);
 const DEL=(p)=>api('DELETE',p);
 
-const SVCS=[
-  {key:'dis_yikama',name:'Dış Yıkama',price:'₺150',ico:'i-droplet',time:'~30 dk'},
-  {key:'ic_dis',name:'İç + Dış Yıkama',price:'₺280',ico:'i-sparkles',time:'~60 dk'},
-  {key:'detayli',name:'Detaylı Temizlik',price:'₺450',ico:'i-shield-check',time:'~90 dk'},
-  {key:'special_4x4',name:'4x4 Özel',price:'₺380',ico:'i-truck-wash',time:'~75 dk'},
-];
-const STATUS_PCT={pending:5,confirmed:15,received:30,washing:55,drying:75,ready:90,delivered:100};
-const STATUS_LBL={pending:'Onay Bekleniyor',confirmed:'Onaylandı',received:'Teslim Alındı',washing:'Yıkanıyor',drying:'Kurulanıyor',ready:'Hazır',delivered:'Teslim Edildi',cancelled:'İptal'};
-const STEPS=['Onay Bekleniyor','Onaylandı','Araç Teslim Alındı','Yıkama Başladı','Kurulanıyor','Teslime Hazır','Teslim Edildi'];
-const STEP_KEYS=['pending','confirmed','received','washing','drying','ready','delivered'];
-const ETA=['','','~30 dk','~20 dk','~10 dk','Hazır!','Tamamlandı'];
+// Toast bildirim sistemi (alert yerine)
+function toast(msg, type='info'){
+  const host=document.getElementById('toast-host');
+  if(!host) return;
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  const icoMap={success:'i-check-circle', error:'i-x-circle', warn:'i-alert-triangle', info:'i-info'};
+  t.innerHTML=`<div class="t-ico"><svg class="icon icon-sm" style="color:#fff"><use href="#${icoMap[type]||icoMap.info}"/></svg></div><div class="t-msg">${msg}</div>`;
+  host.appendChild(t);
+  setTimeout(()=>{ t.classList.add('fade'); setTimeout(()=>t.remove(), 250); }, 3500);
+}
+
+// Mevcut emoji-bazli SVCS yerine dinamik service listesi
+// Default ikon ve hizmet sablonlari
+const SERVICE_ICON_OPTIONS=['i-droplet','i-sparkles','i-shield-check','i-truck-wash','i-car','i-package','i-store','i-clock','i-check-circle','i-info'];
+
+const STATUS_PCT={pending:0,confirmed:10,on_the_way:20,picked_up:35,washing:55,drying:70,ready:82,delivering:92,delivered:100,cancelled:0};
+const STATUS_LBL={pending:'Onay Bekleniyor',confirmed:'Onaylandı',on_the_way:'Firma Yola Çıktı',picked_up:'Araç Alındı',washing:'Yıkanıyor',drying:'Kurulanıyor',ready:'Yıkama Bitti',delivering:'Teslime Getiriliyor',delivered:'Teslim Edildi',cancelled:'İptal'};
+const STEP_KEYS=['pending','confirmed','on_the_way','picked_up','washing','drying','ready','delivering','delivered'];
+const STEPS=['Onay Bekleniyor','Onaylandı','Yola Çıktı','Araç Alındı','Yıkanıyor','Kurulanıyor','Yıkama Bitti','Teslime Getiriliyor','Teslim Edildi'];
+const ETA=['','','Yolda','','','','','Geliyor','Tamamlandı'];
 const SHOP_ICONS=['i-droplet','i-sparkles','i-shield-check','i-car','i-store'];
 const DAYS=['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
-const NEXT_STATUS={confirmed:'received',received:'washing',washing:'drying',drying:'ready',ready:'delivered'};
-const NEXT_LBL={received:'Teslim Aldık',washing:'Yıkıyoruz',drying:'Kuruluyoruz',ready:'Hazır',delivered:'Teslim Ettik'};
+const NEXT_STATUS={confirmed:'on_the_way',on_the_way:'picked_up',picked_up:'washing',washing:'drying',drying:'ready',ready:'delivering',delivering:'delivered'};
+const NEXT_LBL={on_the_way:'Yola Çıktım',picked_up:'Aracı Aldım',washing:'Yıkamaya Başladım',drying:'Kurulamaya Başladım',ready:'Yıkama Bitti',delivering:'Teslime Götürüyorum',delivered:'Teslim Ettim'};
 
 // SVG ikon helper'i
 function svgIcon(id, size='lg', extraStyle=''){
@@ -1270,6 +1466,7 @@ window.ownerNavTo=function(screenId,navId){
   const el=document.getElementById(navId);if(el)el.classList.add('active');
   if(screenId==='s-dash') loadDashboard();
   if(screenId==='s-customers') loadCustomers();
+  if(screenId==='s-services') loadMyServices();
 };
 
 // LOGIN
@@ -1283,17 +1480,17 @@ window.hidePhoneStep=function(){document.getElementById('login-main').classList.
 window.sendOTP=async function(){
   const phone=document.getElementById('phone-inp').value.trim();if(!phone) return;
   try{confirmationResult=await signInWithPhoneNumber(auth,phone,window.recaptchaVerifier);document.getElementById('phone-step').classList.remove('active');document.getElementById('otp-step').classList.add('active');setTimeout(()=>document.querySelectorAll('.otp-inp')[0].focus(),100);}
-  catch(e){alert('SMS gönderilemedi: '+e.message);}
+  catch(e){toast('SMS gönderilemedi: '+e.message,'error');}
 };
 window.otpNext=function(el,idx){if(el.value.length===1){const inputs=document.querySelectorAll('.otp-inp');if(idx<5)inputs[idx+1].focus();if(idx===5)window.verifyOTP();}};
 window.verifyOTP=async function(){
   const code=[...document.querySelectorAll('.otp-inp')].map(i=>i.value).join('');if(code.length<6) return;
   try{const r=await confirmationResult.confirm(code);TOKEN=await r.user.getIdToken();showRoleScreen();}
-  catch(e){alert('Kod hatalı: '+e.message);}
+  catch(e){toast('Kod hatalı: '+e.message,'error');}
 };
 window.socialLogin=async function(){
   try{const r=await signInWithPopup(auth,new GoogleAuthProvider());TOKEN=await r.user.getIdToken();showRoleScreen();}
-  catch(e){alert('Giriş hatası: '+e.message);}
+  catch(e){toast('Giriş hatası: '+e.message,'error');}
 };
 function showRoleScreen(){
   document.getElementById('login-wrap').classList.add('hidden');
@@ -1415,14 +1612,14 @@ window.adminApprove=async function(shopId){
     await PATCH(`/shops/admin/${shopId}/approve`,{});
     showNotif('confirmed');
     loadAdminApps('pending');
-  }catch(e){alert('Onaylanamadı: '+e.message);}
+  }catch(e){toast('Onaylanamadı: '+e.message,'error');}
 };
 window.adminReject=async function(shopId){
   if(!confirm('Bu başvuruyu reddetmek istediğinizden emin misiniz?')) return;
   try{
     await PATCH(`/shops/admin/${shopId}/reject`,{});
     loadAdminApps('pending');
-  }catch(e){alert('Reddedilemedi: '+e.message);}
+  }catch(e){toast('Reddedilemedi: '+e.message,'error');}
 };
 
 // MÜŞTERİ KURULUM
@@ -1478,7 +1675,7 @@ function renderShops(){
   shops.forEach(s=>{
     const c=document.createElement('div');c.className='card shop-card';
     c.innerHTML=`<div class="shop-img">${svgIcon(s.icon,'2xl','color:var(--accent)')}</div><div class="shop-body"><div class="shop-name">${s.name}</div><div class="shop-addr">${s.address||''}</div><div style="display:flex;gap:10px;align-items:center;"><svg class="icon icon-xs" style="color:var(--text-muted)"><use href="#i-clock"/></svg><span style="font-size:11px;color:var(--text-muted)">${s.open_time}–${s.close_time}</span></div></div><div class="shop-footer"><span class="badge badge-green">Açık</span><span class="shop-cta" style="display:flex;align-items:center;gap:4px;">Seç<svg class="icon icon-xs"><use href="#i-arrow-right"/></svg></span></div>`;
-    c.onclick=()=>{selectedShop=s;navTo('s-book-service');renderPills();renderServices();};
+    c.onclick=()=>{selectedShop=s;selectedService=null;navTo('s-book-service');renderPills();loadShopServices(s.id);};
     wrap.appendChild(c);
   });
 }
@@ -1486,20 +1683,87 @@ window.goBooking=function(){navTo('s-book-shop','nav-book');renderShops();};
 window.goTrack=function(){navTo('s-track','nav-track');loadTrack();};
 
 // HİZMETLER
+// HİZMETLER (DİNAMİK — backend'ten)
+async function loadShopServices(shopId){
+  try{ shopServices = await GET(`/services/shop/${shopId}?lang=${lang}`); }
+  catch(e){ shopServices=[]; }
+  renderServices();
+}
 function renderServices(){
   const g=document.getElementById('svc-grid');if(!g) return;g.innerHTML='';
-  SVCS.forEach(s=>{
-    const r=document.createElement('div');r.className='svc-row'+(selectedService?.key===s.key?' sel':'');
-    r.innerHTML=`${svgIcon(s.ico,'lg','color:var(--accent)')}<div style="flex:1"><div style="font-size:13px;font-weight:600">${s.name}</div><div style="font-size:12px;color:var(--accent);margin-top:1px">${s.price} · ${s.time}</div></div><span class="svc-row-check"><svg class="icon icon-md"><use href="#i-check"/></svg></span>`;
+  if(!shopServices.length){
+    g.innerHTML=`<div class="empty-state"><div class="empty-ico">${svgIcon('i-sparkles','3xl','color:var(--text-subtle)')}</div><p>Bu firma henüz hizmet eklememiş.</p></div>`;
+    return;
+  }
+  shopServices.forEach(s=>{
+    const r=document.createElement('div');r.className='svc-row'+(selectedService?.id===s.id?' sel':'');
+    r.innerHTML=`${svgIcon(s.icon||'i-droplet','lg','color:var(--accent)')}<div style="flex:1"><div style="font-size:13px;font-weight:600">${s.name}</div><div style="font-size:12px;color:var(--accent);margin-top:1px">₺${s.price} · ~${s.duration_min} dk</div>${s.description?`<div style="font-size:11px;color:var(--text-muted);margin-top:2px">${s.description}</div>`:''}</div><span class="svc-row-check"><svg class="icon icon-md"><use href="#i-check"/></svg></span>`;
     r.onclick=()=>{selectedService=s;renderServices();};g.appendChild(r);
   });
 }
+
 window.goToStep3=function(){
-  if(!selectedService){alert('Lütfen hizmet seçin');return;}
-  navTo('s-book-datetime');renderPills();renderDateChips();renderSlotChips();
+  if(!selectedService){toast('Lütfen hizmet seçin','warn');return;}
+  navTo('s-book-address');renderPills();
+  // Haritayi tembel olarak yarat
+  setTimeout(initAddressMap, 100);
 };
 
-// TARİH/SAAT
+// ADRES + HARİTA
+function initAddressMap(){
+  const el=document.getElementById('addr-map');
+  if(!el || addrMap) { if(addrMap){ setTimeout(()=>addrMap.invalidateSize(), 50); } return; }
+  if(typeof L === 'undefined'){ console.warn('Leaflet yüklenmedi'); return; }
+
+  addrMap = L.map(el, { zoomControl:false }).setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+  L.control.zoom({ position:'bottomleft' }).addTo(addrMap);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  }).addTo(addrMap);
+
+  addrMap.on('click', (e)=>{
+    setMarker(e.latlng.lat, e.latlng.lng);
+  });
+
+  // Map size fix — modal acildiginda render ediyorsa
+  setTimeout(()=>addrMap.invalidateSize(), 200);
+}
+function setMarker(lat, lng){
+  pickupAddress.lat = lat;
+  pickupAddress.lng = lng;
+  if(!addrMap) return;
+  if(addrMarker){
+    addrMarker.setLatLng([lat,lng]);
+  } else {
+    addrMarker = L.marker([lat,lng], { draggable:true }).addTo(addrMap);
+    addrMarker.on('dragend', (e)=>{
+      const p=e.target.getLatLng();
+      pickupAddress.lat=p.lat; pickupAddress.lng=p.lng;
+    });
+  }
+}
+window.locateMe=function(){
+  if(!navigator.geolocation){ toast('Tarayıcınız konum desteklemiyor','error');return; }
+  navigator.geolocation.getCurrentPosition(
+    (pos)=>{
+      const {latitude:lat, longitude:lng} = pos.coords;
+      if(addrMap) addrMap.setView([lat,lng], 16);
+      setMarker(lat, lng);
+      toast('Konumunuz alındı','success');
+    },
+    (err)=>{ toast('Konum alınamadı: '+err.message,'error'); },
+    { enableHighAccuracy:true, timeout:8000 }
+  );
+};
+window.goToStep4=function(){
+  if(!pickupAddress.lat){ toast('Haritada konum seçin','warn');return; }
+  pickupAddress.note = document.getElementById('addr-note').value.trim();
+  navTo('s-book-datetime');
+  renderPills();renderDateChips();renderSlotChips();updateTimeLabels();
+};
+
+// TARİH/SAAT (iki slot — alis ve teslim)
 function renderDateChips(){
   const wrap=document.getElementById('date-chips');if(!wrap) return;wrap.innerHTML='';
   const today=new Date();
@@ -1508,27 +1772,80 @@ function renderDateChips(){
     const chip=document.createElement('div');chip.className='d-chip'+(i===selectedDate?' sel':'');
     chip.innerHTML=`<div class="d-day">${i===0?'Bugün':DAYS[d.getDay()]}</div><div class="d-num">${d.getDate()}</div>`;
     chip.onclick=async()=>{
-      selectedDate=i;selectedSlot=null;renderDateChips();
-      if(selectedShop?.id){const ds=new Date(today);ds.setDate(today.getDate()+i);const str=ds.toISOString().split('T')[0];try{const r=await GET(`/shops/${selectedShop.id}/slots?date=${str}`);selectedShop.busy=r.slots.filter(s=>!s.available).map(s=>s.slot);}catch(e){}}
-      renderSlotChips();
+      selectedDate=i; selectedPickup=null; selectedDropoff=null;
+      renderDateChips();
+      if(selectedShop?.id){
+        const ds=new Date(today);ds.setDate(today.getDate()+i);
+        const str=ds.toISOString().split('T')[0];
+        try{
+          const r=await GET(`/shops/${selectedShop.id}/slots?date=${str}`);
+          selectedShop.busy=r.slots.filter(s=>!s.available).map(s=>s.slot);
+        }catch(e){}
+      }
+      renderSlotChips();updateTimeLabels();
     };
     wrap.appendChild(chip);
   }
 }
+window.switchTimeTab=function(tab){
+  timeTab = tab;
+  document.getElementById('tab-pickup').classList.toggle('active', tab==='pickup');
+  document.getElementById('tab-dropoff').classList.toggle('active', tab==='dropoff');
+  renderSlotChips();
+};
 function renderSlotChips(){
   const wrap=document.getElementById('slot-chips');if(!wrap||!selectedShop) return;wrap.innerHTML='';
   const open=selectedShop.open_time||'09:00',close=selectedShop.close_time||'18:00',dur=selectedShop.slot_duration||60;
-  const slots=[];let cur=parseInt(open.split(':')[0])*60+parseInt(open.split(':')[1]);const end=parseInt(close.split(':')[0])*60+parseInt(close.split(':')[1]);
-  while(cur+dur<=end){const h=Math.floor(cur/60),m=cur%60;slots.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);cur+=dur;}
+  const slots=[];
+  let cur=parseInt(open.split(':')[0])*60+parseInt(open.split(':')[1]);
+  const end=parseInt(close.split(':')[0])*60+parseInt(close.split(':')[1]);
+  while(cur+dur<=end){
+    const h=Math.floor(cur/60),m=cur%60;
+    slots.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+    cur+=dur;
+  }
+  const busy=selectedShop.busy||[];
+  const current = timeTab==='pickup' ? selectedPickup : selectedDropoff;
+  const pickupMin = selectedPickup ? toMin(selectedPickup) : null;
+
   slots.forEach(s=>{
-    const isBusy=(selectedShop.busy||[]).includes(s);
-    const chip=document.createElement('div');chip.className='s-chip'+(isBusy?' busy':'')+(selectedSlot===s&&!isBusy?' sel':'');
-    chip.textContent=isBusy?`${s} (dolu)`:s;
-    if(!isBusy) chip.onclick=()=>{selectedSlot=s;renderSlotChips();};
-    wrap.appendChild(chip);
+    const btn=document.createElement('button');
+    btn.className='time-pill'+(current===s?' sel':'');
+    btn.type='button';
+    btn.textContent=s;
+    let disabled=false;
+    if(timeTab==='pickup' && busy.includes(s)) disabled=true;
+    if(timeTab==='dropoff'){
+      // Teslim alis saatinden sonra olmali
+      if(pickupMin === null){ disabled=true; }
+      else if(toMin(s) <= pickupMin){ disabled=true; }
+    }
+    if(disabled) btn.disabled=true;
+    btn.onclick=()=>{
+      if(timeTab==='pickup'){
+        selectedPickup=s;
+        // Eger dropoff pickup'tan once ise sifirla
+        if(selectedDropoff && toMin(selectedDropoff) <= toMin(s)) selectedDropoff=null;
+      } else {
+        selectedDropoff=s;
+      }
+      renderSlotChips();updateTimeLabels();
+    };
+    wrap.appendChild(btn);
   });
 }
-window.goToStep4=function(){if(!selectedSlot){alert('Lütfen saat seçin');return;}navTo('s-book-vehicle');renderPills();loadVehiclesForBooking();};
+function toMin(t){ const [h,m]=t.split(':').map(Number); return h*60+m; }
+function updateTimeLabels(){
+  const lp=document.getElementById('lbl-pickup');
+  const ld=document.getElementById('lbl-dropoff');
+  if(lp) lp.textContent = selectedPickup || '—';
+  if(ld) ld.textContent = selectedDropoff || '—';
+}
+window.goToStep5=function(){
+  if(!selectedPickup){ toast('Alış saatini seçin','warn'); return; }
+  if(!selectedDropoff){ toast('Teslim saatini seçin','warn'); return; }
+  navTo('s-book-vehicle');renderPills();loadVehiclesForBooking();
+};
 
 // ARAÇ
 async function loadVehiclesForBooking(){
@@ -1540,27 +1857,80 @@ async function loadVehiclesForBooking(){
     r.onclick=()=>{selectedVehicle=v;loadVehiclesForBooking();};wrap.appendChild(r);
   });
 }
-window.confirmBooking=async function(){
+window.goToStep6=async function(){
   const newPlate=document.getElementById('new-plate').value.trim();
-  if(!selectedVehicle&&!newPlate){alert('Araç seçin veya ekleyin');return;}
-  if(!selectedVehicle&&newPlate){
-    try{const v=await POST('/vehicles/',{plate:newPlate,brand:document.getElementById('new-brand').value.trim(),model:document.getElementById('new-model').value.trim()});selectedVehicle=v.vehicle;}
-    catch(e){alert('Araç eklenemedi');return;}
+  if(!selectedVehicle && !newPlate){ toast('Araç seçin veya plaka girin','warn');return; }
+  if(!selectedVehicle && newPlate){
+    try{
+      const v=await POST('/vehicles/',{
+        plate:newPlate,
+        brand:document.getElementById('new-brand').value.trim(),
+        model:document.getElementById('new-model').value.trim()
+      });
+      selectedVehicle=v.vehicle;
+      myVehicles.push(v.vehicle);
+    }catch(e){ toast('Araç eklenemedi: '+e.message,'error');return; }
   }
-  const today=new Date();today.setDate(today.getDate()+selectedDate);
+  // Iletisim ekrani — kullanici bilgisini doldur
+  document.getElementById('ct-name').value  = CURRENT_USER?.name  || '';
+  document.getElementById('ct-phone').value = CURRENT_USER?.phone || '';
+  // Ozet
+  const sumDate = new Date(); sumDate.setDate(sumDate.getDate()+selectedDate);
+  const dateText = sumDate.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('confirm-summary').innerHTML = `
+    <div><strong>Firma:</strong> ${selectedShop.name}</div>
+    <div><strong>Hizmet:</strong> ${selectedService.name} · ₺${selectedService.price}</div>
+    <div><strong>Tarih:</strong> ${dateText}</div>
+    <div><strong>Alış:</strong> ${selectedPickup} · <strong>Teslim:</strong> ${selectedDropoff}</div>
+    <div><strong>Araç:</strong> ${selectedVehicle.plate}</div>
+  `;
+  navTo('s-book-contact');
+};
+
+window.confirmBooking=async function(){
+  const name  = document.getElementById('ct-name').value.trim();
+  const phone = document.getElementById('ct-phone').value.trim();
+  if(!name)  { toast('Ad soyad girin','warn');return; }
+  if(!phone) { toast('Telefon girin','warn');return; }
+
+  const today=new Date(); today.setDate(today.getDate()+selectedDate);
   const dateStr=today.toISOString().split('T')[0];
+
+  const body={
+    shop_id:        selectedShop.id,
+    vehicle_id:     selectedVehicle.id,
+    appt_date:      dateStr,
+    pickup_time:    selectedPickup,
+    dropoff_time:   selectedDropoff,
+    service_id:     selectedService.id,
+    price:          selectedService.price,
+    pickup_address: pickupAddress.note || '',
+    pickup_lat:     pickupAddress.lat,
+    pickup_lng:     pickupAddress.lng,
+    address_note:   pickupAddress.note,
+    customer_name:  name,
+    customer_phone: phone,
+  };
+
   try{
-    await POST('/appointments/',{shop_id:selectedShop.id,vehicle_id:selectedVehicle.id,appt_date:dateStr,appt_slot:selectedSlot,service_type:selectedService.key,price:parseInt(selectedService.price.replace('₺',''))});
-    selectedVehicle=null;selectedService=null;selectedSlot=null;
+    await POST('/appointments/', body);
+    // Reset state
+    selectedVehicle=null; selectedService=null;
+    selectedPickup=null; selectedDropoff=null;
+    pickupAddress={lat:null,lng:null,note:''};
+    if(addrMarker){ addrMap.removeLayer(addrMarker); addrMarker=null; }
     navTo('s-book-success');
-  }catch(e){alert('Randevu oluşturulamadı: '+e.message);}
+    toast('Randevunuz alındı!','success');
+  }catch(e){
+    toast('Randevu oluşturulamadı: '+e.message,'error');
+  }
 };
 
 // PILL
 function renderPills(){
   ['pill-1','pill-2'].forEach(id=>{
     const el=document.getElementById(id);if(!el||!selectedShop) return;
-    el.innerHTML=`<div class="pill"><span style="font-size:20px">${selectedShop.icon}</span><div><div class="pill-name">${selectedShop.name}</div>${selectedService?`<div class="pill-sub">${selectedService.name} · ${selectedService.price}</div>`:''}</div></div>`;
+    el.innerHTML=`<div class="pill">${svgIcon(selectedShop.icon||'i-store','lg','color:var(--accent)')}<div><div class="pill-name">${selectedShop.name}</div>${selectedService?`<div class="pill-sub">${selectedService.name} · ₺${selectedService.price}</div>`:''}</div></div>`;
   });
 }
 
@@ -1569,13 +1939,25 @@ async function loadTrack(){
   try{
     const appts=await GET('/appointments/');
     const active=appts.find(a=>!['delivered','cancelled'].includes(a.status));
-    if(!active){document.getElementById('track-sub').textContent='Aktif randevu yok';document.getElementById('track-steps').innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-map-pin"/></svg></div><p>Aktif randevunuz bulunmuyor.</p></div>`;return;}
+    if(!active){
+      document.getElementById('track-sub').textContent='Aktif randevu yok';
+      document.getElementById('track-steps').innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-map-pin"/></svg></div><p>Aktif randevunuz bulunmuyor.</p></div>`;
+      // ETA kartini gizle
+      const etaWrap=document.getElementById('track-eta-card'); if(etaWrap) etaWrap.style.display='none';
+      return;
+    }
     const si=STEP_KEYS.indexOf(active.status);
     const pct=STATUS_PCT[active.status]||0;
     document.getElementById('track-bar').style.width=pct+'%';
     document.getElementById('track-pct').textContent=pct+'%';
-    document.getElementById('track-eta').textContent=ETA[si]||'';
-    document.getElementById('track-sub').textContent=`${active.appt_date} ${active.appt_slot}`;
+    document.getElementById('track-eta').textContent=ETA[si]||STATUS_LBL[active.status]||'';
+    const dt=active.appt_date+' '+(active.pickup_time||active.appt_slot);
+    const dropTxt=active.dropoff_time?` · Teslim: ${active.dropoff_time}`:'';
+    document.getElementById('track-sub').textContent=dt+dropTxt;
+
+    // ETA karti
+    renderEtaCard(active);
+
     const wrap=document.getElementById('track-steps');wrap.innerHTML='';
     STEPS.forEach((title,i)=>{
       const state=i<si?'done':i===si?'active':'pend';
@@ -1586,6 +1968,34 @@ async function loadTrack(){
   }catch(e){console.warn(e);}
 }
 
+// ETA karti (musteri tarafi — sadece ETA varsa goster)
+function renderEtaCard(appt){
+  let host=document.getElementById('track-eta-card');
+  if(!host){
+    // Track ekraninin basina enjekte et
+    const trackScreen=document.getElementById('s-track');
+    if(!trackScreen) return;
+    host=document.createElement('div');
+    host.id='track-eta-card';
+    host.style.display='none';
+    // page-head'den hemen sonra
+    const head=trackScreen.querySelector('.page-head');
+    if(head) head.after(host); else trackScreen.prepend(host);
+  }
+  if(appt.eta_minutes !== null && appt.eta_minutes !== undefined){
+    host.style.display='block';
+    host.innerHTML=`<div class="eta-card">
+      <div class="eta-ico">${appt.eta_minutes}<span style="font-size:10px;font-weight:500;margin-left:1px">dk</span></div>
+      <div class="eta-info">
+        <div class="eta-title">Firma yolda</div>
+        <div class="eta-sub">Yaklaşık ${appt.eta_minutes} dakika içinde adresinizdeyiz</div>
+      </div>
+    </div>`;
+  } else {
+    host.style.display='none';
+  }
+}
+
 // GEÇMİŞ
 async function loadHistory(){
   try{
@@ -1593,7 +2003,7 @@ async function loadHistory(){
     const wrap=document.getElementById('history-list');
     const done=appts.filter(a=>['delivered','cancelled'].includes(a.status));
     if(!done.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-clipboard"/></svg></div><p>Henüz geçmiş randevunuz yok.</p></div>`;return;}
-    wrap.innerHTML=done.map(a=>`<div class="hist-card"><div class="hist-ico"><svg class="icon icon-lg" style="color:var(--text-muted)"><use href="#i-car"/></svg></div><div class="hist-info"><div class="hist-shop">${a.appt_date} ${a.appt_slot}</div><div class="hist-svc">${SVCS.find(s=>s.key===a.service_type)?.name||a.service_type}</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">${STATUS_LBL[a.status]||a.status}</div></div><div class="hist-right"><div class="hist-price">${a.price?'₺'+a.price:'—'}</div></div></div>`).join('');
+    wrap.innerHTML=done.map(a=>`<div class="hist-card"><div class="hist-ico"><svg class="icon icon-lg" style="color:var(--text-muted)"><use href="#i-car"/></svg></div><div class="hist-info"><div class="hist-shop">${a.appt_date} ${a.pickup_time||a.appt_slot}</div><div class="hist-svc">${a.service?.name_tr||a.service_type||'Hizmet'}</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">${STATUS_LBL[a.status]||a.status}</div></div><div class="hist-right"><div class="hist-price">${a.price?'₺'+a.price:'—'}</div></div></div>`).join('');
   }catch(e){}
 }
 
@@ -1607,17 +2017,17 @@ async function loadMyVehicles(){
 window.addVehicle=async function(){
   const plate=document.getElementById('v-plate').value.trim();if(!plate) return;
   try{await POST('/vehicles/',{plate,brand:document.getElementById('v-brand').value.trim(),model:document.getElementById('v-model').value.trim()});document.getElementById('v-plate').value='';document.getElementById('v-brand').value='';document.getElementById('v-model').value='';loadMyVehicles();}
-  catch(e){alert('Eklenemedi');}
+  catch(e){toast('Eklenemedi','error');}
 };
 window.deleteVehicle=async function(id){try{await DEL(`/vehicles/${id}`);loadMyVehicles();}catch(e){}};
 
 // BAŞVURU
 window.submitApply=async function(){
-  const name_tr=document.getElementById('ap-name-tr').value.trim();if(!name_tr){alert('Dükkan adı gerekli');return;}
+  const name_tr=document.getElementById('ap-name-tr').value.trim();if(!name_tr){toast('Dükkan adı gerekli','warn');return;}
   try{
     await POST('/shops/apply',{name_tr,name_ru:document.getElementById('ap-name-ru').value.trim(),address_tr:document.getElementById('ap-addr').value.trim(),phone:document.getElementById('ap-phone').value.trim(),open_time:document.getElementById('ap-open').value,close_time:document.getElementById('ap-close').value});
     ownerNavTo('s-pending-approval','onav-dash');
-  }catch(e){alert('Başvuru gönderilemedi: '+e.message);}
+  }catch(e){toast('Başvuru gönderilemedi: '+e.message,'error');}
 };
 
 // DASHBOARD
@@ -1626,7 +2036,7 @@ async function loadDashboard(){
     const today=new Date().toISOString().split('T')[0];
     const appts=await GET(`/appointments/?date=${today}`);
     const pending=appts.filter(a=>a.status==='pending');
-    const active=appts.filter(a=>['confirmed','received','washing','drying','ready'].includes(a.status));
+    const active=appts.filter(a=>['confirmed','on_the_way','picked_up','washing','drying','ready','delivering'].includes(a.status));
     const delivered=appts.filter(a=>a.status==='delivered');
     document.getElementById('st-pending').textContent=pending.length;
     document.getElementById('st-active').textContent=active.length;
@@ -1636,10 +2046,23 @@ async function loadDashboard(){
     badge.style.display=pending.length?'block':'none';
     const psec=document.getElementById('pending-section');
     if(pending.length){
-      psec.innerHTML=`<div class="sec-title" style="color:var(--yellow);display:flex;align-items:center;gap:6px;"><svg class="icon icon-xs"><use href="#i-clock"/></svg><span>Onay Bekleyen (${pending.length})</span></div>`;
+      psec.innerHTML=`<div class="sec-title" style="color:var(--yellow);display:flex;align-items:center;gap:6px;padding:0 18px;"><svg class="icon icon-xs"><use href="#i-clock"/></svg><span>Onay Bekleyen (${pending.length})</span></div>`;
       pending.forEach(a=>{
         const div=document.createElement('div');div.className='pending-card';
-        div.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:14px;font-weight:700">${a.appt_slot} · ${a.appt_date}</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px">${SVCS.find(s=>s.key===a.service_type)?.name||a.service_type}</div></div></div><div class="pend-actions"><button class="pend-btn approve" style="display:flex;align-items:center;justify-content:center;gap:6px;" onclick="changeStatus(${a.id},'confirmed')"><svg class="icon icon-sm"><use href="#i-check"/></svg>Onayla</button><button class="pend-btn reject" style="display:flex;align-items:center;justify-content:center;gap:6px;" onclick="changeStatus(${a.id},'cancelled')"><svg class="icon icon-sm"><use href="#i-x"/></svg>Reddet</button></div>`;
+        const addrLine = a.pickup_address ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px;display:flex;align-items:flex-start;gap:4px;"><svg class="icon icon-xs" style="margin-top:2px;flex-shrink:0;"><use href="#i-map-pin"/></svg><span>${a.pickup_address}</span></div>` : '';
+        const mapLink = a.pickup_lat ? `<a href="https://www.google.com/maps?q=${a.pickup_lat},${a.pickup_lng}" target="_blank" style="font-size:11px;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:3px;margin-top:4px;"><svg class="icon icon-xs"><use href="#i-map-pin"/></svg>Haritada Aç</a>` : '';
+        const vehicleLine = a.vehicle ? `<div style="font-size:11px;color:var(--text);margin-top:4px;display:flex;align-items:center;gap:6px;background:var(--bg-muted);padding:6px 10px;border-radius:var(--radius-sm);width:fit-content;"><svg class="icon icon-xs" style="color:var(--accent)"><use href="#i-car"/></svg><span style="font-weight:700;letter-spacing:0.5px;">${a.vehicle.plate}</span>${a.vehicle.brand||a.vehicle.model?`<span style="color:var(--text-muted)">· ${a.vehicle.brand||''} ${a.vehicle.model||''}</span>`:''}${a.vehicle.color?`<span style="color:var(--text-muted)">· ${a.vehicle.color}</span>`:''}</div>` : '';
+        div.innerHTML=`<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:14px;font-weight:700">${a.pickup_time||a.appt_slot}${a.dropoff_time?' → '+a.dropoff_time:''} · ${a.appt_date}</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${a.service?.name_tr||a.service_type||'Hizmet'}${a.price?' · ₺'+a.price:''}</div>
+            ${a.customer_name?`<div style="font-size:11px;color:var(--text-muted);margin-top:2px;display:flex;align-items:center;gap:4px;"><svg class="icon icon-xs"><use href="#i-user"/></svg>${a.customer_name}${a.customer_phone?` · <a href="tel:${a.customer_phone}" style="color:var(--accent);text-decoration:none">${a.customer_phone}</a>`:''}</div>`:''}
+            ${vehicleLine}
+            ${addrLine}
+            ${mapLink}
+          </div>
+        </div>
+        <div class="pend-actions"><button class="pend-btn approve" style="display:flex;align-items:center;justify-content:center;gap:6px;" onclick="changeStatus(${a.id},'confirmed')"><svg class="icon icon-sm"><use href="#i-check"/></svg>Onayla</button><button class="pend-btn reject" style="display:flex;align-items:center;justify-content:center;gap:6px;" onclick="changeStatus(${a.id},'cancelled')"><svg class="icon icon-sm"><use href="#i-x"/></svg>Reddet</button></div>`;
         psec.appendChild(div);
       });
     }else{psec.innerHTML='';}
@@ -1648,14 +2071,48 @@ async function loadDashboard(){
     wrap.innerHTML='';
     active.forEach(a=>{
       const row=document.createElement('div');row.className='appt-row';
+      row.style.cssText='padding:14px 16px;border-bottom:0.5px solid var(--border);';
       const ns=NEXT_STATUS[a.status];
-      row.innerHTML=`<div class="appt-time">${a.appt_slot}</div><div class="appt-info"><div class="appt-plate">Araç #${a.vehicle_id}</div><div class="appt-name">${STATUS_LBL[a.status]||a.status}</div></div>${ns?`<button class="status-btn ${a.status}" onclick="changeStatus(${a.id},'${ns}')">${NEXT_LBL[ns]||ns}</button>`:''}`;
+      const showEta = ['confirmed','on_the_way'].includes(a.status);
+      const etaDisplay = a.eta_minutes !== null && a.eta_minutes !== undefined
+        ? `<div style="font-size:11px;color:var(--accent);margin-top:4px;font-weight:600;">ETA: ${a.eta_minutes} dk</div>`
+        : '';
+      const etaButtons = showEta
+        ? `<div class="eta-trigger">
+            <button class="eta-quick-btn" onclick="setApptEta(${a.id},5)">5 dk</button>
+            <button class="eta-quick-btn" onclick="setApptEta(${a.id},10)">10 dk</button>
+            <button class="eta-quick-btn" onclick="setApptEta(${a.id},15)">15 dk</button>
+            <button class="eta-quick-btn" onclick="setApptEta(${a.id},30)">30 dk</button>
+            ${a.eta_minutes!==null && a.eta_minutes!==undefined ? `<button class="eta-quick-btn cancel" onclick="setApptEta(${a.id},null)">Temizle</button>` : ''}
+          </div>`
+        : '';
+      const addrLink = a.pickup_lat
+        ? `<a href="https://www.google.com/maps?q=${a.pickup_lat},${a.pickup_lng}" target="_blank" style="font-size:11px;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:3px;margin-top:2px;"><svg class="icon icon-xs"><use href="#i-map-pin"/></svg>Konum</a>`
+        : '';
+      const vehLine = a.vehicle
+        ? `<div style="font-size:11px;color:var(--text);margin-top:4px;display:inline-flex;align-items:center;gap:6px;background:var(--bg-muted);padding:5px 10px;border-radius:var(--radius-sm);"><svg class="icon icon-xs" style="color:var(--accent)"><use href="#i-car"/></svg><span style="font-weight:700;letter-spacing:0.5px;">${a.vehicle.plate}</span>${a.vehicle.brand||a.vehicle.model?`<span style="color:var(--text-muted)">${a.vehicle.brand||''} ${a.vehicle.model||''}</span>`:''}</div>`
+        : '';
+      row.innerHTML=`
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="appt-time" style="font-size:14px;font-weight:700;color:var(--accent);">${a.pickup_time||a.appt_slot}</div>
+              <span class="badge badge-blue">${STATUS_LBL[a.status]||a.status}</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">${a.customer_name||'—'} ${a.customer_phone?`· <a href="tel:${a.customer_phone}" style="color:var(--accent);text-decoration:none">${a.customer_phone}</a>`:''}</div>
+            ${vehLine}
+            ${addrLink}
+            ${etaDisplay}
+          </div>
+          ${ns?`<button class="status-btn ${a.status}" style="padding:8px 12px;border:none;border-radius:var(--radius-md);background:var(--accent);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;" onclick="changeStatus(${a.id},'${ns}')">${NEXT_LBL[ns]||ns}</button>`:''}
+        </div>
+        ${etaButtons}`;
       wrap.appendChild(row);
     });
   }catch(e){console.warn(e);}
 }
 window.changeStatus=async function(id,status){
-  try{await PATCH(`/appointments/${id}/status`,{status});showNotif(status);loadDashboard();}catch(e){alert('Güncellenemedi');}
+  try{await PATCH(`/appointments/${id}/status`,{status});showNotif(status);toast('Durum güncellendi','success');loadDashboard();}catch(e){toast('Güncellenemedi: '+e.message,'error');}
 };
 
 // MÜŞTERİLER
@@ -1686,7 +2143,7 @@ function openDetail(c){
   document.getElementById('dp-name').textContent=c.name||'—';
   document.getElementById('dp-phone').textContent=c.phone||'—';
   document.getElementById('dp-chips').innerHTML=(c.vehicles||[]).map(v=>`<span class="badge badge-blue">${v.brand||''} ${v.model||''} · ${v.plate}</span>`).join('')+`<span class="badge badge-gray">${c.total_appts||0} işlem</span>`;
-  document.getElementById('dp-txns').innerHTML=(c.appointments||[]).map(a=>`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:4px;flex-shrink:0;"></div><div style="flex:1"><div style="font-size:13px;font-weight:500">${SVCS.find(s=>s.key===a.service_type)?.name||a.service_type}</div><div style="font-size:11px;color:var(--muted)">${a.appt_date} ${a.appt_slot}</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700">${a.price?'₺'+a.price:'—'}</div></div></div>`).join('');
+  document.getElementById('dp-txns').innerHTML=(c.appointments||[]).map(a=>`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:4px;flex-shrink:0;"></div><div style="flex:1"><div style="font-size:13px;font-weight:500">${a.service?.name_tr||a.service_type||'Hizmet'}</div><div style="font-size:11px;color:var(--text-muted)">${a.appt_date} ${a.pickup_time||a.appt_slot}</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700">${a.price?'₺'+a.price:'—'}</div></div></div>`).join('');
   document.getElementById('detail-overlay').classList.add('open');
 }
 window.closeDetail=function(e){if(e.target===document.getElementById('detail-overlay'))document.getElementById('detail-overlay').classList.remove('open');};
@@ -1711,6 +2168,143 @@ function showNotif(status){
   document.getElementById('notif-body').textContent=d.body;
   popup.classList.add('show');clearTimeout(notifTimer);notifTimer=setTimeout(()=>popup.classList.remove('show'),3500);
 }
+
+// =================================================================
+// HİZMETLERİM (OWNER CRUD)
+// =================================================================
+async function loadMyServices(){
+  const wrap=document.getElementById('my-services-list');
+  if(!wrap) return;
+  wrap.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl spin" style="color:var(--text-subtle)"><use href="#i-loader"/></svg></div><p>Yükleniyor...</p></div>`;
+  try{
+    myShopServices = await GET('/services/my');
+  }catch(e){
+    wrap.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--red)"><use href="#i-x-circle"/></svg></div><p>Hata: ${e.message}</p></div>`;
+    return;
+  }
+  if(!myShopServices.length){
+    wrap.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-sparkles"/></svg></div><p>Henüz hizmet eklemediniz.</p><p style="font-size:11px;margin-top:6px;">"Yeni Hizmet Ekle" butonuna tıklayın.</p></div>`;
+    return;
+  }
+  wrap.innerHTML='';
+  myShopServices.forEach(s=>{
+    const c=document.createElement('div');
+    c.className='svc-edit-card';
+    c.innerHTML=`
+      <div class="se-ico">${svgIcon(s.icon||'i-droplet','lg')}</div>
+      <div class="se-info">
+        <div class="se-name">${s.name_tr}${!s.is_active?' <span class="badge badge-gray" style="margin-left:6px">Pasif</span>':''}</div>
+        <div class="se-meta">₺${s.price} · ${s.duration_min} dk${s.description?' · '+s.description:''}</div>
+      </div>
+      <div class="se-actions">
+        <button title="Düzenle" onclick="openServiceModal(${s.id})"><svg class="icon icon-sm"><use href="#i-edit"/></svg></button>
+        <button title="Sil" class="del" onclick="deleteService(${s.id})"><svg class="icon icon-sm"><use href="#i-trash"/></svg></button>
+      </div>`;
+    wrap.appendChild(c);
+  });
+}
+
+window.openServiceModal=function(id){
+  editingServiceId = id || null;
+  const isEdit = id !== undefined;
+  const data = isEdit ? myShopServices.find(s=>s.id===id) : null;
+
+  document.getElementById('svc-modal-title').textContent = isEdit ? 'Hizmeti Düzenle' : 'Yeni Hizmet';
+  document.getElementById('svc-id').value         = id || '';
+  document.getElementById('svc-name-tr').value    = data?.name_tr      || '';
+  document.getElementById('svc-name-ru').value    = data?.name_ru      || '';
+  document.getElementById('svc-price').value      = data?.price        || '';
+  document.getElementById('svc-duration').value   = data?.duration_min || '';
+  document.getElementById('svc-desc').value       = data?.description  || '';
+
+  // İkon picker
+  const picker = document.getElementById('svc-icon-picker');
+  picker.innerHTML='';
+  const selectedIcon = data?.icon || 'i-droplet';
+  SERVICE_ICON_OPTIONS.forEach(ico=>{
+    const b=document.createElement('button');
+    b.type='button';
+    b.dataset.icon=ico;
+    b.style.cssText=`padding:10px;border:1px solid var(--border);background:${ico===selectedIcon?'var(--accent-l)':'var(--bg-subtle)'};border-color:${ico===selectedIcon?'var(--accent)':'var(--border)'};border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;color:${ico===selectedIcon?'var(--accent)':'var(--text-muted)'};`;
+    b.innerHTML=svgIcon(ico,'md');
+    b.onclick=()=>{
+      picker.querySelectorAll('button').forEach(x=>{
+        x.style.background='var(--bg-subtle)'; x.style.borderColor='var(--border)'; x.style.color='var(--text-muted)';
+      });
+      b.style.background='var(--accent-l)'; b.style.borderColor='var(--accent)'; b.style.color='var(--accent)';
+    };
+    picker.appendChild(b);
+  });
+
+  document.getElementById('svc-modal-back').classList.add('show');
+};
+window.closeServiceModal=function(){
+  document.getElementById('svc-modal-back').classList.remove('show');
+};
+window.saveService=async function(){
+  const name_tr = document.getElementById('svc-name-tr').value.trim();
+  if(!name_tr){ toast('Hizmet adı gerekli','warn'); return; }
+  const price    = parseFloat(document.getElementById('svc-price').value) || 0;
+  const duration = parseInt(document.getElementById('svc-duration').value) || 60;
+  const name_ru  = document.getElementById('svc-name-ru').value.trim();
+  const desc     = document.getElementById('svc-desc').value.trim();
+  const picker   = document.getElementById('svc-icon-picker');
+  const selBtn   = Array.from(picker.querySelectorAll('button')).find(b=>b.style.borderColor.includes('var(--accent)') || b.style.background.includes('accent-l'));
+  // Daha güvenilir: stilden değil dataset'ten — seçili olanı border rengiyle bulamayız tarayıcı normalize ediyor
+  let icon='i-droplet';
+  picker.querySelectorAll('button').forEach(b=>{
+    const cs=getComputedStyle(b);
+    if(cs.borderColor !== 'rgba(0, 0, 0, 0)' && b.style.background.includes('accent')) icon=b.dataset.icon;
+  });
+  // Daha basit yaklaşım: en son tıklanan = vurgulu olan; ama yoksa data ya da default
+  const highlighted = picker.querySelector('button[style*="accent"]');
+  if(highlighted) icon = highlighted.dataset.icon || icon;
+
+  const body = {
+    name_tr, name_ru: name_ru || null,
+    description: desc || null,
+    price, duration_min: duration,
+    icon,
+  };
+
+  try{
+    if(editingServiceId){
+      await PATCH(`/services/${editingServiceId}`, body);
+      toast('Hizmet güncellendi','success');
+    } else {
+      await POST('/services/', body);
+      toast('Hizmet eklendi','success');
+    }
+    closeServiceModal();
+    loadMyServices();
+  }catch(e){
+    toast('Hata: '+e.message,'error');
+  }
+};
+window.deleteService=async function(id){
+  if(!confirm('Bu hizmeti silmek istediğinize emin misiniz?')) return;
+  try{
+    await DEL(`/services/${id}`);
+    toast('Hizmet silindi','success');
+    loadMyServices();
+  }catch(e){
+    toast('Silinemedi: '+e.message,'error');
+  }
+};
+
+// =================================================================
+// ETA (OWNER → MÜŞTERİ)
+// =================================================================
+window.setApptEta=async function(apptId, minutes){
+  try{
+    await PATCH(`/appointments/${apptId}/eta`, { minutes });
+    toast(minutes===null?'ETA temizlendi':`ETA: ${minutes} dk`,'success');
+    if(typeof loadDashboard==='function') loadDashboard();
+  }catch(e){
+    toast('Hata: '+e.message,'error');
+  }
+};
+
 </script>
 </body>
 </html>
