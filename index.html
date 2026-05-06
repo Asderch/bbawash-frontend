@@ -1238,7 +1238,7 @@ html,body{
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber, signOut } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
 const fbApp = initializeApp({
   apiKey:"AIzaSyAtXK1dtUvFJ8Gdij29V07LsoRLECRkq08",
@@ -1270,7 +1270,15 @@ const DEFAULT_ZOOM = 14;
 async function api(method,path,body){
   const o={method,headers:{'Authorization':`Bearer ${TOKEN}`,'Content-Type':'application/json'}};
   if(body) o.body=JSON.stringify(body);
-  const r=await fetch(API+path,o);
+  let r=await fetch(API+path,o);
+  // Token expire olduysa Firebase'den taze token al, tekrar dene
+  if(r.status === 401 && auth.currentUser){
+    try{
+      TOKEN = await auth.currentUser.getIdToken(true);
+      o.headers['Authorization'] = `Bearer ${TOKEN}`;
+      r = await fetch(API+path, o);
+    }catch(_){}
+  }
   if(!r.ok){
     let msg='Hata oluştu';
     try{ const j=await r.json(); msg=j.error||j.message||msg; }catch(_){ try{ msg=await r.text(); }catch(__){} }
@@ -1503,7 +1511,17 @@ function showRoleScreen(){
 }
 window.enterAsRole=async function(role){
   document.getElementById('role-wrap').classList.add('hidden');
-  try{const d=await POST('/auth/login',{id_token:TOKEN,role});CURRENT_USER=d.user;}catch(e){console.warn(e);}
+  try{
+    const d=await POST('/auth/login',{id_token:TOKEN,role});
+    CURRENT_USER=d.user;
+    // Backend kullanicinin gercek rolunu donduyse onu kullan (admin korumasi vs)
+    role = d.user.role || role;
+    // Role'u ve UID'yi sakla — bir sonraki sefer dogrudan ac
+    try{
+      localStorage.setItem('bbawash:role', role);
+      localStorage.setItem('bbawash:uid',  auth.currentUser?.uid || '');
+    }catch(_){}
+  }catch(e){console.warn(e);}
   document.getElementById('main-app').style.display='flex';
   applyResponsiveLayout();
   if(role==='admin') setupAdminView();
@@ -1529,7 +1547,50 @@ function applyResponsiveLayout(){
   }
 }
 
-window.logout=async function(){await signOut(auth);location.reload();};
+window.logout=async function(){
+  try{
+    localStorage.removeItem('bbawash:role');
+    localStorage.removeItem('bbawash:uid');
+  }catch(_){}
+  await signOut(auth);
+  location.reload();
+};
+
+// =====================================================
+// AUTO LOGIN — sayfa acilisinda Firebase'in sakladigi
+// kullaniciyi yakala, otomatik login ol
+// =====================================================
+onAuthStateChanged(auth, async (user)=>{
+  if(!user){
+    // Hic giris yapmamis veya cikis yapmis -> login ekrani
+    return;
+  }
+  try{
+    TOKEN = await user.getIdToken();
+  }catch(e){
+    console.warn('Token alinamadi:', e);
+    return;
+  }
+
+  // Daha onceden bir rol secilmis mi?
+  let savedRole = null, savedUid = null;
+  try{
+    savedRole = localStorage.getItem('bbawash:role');
+    savedUid  = localStorage.getItem('bbawash:uid');
+  }catch(_){}
+
+  // Ayni kullanici ve kayitli rol varsa direkt o role gir
+  if(savedRole && savedUid && savedUid === user.uid){
+    // Role, login endpoint ile dogrulansin (admin korumasi vs.)
+    document.getElementById('login-wrap').classList.add('hidden');
+    document.getElementById('role-wrap').classList.add('hidden');
+    enterAsRole(savedRole);
+    return;
+  }
+
+  // Token var ama rol yok -> rol secim ekranina gec
+  showRoleScreen();
+});
 
 // ADMİN KURULUM
 async function setupAdminView(){
