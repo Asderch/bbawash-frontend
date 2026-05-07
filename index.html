@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>BBAWash</title>
+<title>BBA</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -703,6 +703,59 @@ html,body{
 /* Toast */
 .toast-host{ position:fixed; top:16px; right:16px; left:16px; z-index:400; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
 @media (min-width:768px){ .toast-host{ left:auto; right:24px; top:24px; max-width:380px; } }
+
+/* Kategori grid (anasayfa) */
+.cat-grid{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 0 18px 24px;
+}
+.cat-card{
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 18px 14px;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.cat-card:hover{
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.cat-card:active{ transform: scale(0.97); }
+.cat-card .cc-ico{
+  width: 44px; height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--accent-l);
+  color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.cat-card .cc-name{
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.2px;
+}
+.cat-card .cc-desc{
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+@media (min-width: 768px){
+  .cat-grid{ grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1024px){
+  .cat-grid{ grid-template-columns: repeat(5, 1fr); }
+}
 .toast{ background:var(--bg-elevated); border:0.5px solid var(--border); border-radius:var(--radius-lg); padding:12px 14px; display:flex; align-items:center; gap:10px; box-shadow:var(--shadow-lg); pointer-events:auto; animation:toastIn var(--dur-base) var(--ease-spring); font-size:13px; }
 @keyframes toastIn{ from{opacity:0;transform:translateY(-8px) scale(0.96)} to{opacity:1;transform:translateY(0) scale(1)} }
 .toast.fade{ animation:toastOut var(--dur-base) var(--ease-out) forwards; }
@@ -779,8 +832,8 @@ html,body{
 <div class="login-wrap" id="login-wrap">
   <div class="login-top">
     <div class="login-logo"><svg class="icon" style="font-size:40px;color:#fff" stroke-width="1.6"><use href="#i-car"/></svg></div>
-    <div class="login-title">BBA<span>Wash</span></div>
-    <p class="login-sub">Araç yıkama randevunuzu kolayca alın.</p>
+    <div class="login-title">BBA</div>
+    <p class="login-sub">Araç yıkama, restoran, kuaför ve daha fazlası — tek uygulamada.</p>
   </div>
   <div class="login-bottom">
     <div class="login-main" id="login-main">
@@ -827,7 +880,7 @@ html,body{
       <div class="role-ico"><svg class="icon icon-xl" style="color:var(--accent)"><use href="#i-user"/></svg></div>
       <div class="role-info">
         <div class="role-name" data-i18n="role-cust-name">Müşteri</div>
-        <div class="role-desc" data-i18n="role-cust-desc">Randevu al, aracını takip et</div>
+        <div class="role-desc" data-i18n="role-cust-desc">Randevu al, takip et</div>
       </div>
       <span style="color:var(--text-muted)"><svg class="icon icon-md"><use href="#i-chevron-right"/></svg></span>
     </div>
@@ -854,7 +907,7 @@ html,body{
 <!-- ANA UYGULAMA -->
 <div class="app" id="main-app" style="display:none">
   <div class="topbar">
-    <div class="logo">BBA<span>Wash</span></div>
+    <div class="logo">BBA</div>
     <div class="lang-toggle">
       <button class="lang-btn active" onclick="setLang('tr')">TR</button>
       <button class="lang-btn" onclick="setLang('ru')">RU</button>
@@ -867,31 +920,12 @@ html,body{
     <div class="screen" id="s-home">
       <div class="home-hero">
         <h1 data-i18n="home-title">Merhaba! <em>Hoş geldiniz.</em></h1>
-        <p data-i18n="home-sub">Aracınız için randevu alın veya takip edin.</p>
+        <p data-i18n="home-sub">Bugün ne yapmak istersin?</p>
       </div>
       <div id="active-appt-area"></div>
-      <div class="sec-title" data-i18n="qa-book-name">Ne Yapmak İstersiniz?</div>
-      <div class="quick-actions">
-        <div class="qa-card" onclick="goBooking()">
-          <div class="qa-ico"><svg class="icon icon-xl" style="color:var(--accent)"><use href="#i-calendar"/></svg></div>
-          <div class="qa-name" data-i18n="qa-book-name">Randevu Al</div>
-          <div class="qa-desc" data-i18n="qa-book-desc">Dükkan seç, saat belirle</div>
-        </div>
-        <div class="qa-card" onclick="goTrack()">
-          <div class="qa-ico"><svg class="icon icon-xl" style="color:var(--accent)"><use href="#i-map-pin"/></svg></div>
-          <div class="qa-name" data-i18n="qa-track-name">Takip Et</div>
-          <div class="qa-desc" data-i18n="qa-track-desc">Aktif randevunu izle</div>
-        </div>
-        <div class="qa-card" onclick="navTo('s-history','nav-history')">
-          <div class="qa-ico"><svg class="icon icon-xl" style="color:var(--accent)"><use href="#i-clock"/></svg></div>
-          <div class="qa-name" data-i18n="qa-hist-name">Geçmiş</div>
-          <div class="qa-desc" data-i18n="qa-hist-desc">Önceki randevular</div>
-        </div>
-        <div class="qa-card" onclick="navTo('s-profile','nav-profile')">
-          <div class="qa-ico"><svg class="icon icon-xl" style="color:var(--accent)"><use href="#i-user"/></svg></div>
-          <div class="qa-name" data-i18n="qa-prof-name">Profil</div>
-          <div class="qa-desc" data-i18n="qa-prof-desc">Araçlarım, bilgilerim</div>
-        </div>
+      <div class="sec-title">Hizmet Kategorileri</div>
+      <div class="cat-grid" id="cat-grid">
+        <!-- Kategori kartları buraya yüklenir -->
       </div>
     </div>
 
@@ -899,7 +933,7 @@ html,body{
     <div class="screen" id="s-book-shop">
       <div class="page-head">
         <button class="back-btn" onclick="navTo('s-home','nav-home')">← Geri</button>
-        <h2>Dükkan Seçin</h2><p>Size en yakın noktayı seçin</p>
+        <h2 id="shop-list-title">İşletme Seçin</h2><p>Size en yakın noktayı seçin</p>
       </div>
       <div class="step-ind"><div class="step-d active"></div><div class="step-d"></div><div class="step-d"></div><div class="step-d"></div></div>
       <div class="shop-list" id="shop-list"></div>
@@ -1010,6 +1044,73 @@ html,body{
     </div>
 
     <!-- RANDEVU BAŞARI -->
+    <!-- ===== APPOINTMENT FLOW (dining/beauty/medical/spa) ===== -->
+
+    <!-- A. TARİH/SAAT (sadece tek slot) -->
+    <div class="screen" id="s-app-datetime">
+      <div class="page-head">
+        <button class="back-btn" onclick="navTo('s-book-service')">← Geri</button>
+        <h2>Tarih & Saat</h2>
+        <p>Ne zaman gelmek istersiniz?</p>
+      </div>
+      <div class="step-ind"><div class="step-d done"></div><div class="step-d done"></div><div class="step-d active"></div><div class="step-d"></div><div class="step-d"></div></div>
+      <div class="booking-body">
+        <div id="pill-app-1"></div>
+        <div><div class="f-label">Tarih</div><div class="date-row" id="app-date-chips"></div></div>
+        <div><div class="f-label">Saat</div><div class="time-grid" id="app-slot-chips"></div></div>
+        <button class="btn btn-primary" onclick="appGoToStep4()">Devam Et →</button>
+      </div>
+    </div>
+
+    <!-- B. DETAYLAR (kişi sayısı, tercih, özel istek) -->
+    <div class="screen" id="s-app-details">
+      <div class="page-head">
+        <button class="back-btn" onclick="navTo('s-app-datetime')">← Geri</button>
+        <h2 id="app-details-title">Detaylar</h2>
+        <p>Bilgilerinizi paylaşın.</p>
+      </div>
+      <div class="step-ind"><div class="step-d done"></div><div class="step-d done"></div><div class="step-d done"></div><div class="step-d active"></div><div class="step-d"></div></div>
+      <div class="booking-body">
+        <div id="app-party-wrap">
+          <div class="f-label">Kişi Sayısı</div>
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;" id="app-party-chips"></div>
+        </div>
+        <div id="app-pref-wrap">
+          <div class="f-label">Tercih</div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;" id="app-pref-chips"></div>
+        </div>
+        <div>
+          <div class="f-label">Özel Bir Sebep mi? (opsiyonel)</div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;" id="app-occ-chips"></div>
+        </div>
+        <div>
+          <div class="f-label">Özel İstek / Not (opsiyonel)</div>
+          <textarea class="addr-textarea" id="app-note" placeholder="Doğum günü, kek getireceğiz, sigara içilebilen alan..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="appGoToStep5()">Devam Et →</button>
+      </div>
+    </div>
+
+    <!-- C. İLETİŞİM (appointment) -->
+    <div class="screen" id="s-app-contact">
+      <div class="page-head">
+        <button class="back-btn" onclick="navTo('s-app-details')">← Geri</button>
+        <h2>İletişim Bilgileri</h2>
+        <p>İşletme sizinle bu numaradan iletişime geçecek.</p>
+      </div>
+      <div class="step-ind"><div class="step-d done"></div><div class="step-d done"></div><div class="step-d done"></div><div class="step-d done"></div><div class="step-d active"></div></div>
+      <div class="booking-body">
+        <div><div class="f-label">Ad Soyad</div><input class="f-input" type="text" id="app-ct-name" placeholder="Adınız Soyadınız"></div>
+        <div><div class="f-label">Telefon</div><input class="f-input" type="tel" id="app-ct-phone" placeholder="0532 123 45 67"></div>
+        <div class="card" style="background:var(--bg-subtle);padding:14px;border:0.5px solid var(--border);">
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Randevu Özeti</div>
+          <div id="app-confirm-summary" style="font-size:13px;line-height:1.7;color:var(--text);"></div>
+        </div>
+        <button class="btn btn-primary" onclick="confirmAppBooking()">Randevuyu Onayla</button>
+      </div>
+    </div>
+
+    <!-- BAŞARI (her iki flow ortak) -->
     <div class="screen" id="s-book-success">
       <div class="success-wrap">
         <div class="success-ico"><svg class="icon icon-3xl" style="color:var(--green)" stroke-width="2.5"><use href="#i-check-circle"/></svg></div>
@@ -1050,6 +1151,9 @@ html,body{
         <div style="font-size:13px;color:var(--text-muted);margin-top:3px;" id="profile-email">—</div>
       </div>
       <div class="card" style="margin:0 18px 12px;">
+        <div class="profile-row" onclick="openMyAddress()">
+          <svg class="icon icon-md" style="color:var(--text-muted)"><use href="#i-map-pin"/></svg><span style="flex:1;font-size:14px">Adresim</span><svg class="icon icon-sm" style="color:var(--text-muted)"><use href="#i-chevron-right"/></svg>
+        </div>
         <div class="profile-row" onclick="navTo('s-my-vehicles')">
           <svg class="icon icon-md" style="color:var(--text-muted)"><use href="#i-car"/></svg><span style="flex:1;font-size:14px">Araçlarım</span><svg class="icon icon-sm" style="color:var(--text-muted)"><use href="#i-chevron-right"/></svg>
         </div>
@@ -1061,6 +1165,31 @@ html,body{
         <div class="profile-row" onclick="logout()" style="color:var(--red)">
           <svg class="icon icon-md"><use href="#i-logout"/></svg><span style="flex:1;font-size:14px">Çıkış Yap</span>
         </div>
+      </div>
+    </div>
+
+    <!-- ADRESİM -->
+    <div class="screen" id="s-my-address">
+      <div class="page-head">
+        <button class="back-btn" onclick="navTo('s-profile')">← Geri</button>
+        <h2>Adresim</h2>
+        <p>Eve hizmet randevularında otomatik kullanılır.</p>
+      </div>
+      <div style="padding:0 18px 24px;display:flex;flex-direction:column;gap:14px;">
+        <div class="map-wrap">
+          <div id="my-addr-map" class="map-host"></div>
+          <div class="map-pin-hint"><svg class="icon icon-sm"><use href="#i-map-pin"/></svg>Tıklayıp pin koyun</div>
+          <button class="map-locate-btn" type="button" onclick="locateMeForProfile()" title="Konumumu kullan"><svg class="icon icon-md"><use href="#i-map-pin"/></svg></button>
+        </div>
+        <div>
+          <div class="f-label">Adres</div>
+          <input class="f-input" type="text" id="my-addr-address" placeholder="Atatürk Cad. 12">
+        </div>
+        <div>
+          <div class="f-label">Adres Tarifi (kapı no, kat, daire)</div>
+          <textarea class="addr-textarea" id="my-addr-note" placeholder="5. kat 12 nolu daire, kapıda zilim çalışmıyor"></textarea>
+        </div>
+        <button class="btn btn-accent" onclick="saveMyAddress()" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-md"><use href="#i-check"/></svg>Kaydet</button>
       </div>
     </div>
 
@@ -1086,7 +1215,7 @@ html,body{
 
     <!-- DASHBOARD -->
     <div class="screen" id="s-dash">
-      <div class="page-head"><h2>Dükkan Paneli</h2><p id="dash-shop-name">—</p></div>
+      <div class="page-head"><h2>İşletme Paneli</h2><p id="dash-shop-name">—</p></div>
       <div class="dash-stats">
         <div class="stat-card"><div class="stat-lbl">Bekleyen</div><div class="stat-val yellow" id="st-pending">0</div></div>
         <div class="stat-card"><div class="stat-lbl">Aktif</div><div class="stat-val blue" id="st-active">0</div></div>
@@ -1111,13 +1240,33 @@ html,body{
     <div class="screen" id="s-apply">
       <div class="page-head"><h2>İşletme Başvurusu</h2><p>Bilgilerinizi doldurun, onaylayalım.</p></div>
       <div class="apply-form">
-        <div><div class="f-label">Dükkan Adı (TR)</div><input class="f-input" id="ap-name-tr" placeholder="DML Araç Yıkama"></div>
-        <div><div class="f-label">Dükkan Adı (RU)</div><input class="f-input" id="ap-name-ru" placeholder="DML мойка"></div>
+        <div>
+          <div class="f-label">Kategori</div>
+          <div id="ap-cat-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
+            <!-- JS ile yüklenir -->
+          </div>
+        </div>
+        <div><div class="f-label">Alt Tip (opsiyonel)</div><input class="f-input" id="ap-subtype" placeholder="cafe, bistro, kuaför, klinik..."></div>
+        <div><div class="f-label">İşletme Adı (TR)</div><input class="f-input" id="ap-name-tr" placeholder="BBA Cafe & Bistro"></div>
+        <div><div class="f-label">İşletme Adı (RU)</div><input class="f-input" id="ap-name-ru" placeholder="BBA Кафе"></div>
+        <div><div class="f-label">Açıklama (TR)</div><textarea class="addr-textarea" id="ap-desc-tr" placeholder="Kısaca işletmeniz hakkında..."></textarea></div>
         <div><div class="f-label">Adres</div><input class="f-input" id="ap-addr" placeholder="Silifke Merkez, Atatürk Cad."></div>
         <div><div class="f-label">Telefon</div><input class="f-input" id="ap-phone" type="tel" placeholder="+90 324 000 0000"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
           <div><div class="f-label">Açılış</div><input class="f-input" id="ap-open" value="09:00"></div>
-          <div><div class="f-label">Kapanış</div><input class="f-input" id="ap-close" value="18:00"></div>
+          <div><div class="f-label">Kapanış</div><input class="f-input" id="ap-close" value="22:00"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div><div class="f-label">Slot Süresi (dk)</div><input class="f-input" id="ap-slot" type="number" value="60" min="15" step="15"></div>
+          <div><div class="f-label">Fiyat Aralığı</div>
+            <select class="f-input" id="ap-price">
+              <option value="">—</option>
+              <option value="1">$</option>
+              <option value="2">$$</option>
+              <option value="3">$$$</option>
+              <option value="4">$$$$</option>
+            </select>
+          </div>
         </div>
         <button class="btn btn-accent" onclick="submitApply()">Başvuruyu Gönder</button>
       </div>
@@ -1308,7 +1457,7 @@ function toast(msg, type='info'){
 const SERVICE_ICON_OPTIONS=['i-droplet','i-sparkles','i-shield-check','i-truck-wash','i-car','i-package','i-store','i-clock','i-check-circle','i-info'];
 
 const STATUS_PCT={pending:0,confirmed:10,on_the_way:20,picked_up:35,washing:55,drying:70,ready:82,delivering:92,delivered:100,cancelled:0};
-const STATUS_LBL={pending:'Onay Bekleniyor',confirmed:'Onaylandı',on_the_way:'Firma Yola Çıktı',picked_up:'Araç Alındı',washing:'Yıkanıyor',drying:'Kurulanıyor',ready:'Yıkama Bitti',delivering:'Teslime Getiriliyor',delivered:'Teslim Edildi',cancelled:'İptal'};
+const STATUS_LBL={pending:'Onay Bekleniyor',confirmed:'Onaylandı',on_the_way:'Firma Yola Çıktı',picked_up:'Araç Alındı',washing:'Yıkanıyor',drying:'Kurulanıyor',ready:'Yıkama Bitti',delivering:'Teslime Getiriliyor',delivered:'Teslim Edildi',arrived:'Geldi',in_service:'Hizmet Veriliyor',completed:'Tamamlandı',no_show:'Gelmedi',cancelled:'İptal'};
 const STEP_KEYS=['pending','confirmed','on_the_way','picked_up','washing','drying','ready','delivering','delivered'];
 const STEPS=['Onay Bekleniyor','Onaylandı','Yola Çıktı','Araç Alındı','Yıkanıyor','Kurulanıyor','Yıkama Bitti','Teslime Getiriliyor','Teslim Edildi'];
 const ETA=['','','Yolda','','','','','Geliyor','Tamamlandı'];
@@ -1330,7 +1479,7 @@ window.setLang=function(l){
   const TX={
     tr:{
       'home-title':'Merhaba! <em>Hoş geldiniz.</em>',
-      'home-sub':'Aracınız için randevu alın veya takip edin.',
+      'home-sub':'Bugün ne yapmak istersin?',
       'qa-book-name':'Randevu Al','qa-book-desc':'Dükkan seç, saat belirle',
       'qa-track-name':'Takip Et','qa-track-desc':'Aktif randevunu izle',
       'qa-hist-name':'Geçmiş','qa-hist-desc':'Önceki randevular',
@@ -1360,9 +1509,9 @@ window.setLang=function(l){
       'pending-approval-title':'Başvurunuz İnceleniyor','pending-approval-sub':'Başvurunuz onaylandığında bildirim alacaksınız.',
       'profile-vehicles':'Araçlarım','profile-history':'Randevu Geçmişim','profile-logout':'Çıkış Yap',
       'role-title':'Hesap Türünüzü Seçin','role-sub':'Ne yapmak istiyorsunuz?',
-      'role-cust-name':'Müşteri','role-cust-desc':'Randevu al, aracını takip et',
+      'role-cust-name':'Müşteri','role-cust-desc':'Randevu al, takip et',
+      'login-sub':'Araç yıkama, restoran, kuaför ve daha fazlası — tek uygulamada.',
       'role-owner-name':'İşletme Sahibi','role-owner-desc':'Dükkanınızı yönetin, randevuları onaylayın',
-      'login-sub':'Araç yıkama randevunuzu kolayca alın.',
       'login-google':'Google ile Giriş Yap','login-phone':'Telefon ile Giriş',
       'login-note':'Devam ederek Kullanım Koşullarını kabul edersiniz.',
       'open-label':'Açık','busy-label':'Yoğun','select-label':'Seç →',
@@ -1415,9 +1564,9 @@ window.setLang=function(l){
       'pending-approval-title':'Заявка на рассмотрении','pending-approval-sub':'Вы получите уведомление после одобрения.',
       'profile-vehicles':'Мои автомобили','profile-history':'История записей','profile-logout':'Выйти',
       'role-title':'Выберите тип аккаунта','role-sub':'Что хотите сделать?',
-      'role-cust-name':'Клиент','role-cust-desc':'Запишитесь, следите за авто',
-      'role-owner-name':'Владелец бизнеса','role-owner-desc':'Управляйте мойкой',
-      'login-sub':'Запишитесь на мойку легко.',
+      'role-cust-name':'Клиент','role-cust-desc':'Запишитесь и следите',
+      'role-owner-name':'Владелец бизнеса','role-owner-desc':'Управляйте бизнесом',
+      'login-sub':'Автомойка, рестораны, парикмахерские и многое другое — в одном приложении.',
       'login-google':'Войти через Google','login-phone':'Войти по телефону',
       'login-note':'Продолжая, вы принимаете Условия использования.',
       'open-label':'Открыто','busy-label':'Занято','select-label':'Выбрать →',
@@ -1695,10 +1844,58 @@ async function setupCustomerView(){
   }
   navTo('s-home','nav-home');
   loadHomeAppt();
-  loadShops();
+  loadCategories();
+}
+
+// =============================================================
+// KATEGORİLER (anasayfa grid)
+// =============================================================
+let allCategories = [];
+let selectedCategory = null;
+
+async function loadCategories(){
+  const wrap = document.getElementById('cat-grid');
+  if(!wrap) return;
+  try{
+    allCategories = await GET(`/categories/?lang=${lang}`);
+  }catch(e){
+    allCategories = [];
+    wrap.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--text-muted);font-size:13px;">Kategoriler yüklenemedi</div>`;
+    return;
+  }
+  if(!allCategories.length){
+    wrap.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--text-muted);font-size:13px;">Kategori yok</div>`;
+    return;
+  }
+  wrap.innerHTML = '';
+  allCategories.forEach(c=>{
+    const card = document.createElement('div');
+    card.className = 'cat-card';
+    const desc = c.description || (c.flow_type === 'home_service' ? 'Eve hizmet' : 'Randevu');
+    card.innerHTML = `
+      <div class="cc-ico">${svgIcon(c.icon || 'i-store', 'xl')}</div>
+      <div>
+        <div class="cc-name">${c.name}</div>
+        <div class="cc-desc">${desc}</div>
+      </div>`;
+    card.onclick = () => selectCategory(c);
+    wrap.appendChild(card);
+  });
+}
+
+function selectCategory(cat){
+  selectedCategory = cat;
+  // Shop liste ekranını başlatırken kategori filtresi uygula
+  document.getElementById('shop-list-title').textContent = cat.name + ' İşletmeleri';
+  navTo('s-book-shop', 'nav-book');
+  loadShops(cat.code);
 }
 
 // İŞLETME KURULUM
+let ownerShop = null;
+let ownerCategory = null;
+let ownerFlowType = 'home_service';
+
 async function setupOwnerView(){
   document.getElementById('customer-nav').style.display='none';
   document.getElementById('owner-nav').style.display='flex';
@@ -1707,15 +1904,33 @@ async function setupOwnerView(){
     document.getElementById('profile-name').textContent=CURRENT_USER.name||'—';
     document.getElementById('profile-email').textContent=CURRENT_USER.email||'—';
   }
-  if(!CURRENT_USER?.shop_id){ownerNavTo('s-apply','onav-dash');return;}
-  try{const s=await GET(`/shops/${CURRENT_USER.shop_id}`);if(s.status==='pending'){ownerNavTo('s-pending-approval','onav-dash');return;}document.getElementById('dash-shop-name').textContent=s.name;}catch(e){}
+  // Kategori listesini ön yükle (apply formu için lazım)
+  if(!allCategories.length){
+    try{ allCategories = await GET(`/categories/?lang=${lang}`); }catch(_){}
+  }
+  if(!CURRENT_USER?.shop_id){
+    loadApplyCategoryGrid();
+    ownerNavTo('s-apply','onav-dash');
+    return;
+  }
+  try{
+    const s = await GET(`/shops/${CURRENT_USER.shop_id}?lang=${lang}`);
+    if(s.status==='pending'){
+      ownerNavTo('s-pending-approval','onav-dash');
+      return;
+    }
+    ownerShop = s;
+    ownerCategory = allCategories.find(c => c.code === s.category_code);
+    ownerFlowType = ownerCategory?.flow_type || 'home_service';
+    document.getElementById('dash-shop-name').textContent = s.name;
+  }catch(e){}
   ownerNavTo('s-dash','onav-dash');
 }
 
 // ANA SAYFA AKTİF RANDEVU
 async function loadHomeAppt(){
   try{
-    const appts=await GET('/appointments/');
+    const appts=await GET('/bookings/');
     const active=appts.find(a=>!['delivered','cancelled'].includes(a.status));
     const area=document.getElementById('active-appt-area');
     if(!active){area.innerHTML='';return;}
@@ -1725,22 +1940,52 @@ async function loadHomeAppt(){
 }
 
 // DÜKKANLAR
-async function loadShops(){
-  try{const d=await GET('/shops/');shops=d.map((s,i)=>({...s,icon:SHOP_ICONS[i%SHOP_ICONS.length],busy:[]}));}
-  catch(e){shops=[{id:1,icon:'i-droplet',name:'DML Araç Yıkama',address:'Silifke Merkez',open_time:'09:00',close_time:'18:00',slot_duration:60,busy:[]}];}
+async function loadShops(categoryCode){
+  try{
+    const path = categoryCode ? `/shops/?category=${categoryCode}&lang=${lang}` : `/shops/?lang=${lang}`;
+    const d = await GET(path);
+    shops = d.map(s => ({...s, busy: []}));
+  }catch(e){
+    shops = [];
+  }
   renderShops();
 }
 function renderShops(){
   const wrap=document.getElementById('shop-list');if(!wrap) return;
   wrap.innerHTML='';
+  if(!shops.length){
+    wrap.innerHTML = `<div class="empty-state"><div class="empty-ico">${svgIcon('i-store','3xl','color:var(--text-subtle)')}</div><p>Bu kategoride henüz işletme yok.</p></div>`;
+    return;
+  }
   shops.forEach(s=>{
     const c=document.createElement('div');c.className='card shop-card';
-    c.innerHTML=`<div class="shop-img">${svgIcon(s.icon,'2xl','color:var(--accent)')}</div><div class="shop-body"><div class="shop-name">${s.name}</div><div class="shop-addr">${s.address||''}</div><div style="display:flex;gap:10px;align-items:center;"><svg class="icon icon-xs" style="color:var(--text-muted)"><use href="#i-clock"/></svg><span style="font-size:11px;color:var(--text-muted)">${s.open_time}–${s.close_time}</span></div></div><div class="shop-footer"><span class="badge badge-green">Açık</span><span class="shop-cta" style="display:flex;align-items:center;gap:4px;">Seç<svg class="icon icon-xs"><use href="#i-arrow-right"/></svg></span></div>`;
-    c.onclick=()=>{selectedShop=s;selectedService=null;navTo('s-book-service');renderPills();loadShopServices(s.id);};
+    const cat = allCategories.find(x => x.code === s.category_code);
+    const ico = cat?.icon || 'i-store';
+    const subtype = s.subtype ? `<span style="font-size:11px;color:var(--text-muted);text-transform:capitalize">${s.subtype}</span>` : '';
+    const priceRange = s.price_range ? '$'.repeat(s.price_range) : '';
+    const tagsLine = (s.tags && s.tags.length) ? `<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">${s.tags.slice(0,3).map(t => `<span style="font-size:10px;background:var(--bg-muted);color:var(--text-muted);padding:2px 7px;border-radius:var(--radius-full)">${t}</span>`).join('')}</div>` : '';
+    c.innerHTML=`<div class="shop-img">${svgIcon(ico,'2xl','color:var(--accent)')}</div><div class="shop-body"><div class="shop-name">${s.name}</div>${subtype?`<div style="margin-bottom:4px">${subtype}</div>`:''}<div class="shop-addr">${s.address||''}</div><div style="display:flex;gap:10px;align-items:center;"><svg class="icon icon-xs" style="color:var(--text-muted)"><use href="#i-clock"/></svg><span style="font-size:11px;color:var(--text-muted)">${s.open_time}–${s.close_time}</span>${priceRange?`<span style="font-size:11px;color:var(--accent);font-weight:700">${priceRange}</span>`:''}</div>${tagsLine}</div><div class="shop-footer"><span class="badge badge-green">Açık</span><span class="shop-cta" style="display:flex;align-items:center;gap:4px;">Seç<svg class="icon icon-xs"><use href="#i-arrow-right"/></svg></span></div>`;
+    c.onclick=()=>onShopSelected(s);
     wrap.appendChild(c);
   });
 }
-window.goBooking=function(){navTo('s-book-shop','nav-book');renderShops();};
+
+// Shop seçildiğinde flow_type'a göre yönlendir
+function onShopSelected(s){
+  selectedShop = s;
+  selectedService = null;
+  // Kategori objesini bul (flow_type için)
+  const cat = allCategories.find(c => c.code === s.category_code);
+  selectedCategory = cat;
+  navTo('s-book-service');
+  renderPills();
+  loadShopServices(s.id);
+}
+
+window.goBooking=function(){
+  // Eski "Randevu" butonu — kategori seçim ekranına götür
+  navTo('s-home','nav-home');
+};
 window.goTrack=function(){navTo('s-track','nav-track');loadTrack();};
 
 // HİZMETLER
@@ -1765,9 +2010,20 @@ function renderServices(){
 
 window.goToStep3=function(){
   if(!selectedService){toast('Lütfen hizmet seçin','warn');return;}
-  navTo('s-book-address');renderPills();
-  // Haritayi tembel olarak yarat
-  setTimeout(initAddressMap, 100);
+  // Flow tipine göre yönlendir
+  const flow = selectedCategory?.flow_type || 'home_service';
+  if(flow === 'home_service'){
+    // Wash akışı — adres ekranı
+    navTo('s-book-address');
+    renderPills();
+    setTimeout(initAddressMap, 100);
+  } else {
+    // Appointment akışı — tarih/saat
+    navTo('s-app-datetime');
+    renderAppPill();
+    renderAppDateChips();
+    renderAppSlotChips();
+  }
 };
 
 // ADRES + HARİTA
@@ -1957,29 +2213,283 @@ window.confirmBooking=async function(){
   const today=new Date(); today.setDate(today.getDate()+selectedDate);
   const dateStr=today.toISOString().split('T')[0];
 
-  const body={
-    shop_id:        selectedShop.id,
-    vehicle_id:     selectedVehicle.id,
-    appt_date:      dateStr,
-    pickup_time:    selectedPickup,
-    dropoff_time:   selectedDropoff,
-    service_id:     selectedService.id,
-    price:          selectedService.price,
-    pickup_address: pickupAddress.note || '',
-    pickup_lat:     pickupAddress.lat,
-    pickup_lng:     pickupAddress.lng,
-    address_note:   pickupAddress.note,
+  const body = {
+    shop_id:       selectedShop.id,
+    booking_date:  dateStr,
+    start_time:    selectedPickup,
+    end_time:      selectedDropoff,
+    service_id:    selectedService.id,
+    price:         selectedService.price,
     customer_name:  name,
     customer_phone: phone,
+    meta: {
+      vehicle_id:     selectedVehicle.id,
+      pickup_address: pickupAddress.note || '',
+      pickup_lat:     pickupAddress.lat,
+      pickup_lng:     pickupAddress.lng,
+      address_note:   pickupAddress.note,
+      pickup_time:    selectedPickup,
+      dropoff_time:   selectedDropoff,
+      service_id:     selectedService.id,
+    }
   };
 
   try{
-    await POST('/appointments/', body);
-    // Reset state
+    await POST('/bookings/', body);
     selectedVehicle=null; selectedService=null;
     selectedPickup=null; selectedDropoff=null;
     pickupAddress={lat:null,lng:null,note:''};
     if(addrMarker){ addrMap.removeLayer(addrMarker); addrMarker=null; }
+    navTo('s-book-success');
+    toast('Randevunuz alındı!','success');
+  }catch(e){
+    toast('Randevu oluşturulamadı: '+e.message,'error');
+  }
+};
+
+
+// =============================================================
+// APPOINTMENT FLOW (dining/beauty/medical/spa)
+// =============================================================
+
+// Appointment state
+let appBookingState = {
+  date: 0,
+  slot: null,
+  party: 2,
+  preference: null,    // window/outdoor/indoor/private/any
+  occasion: null,      // birthday/anniversary/business/casual
+  occasionNote: '',
+  note: '',
+};
+
+// Pill — kategori + işletme + hizmet
+function renderAppPill(){
+  const el = document.getElementById('pill-app-1');
+  if(!el || !selectedShop) return;
+  const cat = selectedCategory;
+  const ico = cat?.icon || 'i-store';
+  el.innerHTML = `<div class="pill">${svgIcon(ico,'lg','color:var(--accent)')}<div><div class="pill-name">${selectedShop.name}</div>${selectedService?`<div class="pill-sub">${selectedService.name} · ₺${selectedService.price}</div>`:''}</div></div>`;
+}
+
+// Tarih chips
+function renderAppDateChips(){
+  const wrap=document.getElementById('app-date-chips');if(!wrap) return;
+  wrap.innerHTML='';
+  const today=new Date();
+  for(let i=0;i<7;i++){
+    const d=new Date(today);d.setDate(today.getDate()+i);
+    const chip=document.createElement('div');chip.className='d-chip'+(i===appBookingState.date?' sel':'');
+    chip.innerHTML=`<div class="d-day">${i===0?'Bugün':DAYS[d.getDay()]}</div><div class="d-num">${d.getDate()}</div>`;
+    chip.onclick=async()=>{
+      appBookingState.date = i;
+      appBookingState.slot = null;
+      renderAppDateChips();
+      // Slot busy listesini al
+      if(selectedShop?.id){
+        const ds=new Date(today);ds.setDate(today.getDate()+i);
+        const str=ds.toISOString().split('T')[0];
+        try{
+          const r=await GET(`/shops/${selectedShop.id}/slots?date=${str}`);
+          selectedShop.busy=r.slots.filter(s=>!s.available).map(s=>s.slot);
+        }catch(e){}
+      }
+      renderAppSlotChips();
+    };
+    wrap.appendChild(chip);
+  }
+}
+
+// Saat chips
+function renderAppSlotChips(){
+  const wrap=document.getElementById('app-slot-chips');
+  if(!wrap||!selectedShop) return;
+  wrap.innerHTML='';
+  const open=selectedShop.open_time||'09:00';
+  const close=selectedShop.close_time||'22:00';
+  const dur=selectedShop.slot_duration||60;
+  let cur=parseInt(open.split(':')[0])*60+parseInt(open.split(':')[1]);
+  const end=parseInt(close.split(':')[0])*60+parseInt(close.split(':')[1]);
+  const slots=[];
+  while(cur+dur<=end){
+    const h=Math.floor(cur/60),m=cur%60;
+    slots.push(`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+    cur+=dur;
+  }
+  const busy=selectedShop.busy||[];
+  slots.forEach(s=>{
+    const btn=document.createElement('button');
+    btn.className='time-pill'+(appBookingState.slot===s?' sel':'');
+    btn.type='button';
+    btn.textContent=s;
+    if(busy.includes(s)) btn.disabled=true;
+    btn.onclick=()=>{
+      appBookingState.slot=s;
+      renderAppSlotChips();
+    };
+    wrap.appendChild(btn);
+  });
+}
+
+window.appGoToStep4=function(){
+  if(!appBookingState.slot){ toast('Saat seçin','warn'); return; }
+  navTo('s-app-details');
+  renderAppDetailsForm();
+};
+
+// Detaylar formu — kategori-spesifik
+function renderAppDetailsForm(){
+  const flow = selectedCategory?.code;
+  const partyWrap = document.getElementById('app-party-wrap');
+  const prefWrap  = document.getElementById('app-pref-wrap');
+  const detailsTitle = document.getElementById('app-details-title');
+
+  // Kategori-bazlı görünürlük: dining'de masa tercihi gerekli, diğerlerinde isteğe bağlı
+  if(flow === 'dining'){
+    detailsTitle.textContent = 'Masa Detayları';
+    partyWrap.style.display = 'block';
+    prefWrap.style.display  = 'block';
+    renderPartyChips([1,2,3,4,5,6,7,8]);
+    renderPrefChips([
+      {code:'window',  label:'Pencere kenarı'},
+      {code:'outdoor', label:'Dışarıda'},
+      {code:'indoor',  label:'İçeride'},
+      {code:'any',     label:'Farketmez'},
+    ]);
+    renderOccChips([
+      {code:'birthday',    label:'Doğum günü'},
+      {code:'anniversary', label:'Yıldönümü'},
+      {code:'business',    label:'İş yemeği'},
+      {code:'casual',      label:'Sıradan'},
+    ]);
+  } else if(flow === 'beauty' || flow === 'spa'){
+    detailsTitle.textContent = 'Detaylar';
+    partyWrap.style.display = 'none';
+    prefWrap.style.display = 'none';
+    document.getElementById('app-occ-chips').innerHTML = '';
+  } else {
+    // medical vs
+    detailsTitle.textContent = 'Detaylar';
+    partyWrap.style.display = 'none';
+    prefWrap.style.display = 'none';
+    document.getElementById('app-occ-chips').innerHTML = '';
+  }
+}
+
+function renderPartyChips(numbers){
+  const wrap = document.getElementById('app-party-chips');
+  wrap.innerHTML = '';
+  numbers.forEach(n => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'time-pill' + (appBookingState.party === n ? ' sel' : '');
+    b.textContent = n;
+    b.onclick = () => { appBookingState.party = n; renderPartyChips(numbers); };
+    wrap.appendChild(b);
+  });
+}
+
+function renderPrefChips(items){
+  const wrap = document.getElementById('app-pref-chips');
+  wrap.innerHTML = '';
+  items.forEach(it => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'time-pill' + (appBookingState.preference === it.code ? ' sel' : '');
+    b.textContent = it.label;
+    b.style.padding = '12px 8px';
+    b.onclick = () => {
+      appBookingState.preference = appBookingState.preference === it.code ? null : it.code;
+      renderPrefChips(items);
+    };
+    wrap.appendChild(b);
+  });
+}
+
+function renderOccChips(items){
+  const wrap = document.getElementById('app-occ-chips');
+  wrap.innerHTML = '';
+  items.forEach(it => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'time-pill' + (appBookingState.occasion === it.code ? ' sel' : '');
+    b.textContent = it.label;
+    b.style.padding = '12px 8px';
+    b.onclick = () => {
+      appBookingState.occasion = appBookingState.occasion === it.code ? null : it.code;
+      renderOccChips(items);
+    };
+    wrap.appendChild(b);
+  });
+}
+
+window.appGoToStep5=function(){
+  appBookingState.note = document.getElementById('app-note').value.trim();
+  // İletişim ekranını hazırla
+  document.getElementById('app-ct-name').value  = CURRENT_USER?.name  || '';
+  document.getElementById('app-ct-phone').value = CURRENT_USER?.phone || '';
+  // Özet
+  const today = new Date(); today.setDate(today.getDate() + appBookingState.date);
+  const dateText = today.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});
+
+  const lines = [
+    `<div><strong>İşletme:</strong> ${selectedShop.name}</div>`,
+    `<div><strong>Hizmet:</strong> ${selectedService.name} · ₺${selectedService.price}</div>`,
+    `<div><strong>Tarih:</strong> ${dateText}</div>`,
+    `<div><strong>Saat:</strong> ${appBookingState.slot}</div>`,
+  ];
+  if(selectedCategory?.code === 'dining'){
+    lines.push(`<div><strong>Kişi:</strong> ${appBookingState.party}</div>`);
+    if(appBookingState.preference){
+      const prefMap = {window:'Pencere kenarı', outdoor:'Dışarıda', indoor:'İçeride', any:'Farketmez', private:'Özel'};
+      lines.push(`<div><strong>Tercih:</strong> ${prefMap[appBookingState.preference]||'-'}</div>`);
+    }
+    if(appBookingState.occasion){
+      const occMap = {birthday:'Doğum günü', anniversary:'Yıldönümü', business:'İş yemeği', casual:'Sıradan'};
+      lines.push(`<div><strong>Sebep:</strong> ${occMap[appBookingState.occasion]||'-'}</div>`);
+    }
+  }
+  if(appBookingState.note) lines.push(`<div><strong>Not:</strong> ${appBookingState.note}</div>`);
+  document.getElementById('app-confirm-summary').innerHTML = lines.join('');
+  navTo('s-app-contact');
+};
+
+window.confirmAppBooking=async function(){
+  const name  = document.getElementById('app-ct-name').value.trim();
+  const phone = document.getElementById('app-ct-phone').value.trim();
+  if(!name)  { toast('Ad soyad girin','warn');return; }
+  if(!phone) { toast('Telefon girin','warn');return; }
+
+  const today = new Date(); today.setDate(today.getDate() + appBookingState.date);
+  const dateStr = today.toISOString().split('T')[0];
+
+  const meta = {
+    party_size:    appBookingState.party,
+    preference:    appBookingState.preference,
+    occasion:      appBookingState.occasion,
+    occasion_note: appBookingState.note,
+    service_id:    selectedService.id,
+  };
+  // Boş alanları temizle
+  Object.keys(meta).forEach(k => meta[k]==null && delete meta[k]);
+
+  const body = {
+    shop_id:        selectedShop.id,
+    booking_date:   dateStr,
+    start_time:     appBookingState.slot,
+    service_id:     selectedService.id,
+    price:          selectedService.price,
+    customer_name:  name,
+    customer_phone: phone,
+    notes:          appBookingState.note || null,
+    meta,
+  };
+
+  try{
+    await POST('/bookings/', body);
+    // Reset
+    appBookingState = { date:0, slot:null, party:2, preference:null, occasion:null, occasionNote:'', note:'' };
+    selectedService = null;
     navTo('s-book-success');
     toast('Randevunuz alındı!','success');
   }catch(e){
@@ -1998,7 +2508,7 @@ function renderPills(){
 // TAKİP
 async function loadTrack(){
   try{
-    const appts=await GET('/appointments/');
+    const appts=await GET('/bookings/');
     const active=appts.find(a=>!['delivered','cancelled'].includes(a.status));
     if(!active){
       document.getElementById('track-sub').textContent='Aktif randevu yok';
@@ -2012,8 +2522,8 @@ async function loadTrack(){
     document.getElementById('track-bar').style.width=pct+'%';
     document.getElementById('track-pct').textContent=pct+'%';
     document.getElementById('track-eta').textContent=ETA[si]||STATUS_LBL[active.status]||'';
-    const dt=active.appt_date+' '+(active.pickup_time||active.appt_slot);
-    const dropTxt=active.dropoff_time?` · Teslim: ${active.dropoff_time}`:'';
+    const dt=active.booking_date+' '+active.start_time;
+    const dropTxt=active.end_time?` · Bitiş: ${active.end_time}`:'';
     document.getElementById('track-sub').textContent=dt+dropTxt;
 
     // ETA karti
@@ -2060,11 +2570,11 @@ function renderEtaCard(appt){
 // GEÇMİŞ
 async function loadHistory(){
   try{
-    const appts=await GET('/appointments/');
+    const appts=await GET('/bookings/');
     const wrap=document.getElementById('history-list');
     const done=appts.filter(a=>['delivered','cancelled'].includes(a.status));
     if(!done.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-clipboard"/></svg></div><p>Henüz geçmiş randevunuz yok.</p></div>`;return;}
-    wrap.innerHTML=done.map(a=>`<div class="hist-card"><div class="hist-ico"><svg class="icon icon-lg" style="color:var(--text-muted)"><use href="#i-car"/></svg></div><div class="hist-info"><div class="hist-shop">${a.appt_date} ${a.pickup_time||a.appt_slot}</div><div class="hist-svc">${a.service?.name_tr||a.service_type||'Hizmet'}</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">${STATUS_LBL[a.status]||a.status}</div></div><div class="hist-right"><div class="hist-price">${a.price?'₺'+a.price:'—'}</div></div></div>`).join('');
+    wrap.innerHTML=done.map(a=>`<div class="hist-card"><div class="hist-ico"><svg class="icon icon-lg" style="color:var(--text-muted)"><use href="#i-car"/></svg></div><div class="hist-info"><div class="hist-shop">${a.booking_date} ${a.start_time||''}</div><div class="hist-svc">${a.service?.name_tr||a.shop?.name||'Hizmet'}</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">${STATUS_LBL[a.status]||a.status}</div></div><div class="hist-right"><div class="hist-price">${a.price?'₺'+a.price:'—'}</div></div></div>`).join('');
   }catch(e){}
 }
 
@@ -2083,22 +2593,74 @@ window.addVehicle=async function(){
 window.deleteVehicle=async function(id){try{await DEL(`/vehicles/${id}`);loadMyVehicles();}catch(e){}};
 
 // BAŞVURU
+let applyCategoryCode = null;
+
+async function loadApplyCategoryGrid(){
+  const wrap = document.getElementById('ap-cat-grid');
+  if(!wrap) return;
+  if(!allCategories.length){
+    try{ allCategories = await GET(`/categories/?lang=${lang}`); }catch(_){}
+  }
+  wrap.innerHTML = '';
+  allCategories.forEach(c => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'time-pill' + (applyCategoryCode === c.code ? ' sel' : '');
+    b.style.padding = '12px 8px';
+    b.style.display = 'flex';
+    b.style.alignItems = 'center';
+    b.style.justifyContent = 'center';
+    b.style.gap = '6px';
+    b.innerHTML = `${svgIcon(c.icon||'i-store','sm')} <span>${c.name}</span>`;
+    b.onclick = () => { applyCategoryCode = c.code; loadApplyCategoryGrid(); };
+    wrap.appendChild(b);
+  });
+}
+
 window.submitApply=async function(){
-  const name_tr=document.getElementById('ap-name-tr').value.trim();if(!name_tr){toast('Dükkan adı gerekli','warn');return;}
+  const name_tr = document.getElementById('ap-name-tr').value.trim();
+  if(!name_tr){ toast('İşletme adı gerekli','warn'); return; }
+  if(!applyCategoryCode){ toast('Kategori seçin','warn'); return; }
+
+  const priceVal = document.getElementById('ap-price').value;
+  const body = {
+    category_code:  applyCategoryCode,
+    subtype:        document.getElementById('ap-subtype').value.trim() || null,
+    name_tr,
+    name_ru:        document.getElementById('ap-name-ru').value.trim(),
+    description_tr: document.getElementById('ap-desc-tr').value.trim(),
+    address_tr:     document.getElementById('ap-addr').value.trim(),
+    phone:          document.getElementById('ap-phone').value.trim(),
+    open_time:      document.getElementById('ap-open').value,
+    close_time:     document.getElementById('ap-close').value,
+    slot_duration:  parseInt(document.getElementById('ap-slot').value) || 60,
+    price_range:    priceVal ? parseInt(priceVal) : null,
+  };
+
   try{
-    await POST('/shops/apply',{name_tr,name_ru:document.getElementById('ap-name-ru').value.trim(),address_tr:document.getElementById('ap-addr').value.trim(),phone:document.getElementById('ap-phone').value.trim(),open_time:document.getElementById('ap-open').value,close_time:document.getElementById('ap-close').value});
+    await POST('/shops/apply', body);
+    toast('Başvurunuz alındı!','success');
     ownerNavTo('s-pending-approval','onav-dash');
-  }catch(e){toast('Başvuru gönderilemedi: '+e.message,'error');}
+  }catch(e){
+    toast('Başvuru gönderilemedi: '+e.message,'error');
+  }
 };
 
 // DASHBOARD
 async function loadDashboard(){
   try{
     const today=new Date().toISOString().split('T')[0];
-    const appts=await GET(`/appointments/?date=${today}`);
+    const appts=await GET(`/bookings/?date=${today}`);
     const pending=appts.filter(a=>a.status==='pending');
-    const active=appts.filter(a=>['confirmed','on_the_way','picked_up','washing','drying','ready','delivering'].includes(a.status));
-    const delivered=appts.filter(a=>a.status==='delivered');
+    // Aktif statuslar flow tipine göre değişir
+    const activeStatuses = ownerFlowType === 'home_service'
+      ? ['confirmed','on_the_way','picked_up','washing','drying','ready','delivering']
+      : ['confirmed','arrived','in_service'];
+    const completedStatuses = ownerFlowType === 'home_service'
+      ? ['delivered']
+      : ['completed'];
+    const active=appts.filter(a=>activeStatuses.includes(a.status));
+    const delivered=appts.filter(a=>completedStatuses.includes(a.status));
     document.getElementById('st-pending').textContent=pending.length;
     document.getElementById('st-active').textContent=active.length;
     document.getElementById('st-done').textContent=delivered.length;
@@ -2110,17 +2672,32 @@ async function loadDashboard(){
       psec.innerHTML=`<div class="sec-title" style="color:var(--yellow);display:flex;align-items:center;gap:6px;padding:0 18px;"><svg class="icon icon-xs"><use href="#i-clock"/></svg><span>Onay Bekleyen (${pending.length})</span></div>`;
       pending.forEach(a=>{
         const div=document.createElement('div');div.className='pending-card';
-        const addrLine = a.pickup_address ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px;display:flex;align-items:flex-start;gap:4px;"><svg class="icon icon-xs" style="margin-top:2px;flex-shrink:0;"><use href="#i-map-pin"/></svg><span>${a.pickup_address}</span></div>` : '';
-        const mapLink = a.pickup_lat ? `<a href="https://www.google.com/maps?q=${a.pickup_lat},${a.pickup_lng}" target="_blank" style="font-size:11px;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:3px;margin-top:4px;"><svg class="icon icon-xs"><use href="#i-map-pin"/></svg>Haritada Aç</a>` : '';
+        const meta = a.meta || {};
+        // home_service-spesifik
+        const addrLine = meta.pickup_address ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px;display:flex;align-items:flex-start;gap:4px;"><svg class="icon icon-xs" style="margin-top:2px;flex-shrink:0;"><use href="#i-map-pin"/></svg><span>${meta.pickup_address}</span></div>` : '';
+        const mapLink = meta.pickup_lat ? `<a href="https://www.google.com/maps?q=${meta.pickup_lat},${meta.pickup_lng}" target="_blank" style="font-size:11px;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:3px;margin-top:4px;"><svg class="icon icon-xs"><use href="#i-map-pin"/></svg>Haritada Aç</a>` : '';
         const vehicleLine = a.vehicle ? `<div style="font-size:11px;color:var(--text);margin-top:4px;display:flex;align-items:center;gap:6px;background:var(--bg-muted);padding:6px 10px;border-radius:var(--radius-sm);width:fit-content;"><svg class="icon icon-xs" style="color:var(--accent)"><use href="#i-car"/></svg><span style="font-weight:700;letter-spacing:0.5px;">${a.vehicle.plate}</span>${a.vehicle.brand||a.vehicle.model?`<span style="color:var(--text-muted)">· ${a.vehicle.brand||''} ${a.vehicle.model||''}</span>`:''}${a.vehicle.color?`<span style="color:var(--text-muted)">· ${a.vehicle.color}</span>`:''}</div>` : '';
+        // appointment-spesifik
+        let metaLine = '';
+        if(meta.party_size){
+          const prefMap = {window:'Pencere',outdoor:'Dışarıda',indoor:'İçeride',any:'Farketmez',private:'Özel'};
+          const occMap  = {birthday:'🎂 Doğum günü',anniversary:'💍 Yıldönümü',business:'💼 İş yemeği',casual:'Sıradan'};
+          const parts = [`<svg class="icon icon-xs"><use href="#i-users"/></svg> ${meta.party_size} kişi`];
+          if(meta.preference) parts.push(prefMap[meta.preference] || meta.preference);
+          if(meta.occasion)   parts.push(occMap[meta.occasion]   || meta.occasion);
+          metaLine = `<div style="font-size:11px;color:var(--text);margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--bg-muted);padding:6px 10px;border-radius:var(--radius-sm);width:fit-content;">${parts.join(' · ')}</div>`;
+        }
+        const noteLine = a.notes ? `<div style="font-size:11px;color:var(--text-muted);margin-top:4px;font-style:italic;">"${a.notes}"</div>` : '';
         div.innerHTML=`<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;">
           <div style="flex:1;min-width:0;">
-            <div style="font-size:14px;font-weight:700">${a.pickup_time||a.appt_slot}${a.dropoff_time?' → '+a.dropoff_time:''} · ${a.appt_date}</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${a.service?.name_tr||a.service_type||'Hizmet'}${a.price?' · ₺'+a.price:''}</div>
+            <div style="font-size:14px;font-weight:700">${a.start_time||''}${a.end_time?' → '+a.end_time:''} · ${a.booking_date}</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${a.service?.name_tr||a.service?.name||'Hizmet'}${a.price?' · ₺'+a.price:''}</div>
             ${a.customer_name?`<div style="font-size:11px;color:var(--text-muted);margin-top:2px;display:flex;align-items:center;gap:4px;"><svg class="icon icon-xs"><use href="#i-user"/></svg>${a.customer_name}${a.customer_phone?` · <a href="tel:${a.customer_phone}" style="color:var(--accent);text-decoration:none">${a.customer_phone}</a>`:''}</div>`:''}
             ${vehicleLine}
+            ${metaLine}
             ${addrLine}
             ${mapLink}
+            ${noteLine}
           </div>
         </div>
         <div class="pend-actions"><button class="pend-btn approve" style="display:flex;align-items:center;justify-content:center;gap:6px;" onclick="changeStatus(${a.id},'confirmed')"><svg class="icon icon-sm"><use href="#i-check"/></svg>Onayla</button><button class="pend-btn reject" style="display:flex;align-items:center;justify-content:center;gap:6px;" onclick="changeStatus(${a.id},'cancelled')"><svg class="icon icon-sm"><use href="#i-x"/></svg>Reddet</button></div>`;
@@ -2133,8 +2710,10 @@ async function loadDashboard(){
     active.forEach(a=>{
       const row=document.createElement('div');row.className='appt-row';
       row.style.cssText='padding:14px 16px;border-bottom:0.5px solid var(--border);';
-      const ns=NEXT_STATUS[a.status];
-      const showEta = ['confirmed','on_the_way'].includes(a.status);
+      const meta = a.meta || {};
+      const isHomeService = ownerFlowType === 'home_service';
+      const ns = NEXT_STATUS[a.status];
+      const showEta = isHomeService && ['confirmed','on_the_way'].includes(a.status);
       const etaDisplay = a.eta_minutes !== null && a.eta_minutes !== undefined
         ? `<div style="font-size:11px;color:var(--accent);margin-top:4px;font-weight:600;">ETA: ${a.eta_minutes} dk</div>`
         : '';
@@ -2147,25 +2726,56 @@ async function loadDashboard(){
             ${a.eta_minutes!==null && a.eta_minutes!==undefined ? `<button class="eta-quick-btn cancel" onclick="setApptEta(${a.id},null)">Temizle</button>` : ''}
           </div>`
         : '';
-      const addrLink = a.pickup_lat
-        ? `<a href="https://www.google.com/maps?q=${a.pickup_lat},${a.pickup_lng}" target="_blank" style="font-size:11px;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:3px;margin-top:2px;"><svg class="icon icon-xs"><use href="#i-map-pin"/></svg>Konum</a>`
+      const addrLink = meta.pickup_lat
+        ? `<a href="https://www.google.com/maps?q=${meta.pickup_lat},${meta.pickup_lng}" target="_blank" style="font-size:11px;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:3px;margin-top:2px;"><svg class="icon icon-xs"><use href="#i-map-pin"/></svg>Konum</a>`
         : '';
       const vehLine = a.vehicle
         ? `<div style="font-size:11px;color:var(--text);margin-top:4px;display:inline-flex;align-items:center;gap:6px;background:var(--bg-muted);padding:5px 10px;border-radius:var(--radius-sm);"><svg class="icon icon-xs" style="color:var(--accent)"><use href="#i-car"/></svg><span style="font-weight:700;letter-spacing:0.5px;">${a.vehicle.plate}</span>${a.vehicle.brand||a.vehicle.model?`<span style="color:var(--text-muted)">${a.vehicle.brand||''} ${a.vehicle.model||''}</span>`:''}</div>`
         : '';
+      // Appointment için meta info
+      let metaInfo = '';
+      if(meta.party_size){
+        const prefMap = {window:'Pencere',outdoor:'Dışarıda',indoor:'İçeride',any:'Farketmez'};
+        const occMap  = {birthday:'🎂',anniversary:'💍',business:'💼'};
+        const parts = [`${meta.party_size} kişi`];
+        if(meta.preference) parts.push(prefMap[meta.preference] || meta.preference);
+        if(meta.occasion)   parts.push((occMap[meta.occasion]||'') + ' ' + meta.occasion);
+        metaInfo = `<div style="font-size:11px;color:var(--text);margin-top:4px;background:var(--bg-muted);padding:5px 10px;border-radius:var(--radius-sm);width:fit-content;">${parts.join(' · ')}</div>`;
+      }
+      // Action butonları flow tipine göre
+      let actionButtons = '';
+      if(isHomeService){
+        // Mevcut tek "ileri" butonu
+        if(ns){
+          actionButtons = `<button class="status-btn" style="padding:8px 12px;border:none;border-radius:var(--radius-md);background:var(--accent);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;" onclick="changeStatus(${a.id},'${ns}')">${NEXT_LBL[ns]||ns}</button>`;
+        }
+      } else {
+        // Appointment: confirmed -> arrived (Geldi) | no_show (Gelmedi) ;  arrived -> in_service | completed
+        if(a.status === 'confirmed'){
+          actionButtons = `<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+            <button style="padding:6px 10px;border:none;border-radius:var(--radius-md);background:var(--green);color:#fff;font-family:var(--font);font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;" onclick="changeStatus(${a.id},'arrived')"><svg class="icon icon-xs"><use href="#i-check"/></svg>Geldi</button>
+            <button style="padding:6px 10px;border:none;border-radius:var(--radius-md);background:var(--bg-muted);color:var(--red);font-family:var(--font);font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;" onclick="changeStatus(${a.id},'no_show')"><svg class="icon icon-xs"><use href="#i-x"/></svg>Gelmedi</button>
+          </div>`;
+        } else if(a.status === 'arrived'){
+          actionButtons = `<button style="padding:8px 12px;border:none;border-radius:var(--radius-md);background:var(--accent);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;" onclick="changeStatus(${a.id},'in_service')">Hizmet Başladı</button>`;
+        } else if(a.status === 'in_service'){
+          actionButtons = `<button style="padding:8px 12px;border:none;border-radius:var(--radius-md);background:var(--green);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:4px;" onclick="changeStatus(${a.id},'completed')"><svg class="icon icon-xs"><use href="#i-check"/></svg>Tamamlandı</button>`;
+        }
+      }
       row.innerHTML=`
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
           <div style="flex:1;min-width:0;">
             <div style="display:flex;align-items:center;gap:8px;">
-              <div class="appt-time" style="font-size:14px;font-weight:700;color:var(--accent);">${a.pickup_time||a.appt_slot}</div>
+              <div class="appt-time" style="font-size:14px;font-weight:700;color:var(--accent);">${a.start_time||''}</div>
               <span class="badge badge-blue">${STATUS_LBL[a.status]||a.status}</span>
             </div>
             <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">${a.customer_name||'—'} ${a.customer_phone?`· <a href="tel:${a.customer_phone}" style="color:var(--accent);text-decoration:none">${a.customer_phone}</a>`:''}</div>
             ${vehLine}
+            ${metaInfo}
             ${addrLink}
             ${etaDisplay}
           </div>
-          ${ns?`<button class="status-btn ${a.status}" style="padding:8px 12px;border:none;border-radius:var(--radius-md);background:var(--accent);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;" onclick="changeStatus(${a.id},'${ns}')">${NEXT_LBL[ns]||ns}</button>`:''}
+          ${actionButtons}
         </div>
         ${etaButtons}`;
       wrap.appendChild(row);
@@ -2173,12 +2783,40 @@ async function loadDashboard(){
   }catch(e){console.warn(e);}
 }
 window.changeStatus=async function(id,status){
-  try{await PATCH(`/appointments/${id}/status`,{status});showNotif(status);toast('Durum güncellendi','success');loadDashboard();}catch(e){toast('Güncellenemedi: '+e.message,'error');}
+  try{await PATCH(`/bookings/${id}/status`,{status});showNotif(status);toast('Durum güncellendi','success');loadDashboard();}catch(e){toast('Güncellenemedi: '+e.message,'error');}
 };
 
 // MÜŞTERİLER
 async function loadCustomers(){
-  try{allCustomers=await GET('/customers/');customers=[...allCustomers];renderCustomers();}catch(e){console.warn(e);}
+  try{
+    // Bookings'ten unique müşterileri çıkar
+    const bookings = await GET('/bookings/');
+    const map = new Map();
+    bookings.forEach(b => {
+      const key = b.user_id;
+      if(!map.has(key)){
+        map.set(key, {
+          id: b.user_id,
+          name: b.customer_name || '—',
+          phone: b.customer_phone || '',
+          bookings: [],
+          total_count: 0,
+          total_spent: 0,
+        });
+      }
+      const c = map.get(key);
+      c.bookings.push(b);
+      c.total_count++;
+      if(b.price) c.total_spent += parseFloat(b.price);
+    });
+    allCustomers = Array.from(map.values());
+    customers = [...allCustomers];
+    renderCustomers();
+  }catch(e){
+    console.warn(e);
+    allCustomers = []; customers = [];
+    renderCustomers();
+  }
 }
 function renderCustomers(){
   const wrap=document.getElementById('cust-list');
@@ -2204,7 +2842,7 @@ function openDetail(c){
   document.getElementById('dp-name').textContent=c.name||'—';
   document.getElementById('dp-phone').textContent=c.phone||'—';
   document.getElementById('dp-chips').innerHTML=(c.vehicles||[]).map(v=>`<span class="badge badge-blue">${v.brand||''} ${v.model||''} · ${v.plate}</span>`).join('')+`<span class="badge badge-gray">${c.total_appts||0} işlem</span>`;
-  document.getElementById('dp-txns').innerHTML=(c.appointments||[]).map(a=>`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:4px;flex-shrink:0;"></div><div style="flex:1"><div style="font-size:13px;font-weight:500">${a.service?.name_tr||a.service_type||'Hizmet'}</div><div style="font-size:11px;color:var(--text-muted)">${a.appt_date} ${a.pickup_time||a.appt_slot}</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700">${a.price?'₺'+a.price:'—'}</div></div></div>`).join('');
+  document.getElementById('dp-txns').innerHTML=(c.bookings||c.appointments||[]).map(a=>`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:4px;flex-shrink:0;"></div><div style="flex:1"><div style="font-size:13px;font-weight:500">${a.service?.name_tr||a.shop?.name||'Hizmet'}</div><div style="font-size:11px;color:var(--text-muted)">${a.booking_date||a.appt_date} ${a.start_time||a.pickup_time||''}</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700">${a.price?'₺'+a.price:'—'}</div></div></div>`).join('');
   document.getElementById('detail-overlay').classList.add('open');
 }
 window.closeDetail=function(e){if(e.target===document.getElementById('detail-overlay'))document.getElementById('detail-overlay').classList.remove('open');};
@@ -2358,12 +2996,139 @@ window.deleteService=async function(id){
 // =================================================================
 window.setApptEta=async function(apptId, minutes){
   try{
-    await PATCH(`/appointments/${apptId}/eta`, { minutes });
+    await PATCH(`/bookings/${apptId}/eta`, { minutes });
     toast(minutes===null?'ETA temizlendi':`ETA: ${minutes} dk`,'success');
     if(typeof loadDashboard==='function') loadDashboard();
   }catch(e){
     toast('Hata: '+e.message,'error');
   }
+};
+
+
+// =============================================================
+// PROFİL > ADRESİM (default address)
+// =============================================================
+let myAddrMap = null, myAddrMarker = null;
+
+window.openMyAddress = function(){
+  navTo('s-my-address');
+  // Form alanlarını mevcut değerle doldur
+  if(CURRENT_USER){
+    document.getElementById('my-addr-address').value = CURRENT_USER.default_address || '';
+    document.getElementById('my-addr-note').value    = CURRENT_USER.default_address_note || '';
+  }
+  setTimeout(initMyAddrMap, 100);
+};
+
+function initMyAddrMap(){
+  const el = document.getElementById('my-addr-map');
+  if(!el || myAddrMap){ if(myAddrMap) setTimeout(()=>myAddrMap.invalidateSize(), 50); return; }
+  if(typeof L === 'undefined') return;
+
+  const startLat = CURRENT_USER?.default_lat || DEFAULT_CENTER[0];
+  const startLng = CURRENT_USER?.default_lng || DEFAULT_CENTER[1];
+
+  myAddrMap = L.map(el, { zoomControl: false }).setView([startLat, startLng], DEFAULT_ZOOM);
+  L.control.zoom({ position: 'bottomleft' }).addTo(myAddrMap);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(myAddrMap);
+
+  myAddrMap.on('click', e => setMyAddrMarker(e.latlng.lat, e.latlng.lng));
+
+  // Mevcut konum varsa pin koy
+  if(CURRENT_USER?.default_lat){
+    setMyAddrMarker(CURRENT_USER.default_lat, CURRENT_USER.default_lng);
+  }
+  setTimeout(()=>myAddrMap.invalidateSize(), 200);
+}
+
+function setMyAddrMarker(lat, lng){
+  if(!myAddrMap) return;
+  if(myAddrMarker){ myAddrMarker.setLatLng([lat,lng]); }
+  else {
+    myAddrMarker = L.marker([lat,lng], { draggable:true }).addTo(myAddrMap);
+    myAddrMarker.on('dragend', e => {
+      // dragend sonrası state güncelleme yok — saveMyAddress'te çekilecek
+    });
+  }
+}
+
+window.locateMeForProfile = function(){
+  if(!navigator.geolocation){ toast('Tarayıcınız konum desteklemiyor','error'); return; }
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const {latitude:lat, longitude:lng} = pos.coords;
+      if(myAddrMap) myAddrMap.setView([lat,lng], 16);
+      setMyAddrMarker(lat, lng);
+      toast('Konumunuz alındı','success');
+    },
+    err => toast('Konum alınamadı: '+err.message,'error'),
+    { enableHighAccuracy:true, timeout:8000 }
+  );
+};
+
+window.saveMyAddress = async function(){
+  const address = document.getElementById('my-addr-address').value.trim();
+  const note    = document.getElementById('my-addr-note').value.trim();
+  let lat = null, lng = null;
+  if(myAddrMarker){
+    const ll = myAddrMarker.getLatLng();
+    lat = ll.lat; lng = ll.lng;
+  }
+  try{
+    const r = await PATCH('/auth/me', {
+      default_address:      address || null,
+      default_lat:          lat,
+      default_lng:          lng,
+      default_address_note: note || null,
+    });
+    CURRENT_USER = r.user;
+    toast('Adresiniz kaydedildi','success');
+    navTo('s-profile');
+  }catch(e){
+    toast('Kaydedilemedi: '+e.message,'error');
+  }
+};
+
+
+// =============================================================
+// WASH ADRES — kullanıcının default'ı varsa öneri olarak göster
+// =============================================================
+function offerDefaultAddress(){
+  if(!CURRENT_USER?.default_lat) return;
+  // Adres ekranında "kayıtlı adresimi kullan" çıkar
+  const banner = document.getElementById('addr-default-banner');
+  if(banner) return; // Zaten var
+  const addrScreen = document.getElementById('s-book-address');
+  if(!addrScreen) return;
+  const body = addrScreen.querySelector('.booking-body');
+  if(!body) return;
+  const div = document.createElement('div');
+  div.id = 'addr-default-banner';
+  div.style.cssText = 'background:var(--brand-50);border:0.5px solid var(--brand-200);border-radius:var(--radius-md);padding:12px;display:flex;align-items:center;gap:10px;margin-bottom:10px;cursor:pointer;';
+  div.innerHTML = `<svg class="icon icon-md" style="color:var(--accent)"><use href="#i-map-pin"/></svg>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:600;color:var(--accent)">Kayıtlı adresimi kullan</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${CURRENT_USER.default_address || ''}</div>
+    </div>`;
+  div.onclick = () => {
+    pickupAddress.lat = CURRENT_USER.default_lat;
+    pickupAddress.lng = CURRENT_USER.default_lng;
+    pickupAddress.note = CURRENT_USER.default_address_note || '';
+    document.getElementById('addr-note').value = pickupAddress.note;
+    if(addrMap){
+      addrMap.setView([pickupAddress.lat, pickupAddress.lng], 16);
+      setMarker(pickupAddress.lat, pickupAddress.lng);
+    }
+    toast('Kayıtlı adresiniz seçildi','success');
+  };
+  body.insertBefore(div, body.firstChild);
+}
+
+// initAddressMap'tan sonra default offer
+const _origInitAddressMap = window.initAddressMap || initAddressMap;
+window.initAddressMap = function(){
+  _origInitAddressMap();
+  offerDefaultAddress();
 };
 
 </script>
