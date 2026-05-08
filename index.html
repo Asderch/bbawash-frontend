@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>BBA</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <style>
@@ -181,15 +181,15 @@ html,body{
 /* Selection rengi marka */
 ::selection{ background: var(--brand-200); color: var(--brand-900); }
 [data-theme="dark"] ::selection{ background: rgba(59,130,246,0.4); color: var(--slate-50); }
-.app{display:flex;flex-direction:column;height:100vh;max-width:var(--app-max);margin:0 auto;position:relative;background:var(--bg);box-shadow:var(--shadow-xl);transition:background var(--dur-base) var(--ease-out);}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:0.5px solid var(--border);background:var(--bg-elevated);flex-shrink:0;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:var(--app-max);margin:0 auto;position:relative;background:var(--bg);box-shadow:var(--shadow-xl);transition:background var(--dur-base) var(--ease-out);}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:0.5px solid var(--border);background:var(--bg-elevated);flex-shrink:0;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);padding-top:max(14px, env(safe-area-inset-top));}
 .logo{font-size:18px;font-weight:700;letter-spacing:-0.5px;color:var(--text);}
 .logo span{background:var(--grad-brand);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:300;}
 .lang-toggle{display:flex;gap:2px;background:var(--bg-muted);border-radius:var(--radius-sm);padding:3px;}
 .lang-btn{padding:4px 11px;border-radius:var(--radius-xs);border:none;background:transparent;font-size:12px;font-weight:500;color:var(--text-muted);cursor:pointer;font-family:var(--font);transition:color var(--dur-fast) var(--ease-out);}
 .lang-btn.active{background:var(--bg-elevated);color:var(--text);box-shadow:var(--shadow-sm);}
 .scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--bg);}
-.bottom-nav{display:flex;background:var(--bg-elevated);border-top:0.5px solid var(--border);height:var(--nav-h);flex-shrink:0;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);}
+.bottom-nav{display:flex;background:var(--bg-elevated);border-top:0.5px solid var(--border);height:calc(var(--nav-h) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);flex-shrink:0;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;cursor:pointer;font-family:var(--font);position:relative;transition:color var(--dur-fast) var(--ease-out);}
 .nav-btn.active{color:var(--accent);}
 .nav-btn:not(.active){color:var(--text-muted);}
@@ -704,6 +704,38 @@ html,body{
 .toast-host{ position:fixed; top:16px; right:16px; left:16px; z-index:400; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
 @media (min-width:768px){ .toast-host{ left:auto; right:24px; top:24px; max-width:380px; } }
 
+/* Dashboard tabs */
+.dash-tabs{
+  display:flex;
+  gap:6px;
+  padding:4px 18px 12px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.dash-tabs::-webkit-scrollbar{ display:none; }
+.dash-tab{
+  flex:0 0 auto;
+  padding:8px 14px;
+  border:0.5px solid var(--border);
+  background:var(--bg-elevated);
+  color:var(--text-muted);
+  border-radius:var(--radius-full);
+  font-family:var(--font);
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:all var(--dur-fast) var(--ease-out);
+}
+.dash-tab:hover{ color:var(--text); }
+.dash-tab.active{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff;
+  box-shadow:var(--shadow-brand);
+}
+
 /* Kategori grid (anasayfa) */
 .cat-grid{
   display:grid;
@@ -1216,7 +1248,18 @@ html,body{
     <!-- DASHBOARD -->
     <div class="screen" id="s-dash">
       <div class="page-head"><h2>İşletme Paneli</h2><p id="dash-shop-name">—</p></div>
-      <div style="padding:0 18px 12px;display:flex;align-items:center;gap:8px;">
+
+      <!-- Filtre sekmeleri -->
+      <div class="dash-tabs" id="dash-tabs">
+        <button class="dash-tab active" data-filter="today"   onclick="dashSetFilter('today')">Bugün</button>
+        <button class="dash-tab"        data-filter="tomorrow" onclick="dashSetFilter('tomorrow')">Yarın</button>
+        <button class="dash-tab"        data-filter="week"     onclick="dashSetFilter('week')">Bu Hafta</button>
+        <button class="dash-tab"        data-filter="pending"  onclick="dashSetFilter('pending')">Tüm Bekleyen</button>
+        <button class="dash-tab"        data-filter="custom"   onclick="dashSetFilter('custom')">Tarih</button>
+      </div>
+
+      <!-- Tarih seçici (sadece custom modda) -->
+      <div id="dash-date-row" style="padding:0 18px 12px;display:none;align-items:center;gap:8px;">
         <button onclick="dashChangeDay(-1)" style="width:36px;height:36px;border:0.5px solid var(--border);background:var(--bg-elevated);border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text);">
           <svg class="icon icon-sm"><use href="#i-arrow-left"/></svg>
         </button>
@@ -1224,16 +1267,16 @@ html,body{
         <button onclick="dashChangeDay(1)" style="width:36px;height:36px;border:0.5px solid var(--border);background:var(--bg-elevated);border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text);">
           <svg class="icon icon-sm"><use href="#i-arrow-right"/></svg>
         </button>
-        <button onclick="dashSetToday()" style="padding:0 12px;height:36px;border:0.5px solid var(--brand-200);background:var(--accent-l);border-radius:var(--radius-md);cursor:pointer;color:var(--accent);font-weight:600;font-size:12px;">Bugün</button>
       </div>
+
       <div class="dash-stats">
         <div class="stat-card"><div class="stat-lbl">Bekleyen</div><div class="stat-val yellow" id="st-pending">0</div></div>
         <div class="stat-card"><div class="stat-lbl">Aktif</div><div class="stat-val blue" id="st-active">0</div></div>
         <div class="stat-card"><div class="stat-lbl">Tamamlanan</div><div class="stat-val green" id="st-done">0</div></div>
-        <div class="stat-card"><div class="stat-lbl" id="st-total-lbl">Bugün Toplam</div><div class="stat-val" id="st-total">0</div></div>
+        <div class="stat-card"><div class="stat-lbl" id="st-total-lbl">Toplam</div><div class="stat-val" id="st-total">0</div></div>
       </div>
       <div id="pending-section"></div>
-      <div class="sec-title">Aktif Randevular</div>
+      <div class="sec-title" id="active-section-title">Aktif Randevular</div>
       <div class="card" style="margin:0 18px 24px;" id="active-appts"></div>
     </div>
 
@@ -2778,37 +2821,89 @@ window.submitApply=async function(){
 };
 
 // DASHBOARD
-// Dashboard tarih state'i
+// Dashboard filtre ve tarih state'i
+let dashFilter = 'today';   // today | tomorrow | week | pending | custom
 let dashDate = new Date().toISOString().split('T')[0];
+
+window.dashSetFilter = function(filter){
+  dashFilter = filter;
+  // Sekmenin görünümü
+  document.querySelectorAll('.dash-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.filter === filter);
+  });
+  // Custom modda tarih seçici göster
+  const dateRow = document.getElementById('dash-date-row');
+  if(dateRow) dateRow.style.display = filter === 'custom' ? 'flex' : 'none';
+  // Custom modda mevcut tarihi koru, diğerlerinde state'e göre yenile
+  loadDashboard();
+};
 
 window.dashChangeDay = function(delta){
   const d = new Date(dashDate); d.setDate(d.getDate() + delta);
   dashDate = d.toISOString().split('T')[0];
-  document.getElementById('dash-date').value = dashDate;
+  const inp = document.getElementById('dash-date');
+  if(inp) inp.value = dashDate;
   loadDashboard();
 };
 window.dashSetDate = function(val){
   if(val){ dashDate = val; loadDashboard(); }
 };
-window.dashSetToday = function(){
-  dashDate = new Date().toISOString().split('T')[0];
-  document.getElementById('dash-date').value = dashDate;
-  loadDashboard();
-};
+
+// Filtreye göre tarih aralığı veya status hesapla
+function getFilterParams(){
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const t = (d) => d.toISOString().split('T')[0];
+
+  if(dashFilter === 'today'){
+    return { dateFrom: todayStr, dateTo: todayStr, label: 'Bugün' };
+  }
+  if(dashFilter === 'tomorrow'){
+    const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
+    const ts = t(tomorrow);
+    return { dateFrom: ts, dateTo: ts, label: 'Yarın' };
+  }
+  if(dashFilter === 'week'){
+    // Bu hafta (bugünden Pazar'a kadar) — 7 gün
+    const end = new Date(today); end.setDate(today.getDate()+6);
+    return { dateFrom: todayStr, dateTo: t(end), label: 'Bu Hafta' };
+  }
+  if(dashFilter === 'pending'){
+    // Tarih filtresi yok, sadece pending durumdakiler
+    return { dateFrom: null, dateTo: null, statusOnly: 'pending', label: 'Tüm Bekleyen' };
+  }
+  // custom
+  return { dateFrom: dashDate, dateTo: dashDate, label: dashDate };
+}
 
 async function loadDashboard(){
   try{
-    // Tarih input'unu setupla (ilk yüklemede)
+    const params = getFilterParams();
+    const lbl = document.getElementById('st-total-lbl');
+    if(lbl) lbl.textContent = params.label;
+
+    // Tarih input'unu setupla (custom mod için)
     const dInput = document.getElementById('dash-date');
     if(dInput && !dInput.value) dInput.value = dashDate;
-    const isToday = dashDate === new Date().toISOString().split('T')[0];
-    const lbl = document.getElementById('st-total-lbl');
-    if(lbl){
-      const dObj = new Date(dashDate);
-      lbl.textContent = isToday ? 'Bugün Toplam' : `${dObj.getDate()} ${['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'][dObj.getMonth()]}`;
+
+    // Bookings'i al
+    let appts = [];
+    if(params.statusOnly === 'pending'){
+      // Tüm bekleyen — tarih filtresiz, status=pending
+      appts = await GET(`/bookings/?status=pending`);
+    } else if(params.dateFrom === params.dateTo){
+      // Tek gün
+      appts = await GET(`/bookings/?date=${params.dateFrom}`);
+    } else {
+      // Tarih aralığı — tüm bookings'i al, frontend'de filtrele
+      const all = await GET(`/bookings/`);
+      appts = all.filter(a => {
+        const d = a.booking_date;
+        return d >= params.dateFrom && d <= params.dateTo;
+      });
     }
-    const appts=await GET(`/bookings/?date=${dashDate}`);
-    const pending=appts.filter(a=>a.status==='pending');
+
+    const pending = appts.filter(a => a.status==='pending');
     // Aktif statuslar flow tipine göre değişir
     const activeStatuses = ownerFlowType === 'home_service'
       ? ['confirmed','on_the_way','picked_up','washing','drying','ready','delivering']
@@ -2816,8 +2911,8 @@ async function loadDashboard(){
     const completedStatuses = ownerFlowType === 'home_service'
       ? ['delivered']
       : ['completed'];
-    const active=appts.filter(a=>activeStatuses.includes(a.status));
-    const delivered=appts.filter(a=>completedStatuses.includes(a.status));
+    const active = appts.filter(a => activeStatuses.includes(a.status));
+    const delivered = appts.filter(a => completedStatuses.includes(a.status));
     document.getElementById('st-pending').textContent=pending.length;
     document.getElementById('st-active').textContent=active.length;
     document.getElementById('st-done').textContent=delivered.length;
@@ -2861,8 +2956,28 @@ async function loadDashboard(){
         psec.appendChild(div);
       });
     }else{psec.innerHTML='';}
+    // Pending modda aktif bölümü gizle (sadece bekleyenler önemli)
+    const activeSection = document.getElementById('active-section-title');
     const wrap=document.getElementById('active-appts');
-    if(!active.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-clipboard"/></svg></div><p>Aktif randevu yok</p></div>`;return;}
+    if(dashFilter === 'pending'){
+      if(activeSection) activeSection.style.display = 'none';
+      wrap.style.display = 'none';
+      // Pending listesi yoksa empty state
+      if(!pending.length){
+        const psec2 = document.getElementById('pending-section');
+        if(psec2 && !psec2.innerHTML){
+          psec2.innerHTML = `<div class="empty-state" style="padding:40px 18px;"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-clipboard"/></svg></div><p>Bekleyen randevu yok</p></div>`;
+        }
+      }
+      return;
+    }
+    if(activeSection){
+      activeSection.style.display = '';
+      activeSection.textContent = (dashFilter === 'tomorrow' || dashFilter === 'week' || dashFilter === 'custom')
+        ? 'Onaylı Randevular' : 'Aktif Randevular';
+    }
+    wrap.style.display = '';
+    if(!active.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-clipboard"/></svg></div><p>Bu tarihte aktif randevu yok</p></div>`;return;}
     wrap.innerHTML='';
     active.forEach(a=>{
       const row=document.createElement('div');row.className='appt-row';
