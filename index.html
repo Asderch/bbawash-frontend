@@ -736,6 +736,79 @@ html,body{
   box-shadow:var(--shadow-brand);
 }
 
+/* Premium rozetleri ve kartlar */
+.premium-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  padding:2px 8px;
+  font-size:10px;
+  font-weight:700;
+  background:linear-gradient(135deg,#fbbf24,#f59e0b);
+  color:#fff;
+  border-radius:var(--radius-full);
+  letter-spacing:0.3px;
+  box-shadow:0 1px 3px rgba(245,158,11,0.3);
+}
+.shop-card.shop-premium{
+  border-color:rgba(245,158,11,0.3);
+  background:linear-gradient(180deg,rgba(251,191,36,0.04) 0%,var(--bg-elevated) 30%);
+}
+.shop-card.shop-premium:hover{
+  border-color:rgba(245,158,11,0.6);
+}
+
+/* Plan kartı (owner panel) */
+.plan-card{
+  background:var(--bg-elevated);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:14px 16px;
+  margin:0 18px 12px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.plan-card.premium{
+  background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(245,158,11,0.04));
+  border-color:rgba(245,158,11,0.3);
+}
+.plan-card .plan-ico{
+  width:44px;height:44px;
+  border-radius:var(--radius-md);
+  background:var(--accent-l);
+  color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.plan-card.premium .plan-ico{
+  background:linear-gradient(135deg,#fbbf24,#f59e0b);
+  color:#fff;
+}
+.plan-card .plan-body{flex:1;min-width:0;}
+.plan-card .plan-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;}
+.plan-card .plan-name{font-size:15px;font-weight:700;color:var(--text);margin-top:2px;}
+.plan-card .plan-name .badge{
+  margin-left:6px;font-size:10px;
+  background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#fff;
+  padding:2px 7px;border-radius:var(--radius-full);
+  font-weight:700;letter-spacing:0.3px;
+}
+
+/* Foto sınırı uyarısı */
+.photo-limit-warn{
+  background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(251,191,36,0.05));
+  border:0.5px solid rgba(245,158,11,0.3);
+  border-radius:var(--radius-md);
+  padding:10px 12px;
+  font-size:11px;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:8px;
+}
+
 /* Kategori grid (anasayfa) */
 .cat-grid{
   display:grid;
@@ -1247,7 +1320,7 @@ html,body{
 
     <!-- DASHBOARD -->
     <div class="screen" id="s-dash">
-      <div class="page-head"><h2>İşletme Paneli</h2><p id="dash-shop-name">—</p></div>
+      <div class="page-head"><h2>İşletme Paneli</h2><p id="dash-shop-name">—</p><div id="dash-plan-badge" style="margin-top:6px;"></div></div>
 
       <!-- Filtre sekmeleri -->
       <div class="dash-tabs" id="dash-tabs">
@@ -1367,6 +1440,10 @@ html,body{
         <h2>İşletmem</h2>
         <p>Bilgileri ve fotoğrafları yönetin.</p>
       </div>
+
+      <!-- Plan Kartı -->
+      <div id="my-shop-plan-card"></div>
+
       <div style="padding:0 18px 24px;display:flex;flex-direction:column;gap:14px;">
 
         <!-- Foto Galerisi -->
@@ -2097,6 +2174,14 @@ async function setupOwnerView(){
     ownerCategory = allCategories.find(c => c.code === s.category_code);
     ownerFlowType = ownerCategory?.flow_type || 'home_service';
     document.getElementById('dash-shop-name').textContent = s.name;
+    // Plan badge
+    const badgeEl = document.getElementById('dash-plan-badge');
+    if(badgeEl){
+      const isPremium = s.is_premium || s.plan_code === 'premium';
+      badgeEl.innerHTML = isPremium
+        ? `<span class="premium-pill">⭐ Premium</span>`
+        : `<span style="font-size:10px;color:var(--text-muted);background:var(--bg-muted);padding:2px 8px;border-radius:var(--radius-full);font-weight:600;">Ücretsiz Plan</span>`;
+    }
   }catch(e){}
   ownerNavTo('s-dash','onav-dash');
 }
@@ -2131,14 +2216,29 @@ function renderShops(){
     wrap.innerHTML = `<div class="empty-state"><div class="empty-ico">${svgIcon('i-store','3xl','color:var(--text-subtle)')}</div><p>Bu kategoride henüz işletme yok.</p></div>`;
     return;
   }
-  shops.forEach(s=>{
+  // Premium işletmeler üstte (priority_listing özelliği)
+  const sorted = [...shops].sort((a,b) => {
+    const aP = a.is_premium ? 1 : 0;
+    const bP = b.is_premium ? 1 : 0;
+    return bP - aP;
+  });
+  sorted.forEach(s=>{
     const c=document.createElement('div');c.className='card shop-card';
+    if(s.is_premium) c.classList.add('shop-premium');
     const cat = allCategories.find(x => x.code === s.category_code);
     const ico = cat?.icon || 'i-store';
     const subtype = s.subtype ? `<span style="font-size:11px;color:var(--text-muted);text-transform:capitalize">${s.subtype}</span>` : '';
     const priceRange = s.price_range ? '$'.repeat(s.price_range) : '';
     const tagsLine = (s.tags && s.tags.length) ? `<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">${s.tags.slice(0,3).map(t => `<span style="font-size:10px;background:var(--bg-muted);color:var(--text-muted);padding:2px 7px;border-radius:var(--radius-full)">${t}</span>`).join('')}</div>` : '';
-    c.innerHTML=`<div class="shop-img">${svgIcon(ico,'2xl','color:var(--accent)')}</div><div class="shop-body"><div class="shop-name">${s.name}</div>${subtype?`<div style="margin-bottom:4px">${subtype}</div>`:''}<div class="shop-addr">${s.address||''}</div><div style="display:flex;gap:10px;align-items:center;"><svg class="icon icon-xs" style="color:var(--text-muted)"><use href="#i-clock"/></svg><span style="font-size:11px;color:var(--text-muted)">${s.open_time}–${s.close_time}</span>${priceRange?`<span style="font-size:11px;color:var(--accent);font-weight:700">${priceRange}</span>`:''}</div>${tagsLine}</div><div class="shop-footer"><span class="badge badge-green">Açık</span><span class="shop-cta" style="display:flex;align-items:center;gap:4px;">Seç<svg class="icon icon-xs"><use href="#i-arrow-right"/></svg></span></div>`;
+    const premiumBadge = s.is_premium ? `<span class="premium-pill">⭐ Premium</span>` : '';
+    // İlk fotoğrafı kapak olarak göster
+    const coverPhoto = (s.photos && s.photos.length)
+      ? (s.photos.find(p=>p.photo_type==='cover') || s.photos[0])
+      : null;
+    const imgHtml = coverPhoto
+      ? `<div class="shop-img" style="background-image:url('${coverPhoto.url}');background-size:cover;background-position:center;"></div>`
+      : `<div class="shop-img">${svgIcon(ico,'2xl','color:var(--accent)')}</div>`;
+    c.innerHTML=`${imgHtml}<div class="shop-body"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><div class="shop-name">${s.name}</div>${premiumBadge}</div>${subtype?`<div style="margin-bottom:4px">${subtype}</div>`:''}<div class="shop-addr">${s.address||''}</div><div style="display:flex;gap:10px;align-items:center;"><svg class="icon icon-xs" style="color:var(--text-muted)"><use href="#i-clock"/></svg><span style="font-size:11px;color:var(--text-muted)">${s.open_time}–${s.close_time}</span>${priceRange?`<span style="font-size:11px;color:var(--accent);font-weight:700">${priceRange}</span>`:''}</div>${tagsLine}</div><div class="shop-footer"><span class="badge badge-green">Açık</span><span class="shop-cta" style="display:flex;align-items:center;gap:4px;">Seç<svg class="icon icon-xs"><use href="#i-arrow-right"/></svg></span></div>`;
     c.onclick=()=>onShopSelected(s);
     wrap.appendChild(c);
   });
@@ -3435,8 +3535,41 @@ async function loadMyShopForm(){
   document.getElementById('ms-tags').value     = (s.tags || []).join(', ');
 
   setTimeout(initMyShopMap, 100);
+  renderPlanCard();
   renderMyShopPhotos();
 }
+
+function renderPlanCard(){
+  const wrap = document.getElementById('my-shop-plan-card');
+  if(!wrap || !ownerShop) return;
+  const isPremium = ownerShop.is_premium || ownerShop.plan_code === 'premium';
+  if(isPremium){
+    wrap.innerHTML = `
+      <div class="plan-card premium">
+        <div class="plan-ico">⭐</div>
+        <div class="plan-body">
+          <div class="plan-label">Mevcut Plan</div>
+          <div class="plan-name">Premium <span class="badge">⭐</span></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Sınırsız foto, detaylı analiz, listede öncelik</div>
+        </div>
+      </div>`;
+  } else {
+    wrap.innerHTML = `
+      <div class="plan-card">
+        <div class="plan-ico">${svgIcon('i-store','lg')}</div>
+        <div class="plan-body">
+          <div class="plan-label">Mevcut Plan</div>
+          <div class="plan-name">Ücretsiz</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">5 foto · Temel özellikler</div>
+        </div>
+        <button onclick="openUpgradeInfo()" style="padding:8px 14px;border:none;border-radius:var(--radius-md);background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#fff;font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;">⭐ Premium</button>
+      </div>`;
+  }
+}
+
+window.openUpgradeInfo = function(){
+  toast('Premium üyelik için iletişime geçin: bba@destek.tr','info');
+};
 
 function initMyShopMap(){
   const el = document.getElementById('ms-map');
@@ -3516,26 +3649,55 @@ function renderMyShopPhotos(){
   if(!wrap) return;
   wrap.innerHTML = '';
   const photos = (ownerShop && ownerShop.photos) || [];
+  const isPremium = ownerShop?.is_premium || ownerShop?.plan_code === 'premium';
+  const FREE_PHOTO_LIMIT = 5;
+  const atLimit = !isPremium && photos.length >= FREE_PHOTO_LIMIT;
+
   if(!photos.length){
     wrap.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text-muted);font-size:12px;border:1px dashed var(--border);border-radius:var(--radius-md)">Henüz fotoğraf yok</div>`;
-    return;
+  } else {
+    photos.forEach(p => {
+      const cell = document.createElement('div');
+      cell.style.cssText = 'position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:var(--bg-muted);';
+      const typeLabel = {cover:'Kapak', gallery:'Galeri', menu:'Menü'}[p.photo_type] || '';
+      cell.innerHTML = `
+        <img src="${p.url}" alt="${p.caption||''}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.opacity='0.3';this.parentElement.querySelector('.fb').style.display='flex'">
+        <div class="fb" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;color:var(--text-muted);font-size:10px;text-align:center;padding:8px;">Yüklenemedi</div>
+        <div style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.6);color:#fff;font-size:9px;padding:2px 6px;border-radius:var(--radius-sm)">${typeLabel}</div>
+        <button onclick="deletePhoto(${p.id})" style="position:absolute;top:4px;right:4px;width:24px;height:24px;border:none;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+          <svg class="icon icon-xs" style="color:#fff"><use href="#i-x"/></svg>
+        </button>`;
+      wrap.appendChild(cell);
+    });
   }
-  photos.forEach(p => {
-    const cell = document.createElement('div');
-    cell.style.cssText = 'position:relative;aspect-ratio:1;border-radius:var(--radius-md);overflow:hidden;background:var(--bg-muted);';
-    const typeLabel = {cover:'Kapak', gallery:'Galeri', menu:'Menü'}[p.photo_type] || '';
-    cell.innerHTML = `
-      <img src="${p.url}" alt="${p.caption||''}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.opacity='0.3';this.parentElement.querySelector('.fb').style.display='flex'">
-      <div class="fb" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;color:var(--text-muted);font-size:10px;text-align:center;padding:8px;">Yüklenemedi</div>
-      <div style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.6);color:#fff;font-size:9px;padding:2px 6px;border-radius:var(--radius-sm)">${typeLabel}</div>
-      <button onclick="deletePhoto(${p.id})" style="position:absolute;top:4px;right:4px;width:24px;height:24px;border:none;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;">
-        <svg class="icon icon-xs" style="color:#fff"><use href="#i-x"/></svg>
-      </button>`;
-    wrap.appendChild(cell);
-  });
+  // Limit uyarısı (sadece free + sınıra yaklaşmış/ulaşmış)
+  const warnEl = document.getElementById('photo-limit-warn');
+  if(warnEl) warnEl.remove();
+  if(!isPremium){
+    const remaining = FREE_PHOTO_LIMIT - photos.length;
+    const parent = wrap.parentElement;
+    const warn = document.createElement('div');
+    warn.id = 'photo-limit-warn';
+    warn.className = 'photo-limit-warn';
+    if(atLimit){
+      warn.innerHTML = `<svg class="icon icon-sm" style="color:#f59e0b"><use href="#i-x"/></svg>
+        <span><strong>Foto sınırına ulaştınız (${FREE_PHOTO_LIMIT}/${FREE_PHOTO_LIMIT}).</strong> Daha fazla foto için Premium'a geçin.</span>`;
+    } else {
+      warn.innerHTML = `<svg class="icon icon-sm" style="color:#f59e0b"><use href="#i-store"/></svg>
+        <span>Ücretsiz plan: ${photos.length}/${FREE_PHOTO_LIMIT} foto kullanıldı. Premium ile sınırsız foto ekleyebilirsiniz.</span>`;
+    }
+    parent.appendChild(warn);
+  }
 }
 
 window.openPhotoModal = function(){
+  // Foto sınırı kontrolü (free plan)
+  const isPremium = ownerShop?.is_premium || ownerShop?.plan_code === 'premium';
+  const photos = (ownerShop && ownerShop.photos) || [];
+  if(!isPremium && photos.length >= 5){
+    toast('Ücretsiz plan 5 foto ile sınırlı. Premium\'a geçin.','warn');
+    return;
+  }
   document.getElementById('photo-url').value = '';
   document.getElementById('photo-caption').value = '';
   document.getElementById('photo-type').value = 'gallery';
