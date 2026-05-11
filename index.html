@@ -1413,6 +1413,27 @@ html,body{
         <h2 style="display:flex;align-items:center;gap:10px;"><svg class="icon icon-xl" style="color:var(--red)"><use href="#i-shield-check"/></svg>Admin Paneli</h2>
         <p>İşletme başvurularını yönet</p>
       </div>
+
+      <!-- Dev Tools (test verisi) -->
+      <div style="margin:0 18px 16px;padding:14px;background:linear-gradient(135deg,rgba(245,158,11,0.06),rgba(251,191,36,0.03));border:0.5px solid rgba(245,158,11,0.25);border-radius:var(--radius-lg);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <svg class="icon icon-md" style="color:#f59e0b"><use href="#i-sparkles"/></svg>
+          <span style="font-size:13px;font-weight:700;">Test Verisi (Dev Tools)</span>
+        </div>
+        <p style="font-size:11px;color:var(--text-muted);margin-bottom:10px;line-height:1.5;">Demo amaçlı test verisi oluştur veya temizle. <strong>Dikkat:</strong> Seed işlemi mevcut shop/booking verilerini siler.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button onclick="runSeed()" id="seed-btn" style="padding:8px 14px;border:none;border-radius:var(--radius-md);background:var(--accent);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
+            <svg class="icon icon-sm"><use href="#i-sparkles"/></svg>
+            Test Verisi Oluştur
+          </button>
+          <button onclick="clearSeed()" id="clear-seed-btn" style="padding:8px 14px;border:0.5px solid var(--red);border-radius:var(--radius-md);background:transparent;color:var(--red);font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
+            <svg class="icon icon-sm"><use href="#i-x"/></svg>
+            Test Verisini Sil
+          </button>
+        </div>
+        <div id="seed-result" style="margin-top:10px;font-size:11px;color:var(--text-muted);display:none;"></div>
+      </div>
+
       <!-- SEKMELER -->
       <div style="display:flex;border-bottom:0.5px solid var(--border);margin:0 18px 16px;">
         <button id="tab-pending" onclick="switchAdminTab('pending')" style="flex:1;padding:10px;border:none;background:transparent;font-family:var(--font);font-size:13px;font-weight:600;color:var(--accent);border-bottom:2px solid var(--accent);cursor:pointer;">Bekleyen</button>
@@ -3735,6 +3756,59 @@ window.deletePhoto = async function(id){
     toast('Silindi','success');
   }catch(e){
     toast('Silinemedi: '+e.message,'error');
+  }
+};
+
+
+// =============================================================
+// ADMIN — Test Verisi (Dev Tools)
+// =============================================================
+window.runSeed = async function(){
+  if(!confirm('Test verisi oluşturulacak. Mevcut shop ve booking verileri SİLİNECEK. Devam?')) return;
+  const btn = document.getElementById('seed-btn');
+  const result = document.getElementById('seed-result');
+  if(btn){ btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '<svg class="icon icon-sm"><use href="#i-sparkles"/></svg> Oluşturuluyor...'; }
+  if(result){ result.style.display = 'block'; result.textContent = 'İşlem başladı, lütfen bekleyin...'; }
+  try{
+    const r = await POST('/admin/seed-test-data', { clear_first: true, bookings_count: 120 });
+    if(result){
+      result.innerHTML = `<div style="background:rgba(34,197,94,0.1);border:0.5px solid rgba(34,197,94,0.3);padding:10px;border-radius:var(--radius-md);color:var(--text);">
+        ✅ <strong>${r.message}</strong><br>
+        <span style="color:var(--text-muted);">
+          ${r.shops_created} işletme · ${r.services_created} hizmet · ${r.users_created} müşteri · ${r.bookings_created} randevu
+        </span>
+      </div>`;
+    }
+    toast('Test verisi oluşturuldu!','success');
+  }catch(e){
+    if(result){
+      result.innerHTML = `<div style="background:rgba(239,68,68,0.1);border:0.5px solid rgba(239,68,68,0.3);padding:10px;border-radius:var(--radius-md);color:var(--red);">❌ Hata: ${e.message}</div>`;
+    }
+    toast('Hata: '+e.message,'error');
+  } finally {
+    if(btn){ btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '<svg class="icon icon-sm"><use href="#i-sparkles"/></svg> Test Verisi Oluştur'; }
+  }
+};
+
+window.clearSeed = async function(){
+  if(!confirm('Tüm test verisi silinecek (shop, booking, demo müşteri). Devam?')) return;
+  const btn = document.getElementById('clear-seed-btn');
+  const result = document.getElementById('seed-result');
+  if(btn){ btn.disabled = true; btn.style.opacity = '0.6'; }
+  if(result){ result.style.display = 'block'; result.textContent = 'Siliniyor...'; }
+  try{
+    const r = await DEL('/admin/seed-test-data');
+    if(result){
+      result.innerHTML = `<div style="background:rgba(34,197,94,0.1);border:0.5px solid rgba(34,197,94,0.3);padding:10px;border-radius:var(--radius-md);color:var(--text);">✅ ${r.message}</div>`;
+    }
+    toast('Test verisi silindi','success');
+  }catch(e){
+    if(result){
+      result.innerHTML = `<div style="background:rgba(239,68,68,0.1);border:0.5px solid rgba(239,68,68,0.3);padding:10px;border-radius:var(--radius-md);color:var(--red);">❌ Hata: ${e.message}</div>`;
+    }
+    toast('Hata: '+e.message,'error');
+  } finally {
+    if(btn){ btn.disabled = false; btn.style.opacity = '1'; }
   }
 };
 
