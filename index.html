@@ -750,6 +750,119 @@ html,body{
   letter-spacing:0.3px;
   box-shadow:0 1px 3px rgba(245,158,11,0.3);
 }
+
+/* İŞLETME DETAY SAYFASI */
+.sd-hero{
+  position:relative;
+  height:240px;
+  background:linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.6) 100%), var(--bg-muted);
+  background-size:cover;
+  background-position:center;
+}
+.sd-hero-back{
+  position:absolute;top:12px;left:12px;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(0,0,0,0.5);
+  color:#fff;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);
+}
+.sd-hero-info{
+  position:absolute;bottom:14px;left:14px;right:14px;
+  color:#fff;
+}
+.sd-hero-name{font-size:22px;font-weight:700;color:#fff;line-height:1.2;}
+.sd-hero-sub{font-size:13px;color:rgba(255,255,255,0.85);margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.sd-body{padding:18px;display:flex;flex-direction:column;gap:18px;}
+.sd-section{}
+.sd-section-title{
+  font-size:13px;font-weight:700;color:var(--text);
+  margin-bottom:10px;display:flex;align-items:center;gap:6px;
+  text-transform:uppercase;letter-spacing:0.5px;
+}
+.sd-section-title svg{color:var(--accent);}
+.sd-card{
+  background:var(--bg-elevated);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:14px;
+}
+.sd-desc{font-size:13px;color:var(--text);line-height:1.6;}
+.sd-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.sd-tag{font-size:10px;background:var(--bg-muted);color:var(--text-muted);padding:3px 9px;border-radius:var(--radius-full);}
+
+/* Galeri carousel */
+.sd-gallery{
+  display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.sd-gallery::-webkit-scrollbar{display:none;}
+.sd-gallery-item{
+  flex:0 0 auto;
+  width:160px;height:160px;
+  border-radius:var(--radius-md);
+  overflow:hidden;
+  background:var(--bg-muted);
+  cursor:pointer;
+  position:relative;
+}
+.sd-gallery-item img{width:100%;height:100%;object-fit:cover;}
+.sd-gallery-item .ph-type{
+  position:absolute;top:6px;left:6px;
+  font-size:9px;background:rgba(0,0,0,0.6);color:#fff;
+  padding:2px 6px;border-radius:var(--radius-sm);
+}
+
+/* Hizmet listesi (detayda) */
+.sd-services{display:flex;flex-direction:column;gap:8px;}
+.sd-service-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px;background:var(--bg-elevated);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius-md);
+}
+.sd-service-name{font-size:13px;font-weight:600;color:var(--text);}
+.sd-service-meta{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.sd-service-price{font-size:14px;font-weight:700;color:var(--accent);flex-shrink:0;}
+
+/* Bilgi satırları */
+.sd-info-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;
+  border-bottom:0.5px solid var(--border);
+}
+.sd-info-row:last-child{border-bottom:none;}
+.sd-info-icon{
+  width:36px;height:36px;border-radius:var(--radius-md);
+  background:var(--accent-l);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.sd-info-body{flex:1;min-width:0;}
+.sd-info-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;}
+.sd-info-value{font-size:13px;color:var(--text);margin-top:2px;}
+.sd-info-value a{color:var(--accent);text-decoration:none;font-weight:600;}
+
+/* Detay haritası */
+.sd-map{
+  height:180px;border-radius:var(--radius-md);
+  overflow:hidden;border:0.5px solid var(--border);
+}
+
+/* CTA randevu butonu */
+.sd-cta-wrap{
+  position:sticky;bottom:0;
+  padding:14px 18px;
+  background:linear-gradient(180deg,transparent 0%,var(--bg) 30%);
+}
+.sd-cta-btn{
+  width:100%;padding:14px;
+  background:var(--accent);color:#fff;border:none;border-radius:var(--radius-lg);
+  font-family:var(--font);font-size:15px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:var(--shadow-brand);
+}
+.sd-cta-btn:hover{transform:translateY(-1px);}
+
 .shop-card.shop-premium{
   border-color:rgba(245,158,11,0.3);
   background:linear-gradient(180deg,rgba(251,191,36,0.04) 0%,var(--bg-elevated) 30%);
@@ -1044,10 +1157,15 @@ html,body{
       <div class="shop-list" id="shop-list"></div>
     </div>
 
+    <!-- İŞLETME DETAY -->
+    <div class="screen" id="s-shop-detail">
+      <div id="sd-content"></div>
+    </div>
+
     <!-- RANDEVU: HİZMET -->
     <div class="screen" id="s-book-service">
       <div class="page-head">
-        <button class="back-btn" onclick="navTo('s-book-shop')">← Geri</button>
+        <button class="back-btn" onclick="navTo('s-shop-detail')">← Geri</button>
         <h2>Hizmet Seçin</h2>
       </div>
       <div class="step-ind"><div class="step-d done"></div><div class="step-d active"></div><div class="step-d"></div><div class="step-d"></div><div class="step-d"></div><div class="step-d"></div></div>
@@ -1355,7 +1473,15 @@ html,body{
 
     <!-- DASHBOARD -->
     <div class="screen" id="s-dash">
-      <div class="page-head"><h2>İşletme Paneli</h2><p id="dash-shop-name">—</p><div id="dash-plan-badge" style="margin-top:6px;"></div></div>
+      <div class="page-head" style="position:relative;">
+        <h2>İşletme Paneli</h2>
+        <p id="dash-shop-name">—</p>
+        <div id="dash-plan-badge" style="margin-top:6px;"></div>
+        <button onclick="openManualBooking()" style="position:absolute;top:24px;right:18px;padding:10px 14px;border:none;border-radius:var(--radius-md);background:var(--accent);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow-brand);">
+          <svg class="icon icon-sm"><use href="#i-plus"/></svg>
+          <span>Manuel Rezervasyon</span>
+        </button>
+      </div>
 
       <!-- Filtre sekmeleri -->
       <div class="dash-tabs" id="dash-tabs">
@@ -1705,6 +1831,61 @@ html,body{
         </select>
       </div>
       <button class="btn btn-accent" onclick="savePhoto()" style="display:flex;align-items:center;justify-content:center;gap:8px;"><svg class="icon icon-md"><use href="#i-check"/></svg>Ekle</button>
+    </div>
+  </div>
+</div>
+
+<!-- MANUEL REZERVASYON MODAL (Owner) -->
+<div class="modal-back" id="manual-booking-modal" onclick="if(event.target===this)closeManualBooking()">
+  <div class="modal-card" style="max-width:480px;">
+    <div class="modal-head">
+      <h3>Manuel Rezervasyon Ekle</h3>
+      <button class="modal-close" onclick="closeManualBooking()"><svg class="icon icon-md"><use href="#i-x"/></svg></button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="font-size:11px;color:var(--text-muted);background:var(--bg-muted);padding:10px;border-radius:var(--radius-md);">
+        💡 Telefonla gelen rezervasyonlar için bu formu kullanın. Otomatik <strong>onaylı</strong> olarak eklenir.
+      </div>
+
+      <div>
+        <div class="f-label">Hizmet</div>
+        <select class="f-input" id="mb-service"></select>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div>
+          <div class="f-label">Tarih</div>
+          <input class="f-input" type="date" id="mb-date">
+        </div>
+        <div>
+          <div class="f-label">Saat</div>
+          <input class="f-input" type="time" id="mb-time">
+        </div>
+      </div>
+
+      <div>
+        <div class="f-label">Müşteri Adı</div>
+        <input class="f-input" type="text" id="mb-name" placeholder="Ahmet Yılmaz">
+      </div>
+      <div>
+        <div class="f-label">Telefon</div>
+        <input class="f-input" type="tel" id="mb-phone" placeholder="0532 123 45 67">
+      </div>
+
+      <!-- Dining özel: kişi sayısı -->
+      <div id="mb-dining-row" style="display:none;">
+        <div class="f-label">Kişi Sayısı</div>
+        <input class="f-input" type="number" id="mb-party" min="1" max="20" value="2">
+      </div>
+
+      <div>
+        <div class="f-label">Not (opsiyonel)</div>
+        <textarea class="addr-textarea" id="mb-note" placeholder="Özel istek, masa tercihi vs"></textarea>
+      </div>
+
+      <button class="btn btn-accent" onclick="saveManualBooking()" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg class="icon icon-md"><use href="#i-check"/></svg>Rezervasyonu Ekle
+      </button>
     </div>
   </div>
 </div>
@@ -2366,12 +2547,233 @@ function renderShops(){
 function onShopSelected(s){
   selectedShop = s;
   selectedService = null;
-  // Kategori objesini bul (flow_type için)
   const cat = allCategories.find(c => c.code === s.category_code);
   selectedCategory = cat;
-  navTo('s-book-service');
-  renderPills();
+  // Önce detay sayfasına git (eski direkt hizmet ekranına atlama yerine)
+  renderShopDetail(s);
+  navTo('s-shop-detail');
+  // Hizmetleri arka planda yükle
   loadShopServices(s.id);
+  // Harita için biraz gecikme
+  setTimeout(initShopDetailMap, 200);
+}
+
+// "Randevu Al" CTA — detay ekranından hizmet ekranına geç
+window.proceedToBooking = function(){
+  if(!selectedShop) return;
+  renderPills();
+  navTo('s-book-service');
+};
+
+// İşletme Detay Ekranı render
+function renderShopDetail(s){
+  const wrap = document.getElementById('sd-content');
+  if(!wrap || !s) return;
+
+  // Foto sınıflandırma
+  const photos = s.photos || [];
+  const cover = photos.find(p => p.photo_type === 'cover') || photos[0];
+  const gallery = photos.filter(p => p.photo_type !== 'menu');
+  const menuPhotos = photos.filter(p => p.photo_type === 'menu');
+
+  // Premium rozeti
+  const isPremium = s.is_premium || s.plan_code === 'premium';
+  const premiumBadge = isPremium ? `<span class="premium-pill">⭐ Premium</span>` : '';
+
+  // Subtype label
+  const subtypeLabel = s.subtype ? `<span style="text-transform:capitalize;">${s.subtype}</span>` : '';
+  const priceRange = s.price_range ? '$'.repeat(s.price_range) : '';
+
+  // Hero
+  const heroStyle = cover ? `style="background-image:url('${cover.url}')"` : '';
+
+  // Tags
+  const tagsHtml = (s.tags && s.tags.length)
+    ? `<div class="sd-tags">${s.tags.map(t => `<span class="sd-tag">${t}</span>`).join('')}</div>`
+    : '';
+
+  // Açıklama
+  const desc = s.description_tr || s.description_ru || s.description || '';
+
+  // Çalışma saatleri
+  const hours = `${s.open_time || '—'} – ${s.close_time || '—'}`;
+
+  // Telefon
+  const phoneHtml = s.phone
+    ? `<a href="tel:${s.phone}">${s.phone}</a>`
+    : '<span style="color:var(--text-muted)">—</span>';
+
+  // Adres
+  const addrText = s.address_tr || s.address_ru || s.address || '';
+
+  // Konum/harita
+  const hasLocation = s.lat && s.lng;
+  const mapBlock = hasLocation
+    ? `<div class="sd-map" id="sd-map"></div>
+       <a href="https://www.google.com/maps?q=${s.lat},${s.lng}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--accent);margin-top:8px;text-decoration:none;font-weight:600;">
+         <svg class="icon icon-xs"><use href="#i-map-pin"/></svg>Google Maps'te Aç
+       </a>`
+    : `<div style="font-size:12px;color:var(--text-muted);">Konum belirtilmemiş</div>`;
+
+  // Hizmet listesi (loadShopServices sonra ekleyecek, şu an placeholder)
+  const servicesPlaceholder = `
+    <div class="sd-services" id="sd-services-list">
+      <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:12px;">Hizmetler yükleniyor...</div>
+    </div>`;
+
+  // Galeri
+  const galleryHtml = gallery.length
+    ? `<div class="sd-gallery">${gallery.map(p => `
+        <div class="sd-gallery-item">
+          <img src="${p.url}" alt="${p.caption||''}" loading="lazy">
+          ${p.photo_type==='cover'?'<span class="ph-type">Kapak</span>':''}
+        </div>`).join('')}
+      </div>`
+    : '';
+
+  // Menü fotoları (sadece dining)
+  const menuHtml = (s.category_code === 'dining' && menuPhotos.length)
+    ? `<div class="sd-section">
+         <div class="sd-section-title"><svg class="icon icon-sm"><use href="#i-clipboard"/></svg>Menü</div>
+         <div class="sd-gallery">
+           ${menuPhotos.map(p => `
+             <div class="sd-gallery-item">
+               <img src="${p.url}" alt="Menü" loading="lazy">
+               <span class="ph-type">Menü</span>
+             </div>`).join('')}
+         </div>
+       </div>`
+    : '';
+
+  wrap.innerHTML = `
+    <!-- Hero -->
+    <div class="sd-hero" ${heroStyle}>
+      <button class="sd-hero-back" onclick="navTo('s-book-shop')"><svg class="icon icon-md"><use href="#i-chevron-right"/></svg></button>
+      <div class="sd-hero-info">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+          ${premiumBadge}
+        </div>
+        <div class="sd-hero-name">${s.name || s.name_tr}</div>
+        <div class="sd-hero-sub">
+          ${subtypeLabel}
+          ${priceRange ? `<span style="color:#fbbf24;font-weight:700;">${priceRange}</span>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <div class="sd-body">
+
+      ${desc ? `
+        <div class="sd-section">
+          <div class="sd-section-title"><svg class="icon icon-sm"><use href="#i-clipboard"/></svg>Hakkında</div>
+          <div class="sd-card">
+            <div class="sd-desc">${desc}</div>
+            ${tagsHtml}
+          </div>
+        </div>` : ''}
+
+      ${gallery.length ? `
+        <div class="sd-section">
+          <div class="sd-section-title"><svg class="icon icon-sm"><use href="#i-sparkles"/></svg>Galeri</div>
+          ${galleryHtml}
+        </div>` : ''}
+
+      ${menuHtml}
+
+      <div class="sd-section">
+        <div class="sd-section-title"><svg class="icon icon-sm"><use href="#i-droplet"/></svg>Hizmetler</div>
+        ${servicesPlaceholder}
+      </div>
+
+      <div class="sd-section">
+        <div class="sd-section-title"><svg class="icon icon-sm"><use href="#i-clock"/></svg>Bilgiler</div>
+        <div class="sd-card">
+          <div class="sd-info-row">
+            <div class="sd-info-icon"><svg class="icon icon-md"><use href="#i-clock"/></svg></div>
+            <div class="sd-info-body">
+              <div class="sd-info-label">Çalışma Saatleri</div>
+              <div class="sd-info-value">${hours}</div>
+            </div>
+          </div>
+          <div class="sd-info-row">
+            <div class="sd-info-icon"><svg class="icon icon-md"><use href="#i-user"/></svg></div>
+            <div class="sd-info-body">
+              <div class="sd-info-label">Telefon</div>
+              <div class="sd-info-value">${phoneHtml}</div>
+            </div>
+          </div>
+          ${addrText ? `
+          <div class="sd-info-row">
+            <div class="sd-info-icon"><svg class="icon icon-md"><use href="#i-map-pin"/></svg></div>
+            <div class="sd-info-body">
+              <div class="sd-info-label">Adres</div>
+              <div class="sd-info-value">${addrText}</div>
+            </div>
+          </div>` : ''}
+        </div>
+      </div>
+
+      <div class="sd-section">
+        <div class="sd-section-title"><svg class="icon icon-sm"><use href="#i-map-pin"/></svg>Konum</div>
+        ${mapBlock}
+      </div>
+
+    </div>
+
+    <!-- CTA -->
+    <div class="sd-cta-wrap">
+      <button class="sd-cta-btn" onclick="proceedToBooking()">
+        <svg class="icon icon-md"><use href="#i-plus"/></svg>
+        Randevu Al
+      </button>
+    </div>
+  `;
+}
+
+// Detay sayfasında hizmetleri shopServices yüklendiğinde göster
+function renderShopDetailServices(){
+  const list = document.getElementById('sd-services-list');
+  if(!list) return;
+  if(!shopServices || !shopServices.length){
+    list.innerHTML = `<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:12px;">Henüz hizmet eklenmemiş.</div>`;
+    return;
+  }
+  list.innerHTML = shopServices.map(s => `
+    <div class="sd-service-item">
+      <div style="flex:1;min-width:0;">
+        <div class="sd-service-name">${s.name_tr || s.name}</div>
+        <div class="sd-service-meta">~${s.duration_min} dk</div>
+      </div>
+      <div class="sd-service-price">₺${s.price}</div>
+    </div>
+  `).join('');
+}
+
+// Shop detail haritası
+let sdMap = null;
+function initShopDetailMap(){
+  if(!selectedShop || !selectedShop.lat || !selectedShop.lng) return;
+  const el = document.getElementById('sd-map');
+  if(!el || typeof L === 'undefined') return;
+  if(sdMap){
+    sdMap.remove();
+    sdMap = null;
+  }
+  sdMap = L.map(el, {
+    center: [selectedShop.lat, selectedShop.lng],
+    zoom: 15,
+    zoomControl: false,
+    attributionControl: false,
+    dragging: false,
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+    touchZoom: false,
+  });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
+    subdomains: 'abcd', maxZoom: 19,
+  }).addTo(sdMap);
+  L.marker([selectedShop.lat, selectedShop.lng]).addTo(sdMap);
+  setTimeout(()=>sdMap.invalidateSize(), 100);
 }
 
 window.goBooking=function(){
@@ -2386,6 +2788,8 @@ async function loadShopServices(shopId){
   try{ shopServices = await GET(`/services/shop/${shopId}?lang=${lang}`); }
   catch(e){ shopServices=[]; }
   renderServices();
+  // Detay ekranı açıksa orayı da güncelle
+  renderShopDetailServices();
 }
 function renderServices(){
   const g=document.getElementById('svc-grid');if(!g) return;g.innerHTML='';
@@ -4030,6 +4434,104 @@ window.clearSeed = async function(){
     toast('Hata: '+e.message,'error');
   } finally {
     if(btn){ btn.disabled = false; btn.style.opacity = '1'; }
+  }
+};
+
+
+// =============================================================
+// OWNER — Manuel Rezervasyon Ekleme
+// =============================================================
+window.openManualBooking = async function(){
+  if(!ownerShop){
+    toast('İşletme bilgisi yüklenmedi','error');
+    return;
+  }
+  // Hizmetleri yükle
+  let services = [];
+  try{
+    services = await GET('/services/my');
+  }catch(e){
+    toast('Hizmetler yüklenemedi: '+e.message,'error');
+    return;
+  }
+  if(!services.length){
+    toast('Önce hizmet eklemelisiniz','warn');
+    return;
+  }
+  const sel = document.getElementById('mb-service');
+  sel.innerHTML = services.map(s => `<option value="${s.id}" data-price="${s.price}" data-duration="${s.duration_min}">${s.name_tr || s.name} · ₺${s.price}</option>`).join('');
+  // Default değerler
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('mb-date').value = today;
+  document.getElementById('mb-time').value = ownerShop.open_time || '10:00';
+  document.getElementById('mb-name').value = '';
+  document.getElementById('mb-phone').value = '';
+  document.getElementById('mb-note').value = '';
+  document.getElementById('mb-party').value = '2';
+  // Dining ise kişi sayısı göster
+  const isDining = ownerShop.category_code === 'dining';
+  document.getElementById('mb-dining-row').style.display = isDining ? 'block' : 'none';
+  document.getElementById('manual-booking-modal').classList.add('show');
+};
+
+window.closeManualBooking = function(){
+  document.getElementById('manual-booking-modal').classList.remove('show');
+};
+
+window.saveManualBooking = async function(){
+  const serviceId = document.getElementById('mb-service').value;
+  const dateStr   = document.getElementById('mb-date').value;
+  const timeStr   = document.getElementById('mb-time').value;
+  const name      = document.getElementById('mb-name').value.trim();
+  const phone     = document.getElementById('mb-phone').value.trim();
+  const note      = document.getElementById('mb-note').value.trim();
+  const party     = document.getElementById('mb-party').value;
+
+  if(!serviceId){ toast('Hizmet seçin','warn'); return; }
+  if(!dateStr || !timeStr){ toast('Tarih ve saat gerekli','warn'); return; }
+  if(!name){ toast('Müşteri adı gerekli','warn'); return; }
+  if(!phone){ toast('Telefon gerekli','warn'); return; }
+
+  const selOpt = document.getElementById('mb-service').selectedOptions[0];
+  const price = parseFloat(selOpt.dataset.price);
+  const duration = parseInt(selOpt.dataset.duration);
+
+  // end_time hesapla
+  const [h, m] = timeStr.split(':').map(Number);
+  const endMin = h * 60 + m + duration;
+  const eh = Math.floor(endMin / 60), em = endMin % 60;
+  const endTime = `${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`;
+
+  // Meta
+  const meta = {
+    service_id: parseInt(serviceId),
+    source: 'manual',          // takip için: bu manuel girilmiş
+  };
+  if(ownerShop.category_code === 'dining'){
+    meta.party_size = parseInt(party) || 2;
+  }
+
+  const body = {
+    shop_id:        ownerShop.id,
+    booking_date:   dateStr,
+    start_time:     timeStr,
+    end_time:       endTime,
+    service_id:     parseInt(serviceId),
+    price:          price,
+    customer_name:  name,
+    customer_phone: phone,
+    notes:          note || null,
+    meta:           meta,
+    manual:         true,        // backend: status = 'confirmed' otomatik
+  };
+
+  try{
+    await POST('/bookings/', body);
+    closeManualBooking();
+    toast('Rezervasyon eklendi','success');
+    if(typeof loadDashboard === 'function') loadDashboard();
+  }catch(e){
+    toast('Eklenemedi: '+e.message,'error');
   }
 };
 
