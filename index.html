@@ -1675,10 +1675,15 @@ html,body{
         <h2>İşletme Paneli</h2>
         <p id="dash-shop-name">—</p>
         <div id="dash-plan-badge" style="margin-top:6px;"></div>
-        <button onclick="openManualBooking()" style="position:absolute;top:24px;right:18px;padding:10px 14px;border:none;border-radius:var(--radius-md);background:var(--accent);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow-brand);">
-          <svg class="icon icon-sm"><use href="#i-plus"/></svg>
-          <span>Manuel Rezervasyon</span>
-        </button>
+        <div style="position:absolute;top:24px;right:18px;display:flex;gap:8px;align-items:center;">
+          <button onclick="openManualBooking()" style="padding:10px 14px;border:none;border-radius:var(--radius-md);background:var(--accent);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow-brand);">
+            <svg class="icon icon-sm"><use href="#i-plus"/></svg>
+            <span>Manuel</span>
+          </button>
+          <button onclick="logout()" title="Çıkış Yap" style="width:36px;height:36px;border:0.5px solid var(--border);border-radius:var(--radius-md);background:var(--bg-elevated);color:var(--red);cursor:pointer;display:flex;align-items:center;justify-content:center;">
+            <svg class="icon icon-md"><use href="#i-logout"/></svg>
+          </button>
+        </div>
       </div>
 
       <!-- Filtre sekmeleri -->
