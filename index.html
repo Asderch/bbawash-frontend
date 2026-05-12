@@ -1059,13 +1059,48 @@ html,body{
     </div>
 
     <!-- RANDEVU: ADRES + HARİTA -->
-    <div class="screen" id="s-book-address">
+    <!-- WASH FLOW — HİZMET TİPİ (sadece karma yıkamacılarda) -->
+    <div class="screen" id="s-wash-mode">
       <div class="page-head">
         <button class="back-btn" onclick="navTo('s-book-service')">← Geri</button>
+        <h2>Hizmet Tipi</h2>
+        <p>Nasıl tercih edersiniz?</p>
+      </div>
+      <div class="step-ind"><div class="step-d done"></div><div class="step-d done"></div><div class="step-d active"></div><div class="step-d"></div><div class="step-d"></div><div class="step-d"></div></div>
+      <div class="booking-body">
+        <div class="mode-cards" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="mode-card" onclick="selectWashMode('mobile')" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all var(--dur-fast) var(--ease-out);">
+            <div style="width:48px;height:48px;border-radius:var(--radius-md);background:var(--accent-l);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg class="icon icon-xl"><use href="#i-car"/></svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:15px;font-weight:700;color:var(--text);">Eve Gelin</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Aracımı evden alın, yıkayıp geri getirin</div>
+            </div>
+            <svg class="icon icon-sm" style="color:var(--text-muted)"><use href="#i-chevron-right"/></svg>
+          </div>
+          <div class="mode-card" onclick="selectWashMode('self')" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all var(--dur-fast) var(--ease-out);">
+            <div style="width:48px;height:48px;border-radius:var(--radius-md);background:var(--accent-l);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg class="icon icon-xl"><use href="#i-map-pin"/></svg>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:15px;font-weight:700;color:var(--text);">Kendim Geleceğim</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Aracımı kendim getireceğim, orada yıkanacak</div>
+            </div>
+            <svg class="icon icon-sm" style="color:var(--text-muted)"><use href="#i-chevron-right"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RANDEVU: ADRES + HARİTA (sadece mobile mode'da) -->
+    <div class="screen" id="s-book-address">
+      <div class="page-head">
+        <button class="back-btn" onclick="washBackFromAddress()">← Geri</button>
         <h2>Aracınızı Nereden Alalım?</h2>
         <p>Haritada konum seçin, gerekirse not ekleyin.</p>
       </div>
-      <div class="step-ind"><div class="step-d done"></div><div class="step-d done"></div><div class="step-d active"></div><div class="step-d"></div><div class="step-d"></div><div class="step-d"></div></div>
+      <div class="step-ind"><div class="step-d done"></div><div class="step-d done"></div><div class="step-d done"></div><div class="step-d active"></div><div class="step-d"></div><div class="step-d"></div></div>
       <div class="booking-body">
         <div class="map-wrap">
           <div id="addr-map" class="map-host"></div>
@@ -1373,6 +1408,16 @@ html,body{
           </div>
         </div>
         <div><div class="f-label">Alt Tip (opsiyonel)</div><input class="f-input" id="ap-subtype" placeholder="cafe, bistro, kuaför, klinik..."></div>
+
+        <!-- Yıkama için özel: Hizmet Tipi seçimi -->
+        <div id="ap-wash-mode-row" style="display:none;">
+          <div class="f-label">Hizmet Tipi</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+            <button type="button" class="time-pill" id="ap-mode-mobil" onclick="setApplyWashMode('mobil')" style="padding:10px;">Sadece Mobil<br><span style="font-size:9px;color:var(--text-muted);">Eve giderim</span></button>
+            <button type="button" class="time-pill" id="ap-mode-sabit" onclick="setApplyWashMode('sabit')" style="padding:10px;">Sadece Sabit<br><span style="font-size:9px;color:var(--text-muted);">Müşteri gelir</span></button>
+            <button type="button" class="time-pill" id="ap-mode-karma" onclick="setApplyWashMode('karma')" style="padding:10px;">İkisi de<br><span style="font-size:9px;color:var(--text-muted);">Müşteri seçer</span></button>
+          </div>
+        </div>
         <div><div class="f-label">İşletme Adı (TR)</div><input class="f-input" id="ap-name-tr" placeholder="BBA Cafe & Bistro"></div>
         <div><div class="f-label">İşletme Adı (RU)</div><input class="f-input" id="ap-name-ru" placeholder="BBA Кафе"></div>
         <div><div class="f-label">Açıklama (TR)</div><textarea class="addr-textarea" id="ap-desc-tr" placeholder="Kısaca işletmeniz hakkında..."></textarea></div>
@@ -1491,6 +1536,16 @@ html,body{
           <div><div class="f-label">İsim (TR)</div><input class="f-input" type="text" id="ms-name-tr"></div>
           <div><div class="f-label">İsim (RU)</div><input class="f-input" type="text" id="ms-name-ru"></div>
           <div><div class="f-label">Alt Tip</div><input class="f-input" type="text" id="ms-subtype" placeholder="cafe, bistro, kuaför..."></div>
+
+          <!-- Yıkama için: Hizmet Tipi seçimi -->
+          <div id="ms-wash-mode-row" style="display:none;">
+            <div class="f-label">Hizmet Tipi (Yıkama)</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+              <button type="button" class="time-pill" id="ms-mode-mobil" onclick="setMyShopWashMode('mobil')" style="padding:10px;">Sadece Mobil</button>
+              <button type="button" class="time-pill" id="ms-mode-sabit" onclick="setMyShopWashMode('sabit')" style="padding:10px;">Sadece Sabit</button>
+              <button type="button" class="time-pill" id="ms-mode-karma" onclick="setMyShopWashMode('karma')" style="padding:10px;">İkisi de</button>
+            </div>
+          </div>
           <div><div class="f-label">Açıklama (TR)</div><textarea class="addr-textarea" id="ms-desc-tr" placeholder="Kısa tanıtım..."></textarea></div>
           <div><div class="f-label">Açıklama (RU)</div><textarea class="addr-textarea" id="ms-desc-ru" placeholder="Краткое описание..."></textarea></div>
         </div>
@@ -1727,11 +1782,53 @@ function toast(msg, type='info'){
 // Default ikon ve hizmet sablonlari
 const SERVICE_ICON_OPTIONS=['i-droplet','i-sparkles','i-shield-check','i-truck-wash','i-car','i-package','i-store','i-clock','i-check-circle','i-info'];
 
-const STATUS_PCT={pending:0,confirmed:10,on_the_way:20,picked_up:35,washing:55,drying:70,ready:82,delivering:92,delivered:100,cancelled:0};
+const STATUS_PCT={pending:0,confirmed:10,on_the_way:20,picked_up:35,washing:55,drying:70,ready:82,delivering:92,delivered:100,arrived:50,in_service:75,completed:100,no_show:0,cancelled:0};
 const STATUS_LBL={pending:'Onay Bekleniyor',confirmed:'Onaylandı',on_the_way:'Firma Yola Çıktı',picked_up:'Araç Alındı',washing:'Yıkanıyor',drying:'Kurulanıyor',ready:'Yıkama Bitti',delivering:'Teslime Getiriliyor',delivered:'Teslim Edildi',arrived:'Geldi',in_service:'Hizmet Veriliyor',completed:'Tamamlandı',no_show:'Gelmedi',cancelled:'İptal'};
-const STEP_KEYS=['pending','confirmed','on_the_way','picked_up','washing','drying','ready','delivering','delivered'];
-const STEPS=['Onay Bekleniyor','Onaylandı','Yola Çıktı','Araç Alındı','Yıkanıyor','Kurulanıyor','Yıkama Bitti','Teslime Getiriliyor','Teslim Edildi'];
-const ETA=['','','Yolda','','','','','Geliyor','Tamamlandı'];
+
+// Kategori-bazlı takip adımları
+const TRACK_STEPS = {
+  // Eve hizmet — yıkama, vs.
+  home_service: {
+    keys:  ['pending','confirmed','on_the_way','picked_up','washing','drying','ready','delivering','delivered'],
+    steps: ['Onay Bekleniyor','Onaylandı','Yola Çıktı','Araç Alındı','Yıkanıyor','Kurulanıyor','Yıkama Bitti','Teslime Getiriliyor','Teslim Edildi'],
+    eta:   ['','','Yolda','','','','','Geliyor','Tamamlandı'],
+  },
+  // Restoran / kafe
+  dining: {
+    keys:  ['pending','confirmed','arrived','completed'],
+    steps: ['Rezervasyon Alındı','Onaylandı','Geldiniz','Hizmet Tamamlandı'],
+    eta:   ['','Onaylandı, sizi bekliyoruz','Hoşgeldiniz','Tekrar bekleriz'],
+  },
+  // Kuaför / güzellik
+  beauty: {
+    keys:  ['pending','confirmed','arrived','completed'],
+    steps: ['Randevu Alındı','Onaylandı','Salonda','Hizmet Tamamlandı'],
+    eta:   ['','Onaylandı, görüşmek üzere','Hizmetiniz başladı','Görüşmek üzere'],
+  },
+  // Doktor / klinik
+  medical: {
+    keys:  ['pending','confirmed','arrived','completed'],
+    steps: ['Randevu Alındı','Onaylandı','Klinikte','Muayene Tamamlandı'],
+    eta:   ['','Doktor sizi bekliyor','Muayene devam ediyor','Geçmiş olsun'],
+  },
+  // Spa / masaj
+  spa: {
+    keys:  ['pending','confirmed','arrived','completed'],
+    steps: ['Randevu Alındı','Onaylandı','Spa\'da','Hizmet Tamamlandı'],
+    eta:   ['','Onaylandı','Hizmetiniz devam ediyor','Dinlendiniz mi?'],
+  },
+  // Generic appointment (kategori bilinmiyorsa)
+  appointment: {
+    keys:  ['pending','confirmed','arrived','completed'],
+    steps: ['Randevu Alındı','Onaylandı','Geldiniz','Tamamlandı'],
+    eta:   ['','Bekliyoruz','Hizmet veriliyor','Tamamlandı'],
+  },
+};
+
+// Eski global'leri uyumluluk için tut (kullanılan yerler olabilir)
+const STEP_KEYS = TRACK_STEPS.home_service.keys;
+const STEPS = TRACK_STEPS.home_service.steps;
+const ETA = TRACK_STEPS.home_service.eta;
 const SHOP_ICONS=['i-droplet','i-sparkles','i-shield-check','i-car','i-store'];
 const DAYS=['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
 const NEXT_STATUS={confirmed:'on_the_way',on_the_way:'picked_up',picked_up:'washing',washing:'drying',drying:'ready',ready:'delivering',delivering:'delivered'};
@@ -2211,7 +2308,7 @@ async function setupOwnerView(){
 async function loadHomeAppt(){
   try{
     const appts=await GET('/bookings/');
-    const active=appts.find(a=>!['delivered','cancelled'].includes(a.status));
+    const active=appts.find(a=>!['delivered','cancelled','completed','no_show'].includes(a.status));
     const area=document.getElementById('active-appt-area');
     if(!active){area.innerHTML='';return;}
     const pct=STATUS_PCT[active.status]||0;
@@ -2303,21 +2400,63 @@ function renderServices(){
   });
 }
 
+let washMode = 'mobile';  // mobile (eve gelir) | self (müşteri gelir)
+
 window.goToStep3=function(){
   if(!selectedService){toast('Lütfen hizmet seçin','warn');return;}
-  // Flow tipine göre yönlendir
   const flow = selectedCategory?.flow_type || 'home_service';
   if(flow === 'home_service'){
-    // Wash akışı — adres ekranı
-    navTo('s-book-address');
-    renderPills();
-    setTimeout(initAddressMap, 100);
+    // Yıkama: subtype'a göre akış
+    const subtype = (selectedShop?.subtype || '').toLowerCase();
+    if(subtype === 'sabit'){
+      // Sadece kendim gelirim — direkt tarih/saat ekranına
+      washMode = 'self';
+      navTo('s-book-datetime');
+      renderPills();
+      renderDateChips();
+      renderSlotChips();
+    } else if(subtype === 'mobil' || !subtype){
+      // Sadece eve gelir (eski default)
+      washMode = 'mobile';
+      navTo('s-book-address');
+      renderPills();
+      setTimeout(initAddressMap, 100);
+    } else {
+      // Karma: kullanıcı seçsin
+      navTo('s-wash-mode');
+      renderPills();
+    }
   } else {
     // Appointment akışı — tarih/saat
     navTo('s-app-datetime');
     renderAppPill();
     renderAppDateChips();
     renderAppSlotChips();
+  }
+};
+
+window.selectWashMode = function(mode){
+  washMode = mode;
+  if(mode === 'mobile'){
+    navTo('s-book-address');
+    renderPills();
+    setTimeout(initAddressMap, 100);
+  } else {
+    // self — adresi atla, direkt tarih/saat
+    navTo('s-book-datetime');
+    renderPills();
+    renderDateChips();
+    renderSlotChips();
+  }
+};
+
+window.washBackFromAddress = function(){
+  // Adres ekranından geri: karma akışta mode ekranına, değilse hizmet ekranına
+  const subtype = (selectedShop?.subtype || '').toLowerCase();
+  if(subtype && subtype !== 'mobil' && subtype !== 'sabit'){
+    navTo('s-wash-mode');
+  } else {
+    navTo('s-book-service');
   }
 };
 
@@ -2508,6 +2647,7 @@ window.confirmBooking=async function(){
   const today=new Date(); today.setDate(today.getDate()+selectedDate);
   const dateStr=today.toISOString().split('T')[0];
 
+  const isSelf = (washMode === 'self');
   const body = {
     shop_id:       selectedShop.id,
     booking_date:  dateStr,
@@ -2519,10 +2659,11 @@ window.confirmBooking=async function(){
     customer_phone: phone,
     meta: {
       vehicle_id:     selectedVehicle.id,
-      pickup_address: pickupAddress.note || '',
-      pickup_lat:     pickupAddress.lat,
-      pickup_lng:     pickupAddress.lng,
-      address_note:   pickupAddress.note,
+      wash_mode:      washMode,          // 'mobile' veya 'self'
+      pickup_address: isSelf ? null : (pickupAddress.note || ''),
+      pickup_lat:     isSelf ? null : pickupAddress.lat,
+      pickup_lng:     isSelf ? null : pickupAddress.lng,
+      address_note:   isSelf ? null : pickupAddress.note,
       pickup_time:    selectedPickup,
       dropoff_time:   selectedDropoff,
       service_id:     selectedService.id,
@@ -2534,6 +2675,7 @@ window.confirmBooking=async function(){
     selectedVehicle=null; selectedService=null;
     selectedPickup=null; selectedDropoff=null;
     pickupAddress={lat:null,lng:null,note:''};
+    washMode = 'mobile';
     if(addrMarker){ addrMap.removeLayer(addrMarker); addrMarker=null; }
     navTo('s-book-success');
     toast('Randevunuz alındı!','success');
@@ -2804,30 +2946,44 @@ function renderPills(){
 async function loadTrack(){
   try{
     const appts=await GET('/bookings/');
-    const active=appts.find(a=>!['delivered','cancelled'].includes(a.status));
+    // Aktif: tamamlanmamış / iptal edilmemiş / gelmedi olmayan
+    const active = appts.find(a => !['delivered','cancelled','completed','no_show'].includes(a.status));
     if(!active){
       document.getElementById('track-sub').textContent='Aktif randevu yok';
       document.getElementById('track-steps').innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-map-pin"/></svg></div><p>Aktif randevunuz bulunmuyor.</p></div>`;
-      // ETA kartini gizle
       const etaWrap=document.getElementById('track-eta-card'); if(etaWrap) etaWrap.style.display='none';
       return;
     }
-    const si=STEP_KEYS.indexOf(active.status);
-    const pct=STATUS_PCT[active.status]||0;
+
+    // Kategoriye göre takip akışı seç
+    const cat = allCategories.find(c => c.code === active.category_code);
+    const flowType = cat?.flow_type || 'appointment';
+    // Önce kategori spesifik adımları kullan, yoksa flow_type genel adımlarını
+    const trackDef = TRACK_STEPS[active.category_code] || TRACK_STEPS[flowType] || TRACK_STEPS.appointment;
+    const stepKeys = trackDef.keys;
+    const steps    = trackDef.steps;
+    const etaTexts = trackDef.eta;
+
+    const si = stepKeys.indexOf(active.status);
+    const pct = STATUS_PCT[active.status]||0;
     document.getElementById('track-bar').style.width=pct+'%';
     document.getElementById('track-pct').textContent=pct+'%';
-    document.getElementById('track-eta').textContent=ETA[si]||STATUS_LBL[active.status]||'';
+    document.getElementById('track-eta').textContent = (si>=0 ? etaTexts[si] : '') || STATUS_LBL[active.status]||'';
     const dt=active.booking_date+' '+active.start_time;
     const dropTxt=active.end_time?` · Bitiş: ${active.end_time}`:'';
     document.getElementById('track-sub').textContent=dt+dropTxt;
 
-    // ETA karti
-    renderEtaCard(active);
+    // ETA kartı (sadece home_service için anlamlı)
+    if(flowType === 'home_service'){
+      renderEtaCard(active);
+    } else {
+      const etaWrap=document.getElementById('track-eta-card'); if(etaWrap) etaWrap.style.display='none';
+    }
 
     const wrap=document.getElementById('track-steps');wrap.innerHTML='';
-    STEPS.forEach((title,i)=>{
-      const state=i<si?'done':i===si?'active':'pend';
-      const div=document.createElement('div');div.className='t-step';
+    steps.forEach((title,i)=>{
+      const state = i < si ? 'done' : i === si ? 'active' : 'pend';
+      const div = document.createElement('div'); div.className='t-step';
       div.innerHTML=`<div class="t-dot ${state}">${state==='done'?'<svg class="icon icon-sm"><use href="#i-check"/></svg>':state==='active'?'●':'○'}</div><div class="t-info"><div class="t-title ${state}">${title}</div>${state==='active'?`<div class="pulse-badge"><div class="pulse"></div><span>Devam ediyor</span></div>`:''}</div><div class="t-line"></div>`;
       wrap.appendChild(div);
     });
@@ -2889,6 +3045,21 @@ window.deleteVehicle=async function(id){try{await DEL(`/vehicles/${id}`);loadMyV
 
 // BAŞVURU
 let applyCategoryCode = null;
+let applyWashMode = null; // 'mobil' | 'sabit' | 'karma'
+
+window.setApplyWashMode = function(mode){
+  applyWashMode = mode;
+  ['mobil','sabit','karma'].forEach(m => {
+    const b = document.getElementById('ap-mode-'+m);
+    if(b) b.classList.toggle('sel', mode === m);
+  });
+};
+
+function updateApplyWashModeVisibility(){
+  const row = document.getElementById('ap-wash-mode-row');
+  if(!row) return;
+  row.style.display = applyCategoryCode === 'wash' ? 'block' : 'none';
+}
 
 async function loadApplyCategoryGrid(){
   const wrap = document.getElementById('ap-cat-grid');
@@ -2907,9 +3078,10 @@ async function loadApplyCategoryGrid(){
     b.style.justifyContent = 'center';
     b.style.gap = '6px';
     b.innerHTML = `${svgIcon(c.icon||'i-store','sm')} <span>${c.name}</span>`;
-    b.onclick = () => { applyCategoryCode = c.code; loadApplyCategoryGrid(); };
+    b.onclick = () => { applyCategoryCode = c.code; loadApplyCategoryGrid(); updateApplyWashModeVisibility(); };
     wrap.appendChild(b);
   });
+  updateApplyWashModeVisibility();
 }
 
 window.submitApply=async function(){
@@ -2917,10 +3089,16 @@ window.submitApply=async function(){
   if(!name_tr){ toast('İşletme adı gerekli','warn'); return; }
   if(!applyCategoryCode){ toast('Kategori seçin','warn'); return; }
 
+  // Subtype: yıkamacılarda wash mode otomatik subtype'a yazılır
+  let subtype = document.getElementById('ap-subtype').value.trim() || null;
+  if(applyCategoryCode === 'wash' && applyWashMode){
+    subtype = applyWashMode;  // 'mobil' / 'sabit' / 'karma'
+  }
+
   const priceVal = document.getElementById('ap-price').value;
   const body = {
     category_code:  applyCategoryCode,
-    subtype:        document.getElementById('ap-subtype').value.trim() || null,
+    subtype:        subtype,
     name_tr,
     name_ru:        document.getElementById('ap-name-ru').value.trim(),
     description_tr: document.getElementById('ap-desc-tr').value.trim(),
@@ -3028,7 +3206,7 @@ async function loadDashboard(){
     // Aktif statuslar flow tipine göre değişir
     const activeStatuses = ownerFlowType === 'home_service'
       ? ['confirmed','on_the_way','picked_up','washing','drying','ready','delivering']
-      : ['confirmed','arrived','in_service'];
+      : ['confirmed','arrived'];
     const completedStatuses = ownerFlowType === 'home_service'
       ? ['delivered']
       : ['completed'];
@@ -3050,6 +3228,15 @@ async function loadDashboard(){
         const addrLine = meta.pickup_address ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px;display:flex;align-items:flex-start;gap:4px;"><svg class="icon icon-xs" style="margin-top:2px;flex-shrink:0;"><use href="#i-map-pin"/></svg><span>${meta.pickup_address}</span></div>` : '';
         const mapLink = meta.pickup_lat ? `<a href="https://www.google.com/maps?q=${meta.pickup_lat},${meta.pickup_lng}" target="_blank" style="font-size:11px;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:3px;margin-top:4px;"><svg class="icon icon-xs"><use href="#i-map-pin"/></svg>Haritada Aç</a>` : '';
         const vehicleLine = a.vehicle ? `<div style="font-size:11px;color:var(--text);margin-top:4px;display:flex;align-items:center;gap:6px;background:var(--bg-muted);padding:6px 10px;border-radius:var(--radius-sm);width:fit-content;"><svg class="icon icon-xs" style="color:var(--accent)"><use href="#i-car"/></svg><span style="font-weight:700;letter-spacing:0.5px;">${a.vehicle.plate}</span>${a.vehicle.brand||a.vehicle.model?`<span style="color:var(--text-muted)">· ${a.vehicle.brand||''} ${a.vehicle.model||''}</span>`:''}${a.vehicle.color?`<span style="color:var(--text-muted)">· ${a.vehicle.color}</span>`:''}</div>` : '';
+        // Wash mode rozeti (yıkama randevularında)
+        let washModeBadge = '';
+        if(a.category_code === 'wash' && meta.wash_mode){
+          if(meta.wash_mode === 'mobile'){
+            washModeBadge = `<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;background:var(--brand-50);color:var(--accent);padding:3px 8px;border-radius:var(--radius-full);font-weight:600;margin-top:4px;">🚗 Eve Gel</span>`;
+          } else if(meta.wash_mode === 'self'){
+            washModeBadge = `<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;background:#f0fdf4;color:#16a34a;padding:3px 8px;border-radius:var(--radius-full);font-weight:600;margin-top:4px;">📍 Müşteri Geliyor</span>`;
+          }
+        }
         // appointment-spesifik
         let metaLine = '';
         if(meta.party_size){
@@ -3065,6 +3252,7 @@ async function loadDashboard(){
           <div style="flex:1;min-width:0;">
             <div style="font-size:14px;font-weight:700">${a.start_time||''}${a.end_time?' → '+a.end_time:''} · ${a.booking_date}</div>
             <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${a.service?.name_tr||a.service?.name||'Hizmet'}${a.price?' · ₺'+a.price:''}</div>
+            ${washModeBadge}
             ${a.customer_name?`<div style="font-size:11px;color:var(--text-muted);margin-top:2px;display:flex;align-items:center;gap:4px;"><svg class="icon icon-xs"><use href="#i-user"/></svg>${a.customer_name}${a.customer_phone?` · <a href="tel:${a.customer_phone}" style="color:var(--accent);text-decoration:none">${a.customer_phone}</a>`:''}</div>`:''}
             ${vehicleLine}
             ${metaLine}
@@ -3143,15 +3331,15 @@ async function loadDashboard(){
           actionButtons = `<button class="status-btn" style="padding:8px 12px;border:none;border-radius:var(--radius-md);background:var(--accent);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;" onclick="changeStatus(${a.id},'${ns}')">${NEXT_LBL[ns]||ns}</button>`;
         }
       } else {
-        // Appointment: confirmed -> arrived (Geldi) | no_show (Gelmedi) ;  arrived -> in_service | completed
+        // Appointment (restoran/kuaför/klinik/spa):
+        // confirmed → "Geldi" / "Gelmedi"
+        // arrived → "Tamamlandı"
         if(a.status === 'confirmed'){
           actionButtons = `<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
             <button style="padding:6px 10px;border:none;border-radius:var(--radius-md);background:var(--green);color:#fff;font-family:var(--font);font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;" onclick="changeStatus(${a.id},'arrived')"><svg class="icon icon-xs"><use href="#i-check"/></svg>Geldi</button>
             <button style="padding:6px 10px;border:none;border-radius:var(--radius-md);background:var(--bg-muted);color:var(--red);font-family:var(--font);font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;" onclick="changeStatus(${a.id},'no_show')"><svg class="icon icon-xs"><use href="#i-x"/></svg>Gelmedi</button>
           </div>`;
         } else if(a.status === 'arrived'){
-          actionButtons = `<button style="padding:8px 12px;border:none;border-radius:var(--radius-md);background:var(--accent);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;" onclick="changeStatus(${a.id},'in_service')">Hizmet Başladı</button>`;
-        } else if(a.status === 'in_service'){
           actionButtons = `<button style="padding:8px 12px;border:none;border-radius:var(--radius-md);background:var(--green);color:#fff;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:4px;" onclick="changeStatus(${a.id},'completed')"><svg class="icon icon-xs"><use href="#i-check"/></svg>Tamamlandı</button>`;
         }
       }
@@ -3530,6 +3718,19 @@ window.initAddressMap = function(){
 // =============================================================
 let msMap = null, msMarker = null;
 
+let myShopWashMode = null;
+
+window.setMyShopWashMode = function(mode){
+  myShopWashMode = mode;
+  ['mobil','sabit','karma'].forEach(m => {
+    const b = document.getElementById('ms-mode-'+m);
+    if(b) b.classList.toggle('sel', mode === m);
+  });
+  // Subtype alanına yansıt
+  const sub = document.getElementById('ms-subtype');
+  if(sub) sub.value = mode;
+};
+
 async function loadMyShopForm(){
   if(!ownerShop){
     try{
@@ -3554,6 +3755,26 @@ async function loadMyShopForm(){
   document.getElementById('ms-capacity').value = s.capacity || '';
   document.getElementById('ms-price').value    = s.price_range || '';
   document.getElementById('ms-tags').value     = (s.tags || []).join(', ');
+
+  // Yıkama ise mod satırını göster, mevcut subtype'a göre buton seç
+  const modeRow = document.getElementById('ms-wash-mode-row');
+  if(modeRow){
+    if(s.category_code === 'wash'){
+      modeRow.style.display = 'block';
+      const sub = (s.subtype || '').toLowerCase();
+      if(['mobil','sabit','karma'].includes(sub)){
+        myShopWashMode = sub;
+      } else {
+        myShopWashMode = 'mobil'; // default
+      }
+      ['mobil','sabit','karma'].forEach(m => {
+        const b = document.getElementById('ms-mode-'+m);
+        if(b) b.classList.toggle('sel', myShopWashMode === m);
+      });
+    } else {
+      modeRow.style.display = 'none';
+    }
+  }
 
   setTimeout(initMyShopMap, 100);
   renderPlanCard();
