@@ -939,6 +939,125 @@ html,body{
 .rating-picker .star-btn:hover{transform:scale(1.15);}
 .rating-picker .star-btn:active{transform:scale(0.95);}
 
+/* ANALYTICS — KPI Cards */
+.kpi-card{
+  background:var(--bg-elevated);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:12px 14px;
+  display:flex;flex-direction:column;gap:4px;
+}
+.kpi-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;font-weight:600;}
+.kpi-value{font-size:22px;font-weight:800;color:var(--text);line-height:1.1;}
+.kpi-sub{font-size:10px;color:var(--text-muted);}
+.kpi-delta{font-size:10px;font-weight:600;padding:2px 6px;border-radius:var(--radius-full);width:fit-content;}
+.kpi-delta.up   {color:#16a34a;background:rgba(34,197,94,0.1);}
+.kpi-delta.down {color:#dc2626;background:rgba(239,68,68,0.1);}
+.kpi-delta.flat {color:var(--text-muted);background:var(--bg-muted);}
+.loading-kpi{
+  grid-column:1/-1;text-align:center;padding:20px;
+  color:var(--text-muted);font-size:12px;
+}
+
+/* Dönem seçici pill */
+.period-pill{
+  flex-shrink:0;padding:6px 12px;border:0.5px solid var(--border);
+  background:var(--bg-elevated);color:var(--text-muted);
+  font-family:var(--font);font-size:11px;font-weight:600;
+  border-radius:var(--radius-full);cursor:pointer;white-space:nowrap;
+}
+.period-pill.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* Segment filtreleri */
+.seg-pill{
+  flex-shrink:0;padding:6px 12px;border:0.5px solid var(--border);
+  background:var(--bg-elevated);color:var(--text-muted);
+  font-family:var(--font);font-size:11px;font-weight:600;
+  border-radius:var(--radius-full);cursor:pointer;white-space:nowrap;
+}
+.seg-pill.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.seg-pill.vip.active   {background:linear-gradient(135deg,#fbbf24,#f59e0b);border-color:#f59e0b;}
+.seg-pill.new.active   {background:#16a34a;border-color:#16a34a;}
+.seg-pill.lost.active  {background:#dc2626;border-color:#dc2626;}
+.seg-pill.regular.active{background:var(--accent);border-color:var(--accent);}
+
+/* Müşteri kartı */
+.cust-card{
+  background:var(--bg-elevated);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius-md);
+  padding:12px 14px;
+  margin-bottom:8px;
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;
+  transition:all var(--dur-fast) var(--ease-out);
+}
+.cust-card:hover{transform:translateX(2px);border-color:var(--accent);}
+.cust-avatar{
+  width:42px;height:42px;border-radius:50%;
+  background:var(--accent-l);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;flex-shrink:0;
+}
+.cust-body{flex:1;min-width:0;}
+.cust-name{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:4px;}
+.cust-meta{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.cust-stats{
+  display:flex;flex-direction:column;align-items:flex-end;
+  text-align:right;flex-shrink:0;
+}
+.cust-amount{font-size:13px;font-weight:700;color:var(--accent);}
+.cust-visits{font-size:10px;color:var(--text-muted);margin-top:2px;}
+.cust-segment-badge{
+  font-size:9px;font-weight:700;padding:2px 6px;border-radius:var(--radius-full);
+  letter-spacing:0.3px;text-transform:uppercase;
+}
+.seg-vip    {color:#b45309;background:rgba(251,191,36,0.15);}
+.seg-regular{color:var(--accent);background:var(--accent-l);}
+.seg-new    {color:#15803d;background:rgba(34,197,94,0.1);}
+.seg-lost   {color:#dc2626;background:rgba(239,68,68,0.1);}
+
+/* Heatmap */
+.heatmap-table{
+  border-collapse:separate;border-spacing:2px;
+  margin:0 auto;
+}
+.heatmap-table th{
+  font-size:9px;font-weight:600;color:var(--text-muted);
+  padding:2px 4px;text-align:center;
+}
+.heatmap-table td{
+  width:18px;height:18px;border-radius:3px;
+  background:var(--bg-muted);
+  font-size:9px;color:var(--text);text-align:center;
+  cursor:default;transition:transform var(--dur-fast) var(--ease-out);
+}
+.heatmap-table td:hover{transform:scale(1.5);z-index:2;position:relative;}
+.heatmap-table td.h1{background:rgba(91,141,239,0.15);}
+.heatmap-table td.h2{background:rgba(91,141,239,0.35);}
+.heatmap-table td.h3{background:rgba(91,141,239,0.55);color:#fff;}
+.heatmap-table td.h4{background:rgba(91,141,239,0.75);color:#fff;}
+.heatmap-table td.h5{background:rgba(91,141,239,0.95);color:#fff;}
+
+/* Hizmet breakdown */
+.svc-bd-row{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 0;
+  border-bottom:0.5px solid var(--border);
+}
+.svc-bd-row:last-child{border-bottom:none;}
+.svc-bd-name{flex:1;font-size:12px;color:var(--text);font-weight:600;min-width:0;}
+.svc-bd-bar-wrap{
+  flex:2;height:6px;background:var(--bg-muted);border-radius:3px;
+  overflow:hidden;
+}
+.svc-bd-bar{
+  height:100%;background:linear-gradient(90deg,var(--accent),#7da9f5);
+  border-radius:3px;
+}
+.svc-bd-cnt{font-size:11px;color:var(--text-muted);min-width:38px;text-align:right;}
+.svc-bd-rev{font-size:11px;color:var(--accent);font-weight:700;min-width:56px;text-align:right;}
+
 .shop-card.shop-premium{
   border-color:rgba(245,158,11,0.3);
   background:linear-gradient(180deg,rgba(251,191,36,0.04) 0%,var(--bg-elevated) 30%);
@@ -1595,11 +1714,97 @@ html,body{
 
     <!-- MÜŞTERİLER -->
     <div class="screen" id="s-customers">
-      <div class="page-head"><h2>Müşteriler</h2></div>
-      <div style="padding:0 18px 12px;">
-        <input class="f-input" type="search" id="cust-search" placeholder="Ad, plaka veya telefon..." oninput="filterCustomers()">
+      <div class="page-head"><h2>Müşterilerim</h2><p>Tüm müşterileriniz, ziyaret ve harcama geçmişi.</p></div>
+
+      <!-- Segment filtreleri -->
+      <div style="padding:0 18px 12px;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;">
+        <button class="seg-pill active" data-seg="all"     onclick="filterCustSegment('all')">Tümü</button>
+        <button class="seg-pill vip"     data-seg="vip"    onclick="filterCustSegment('vip')">⭐ VIP</button>
+        <button class="seg-pill regular" data-seg="regular" onclick="filterCustSegment('regular')">Düzenli</button>
+        <button class="seg-pill new"     data-seg="new"    onclick="filterCustSegment('new')">Yeni</button>
+        <button class="seg-pill lost"    data-seg="lost"   onclick="filterCustSegment('lost')">Kayıp</button>
       </div>
-      <div class="card" style="margin:0 18px 24px;" id="cust-list"></div>
+
+      <!-- Arama -->
+      <div style="padding:0 18px 12px;">
+        <input class="f-input" type="search" id="cust-search" placeholder="Ad veya telefon ara..." oninput="filterCustomers()">
+      </div>
+
+      <!-- Müşteri listesi -->
+      <div style="padding:0 18px 24px;" id="cust-list"></div>
+    </div>
+
+    <!-- ANALİZ EKRANI (OWNER) -->
+    <div class="screen" id="s-analytics">
+      <div class="page-head"><h2>Analiz Paneli</h2><p>İşletme performansınız ve trendler.</p></div>
+
+      <!-- Plan etiketi -->
+      <div id="analytics-plan-row" style="padding:0 18px 12px;"></div>
+
+      <!-- KPI Grid (free + premium görür) -->
+      <div style="padding:0 18px 12px;">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;" id="kpi-grid">
+          <div class="loading-kpi">Yükleniyor...</div>
+        </div>
+      </div>
+
+      <!-- Dönem seçici (premium) -->
+      <div id="analytics-period-row" style="padding:0 18px 12px;display:none;">
+        <div style="display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;">
+          <button class="period-pill active" data-days="7"   onclick="setAnalyticsPeriod(7)">Son 7 gün</button>
+          <button class="period-pill"        data-days="30"  onclick="setAnalyticsPeriod(30)">Son 30 gün</button>
+          <button class="period-pill"        data-days="90"  onclick="setAnalyticsPeriod(90)">Son 90 gün</button>
+        </div>
+      </div>
+
+      <!-- Grafikler (premium-only) -->
+      <div id="analytics-premium-section" style="padding:0 18px 24px;">
+        <!-- Free için premium teaser kart -->
+        <div id="premium-teaser" style="display:none;background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(245,158,11,0.04));border:0.5px solid rgba(245,158,11,0.3);border-radius:var(--radius-lg);padding:20px;text-align:center;">
+          <div style="font-size:28px;margin-bottom:8px;">⭐</div>
+          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;">Premium ile Daha Fazlası</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.5;margin-bottom:14px;">
+            Detaylı analiz, son 30/90 günün trendleri, hizmet bazlı performans, saat × gün yoğunluğu, müşteri segmentasyonu ve daha fazlası.
+          </div>
+          <button onclick="openUpgradeInfo()" style="padding:10px 18px;border:none;border-radius:var(--radius-md);background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#fff;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;">⭐ Premium'a Geç</button>
+        </div>
+
+        <!-- Premium içerik -->
+        <div id="premium-content" style="display:none;">
+          <!-- Gelir grafiği -->
+          <div style="background:var(--bg-elevated);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px;margin-bottom:12px;">
+            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+              <span>💰 Gelir Trendi</span>
+              <span id="chart-revenue-total" style="font-size:11px;color:var(--accent);font-weight:700;"></span>
+            </div>
+            <div style="position:relative;height:180px;"><canvas id="chart-revenue"></canvas></div>
+          </div>
+
+          <!-- Randevu durumları -->
+          <div style="background:var(--bg-elevated);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px;margin-bottom:12px;">
+            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;">📅 Randevu Durumları</div>
+            <div style="position:relative;height:180px;"><canvas id="chart-bookings"></canvas></div>
+          </div>
+
+          <!-- Saat × gün yoğunluk (heatmap) -->
+          <div style="background:var(--bg-elevated);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px;margin-bottom:12px;">
+            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;">🔥 Yoğunluk Haritası (Saat × Gün)</div>
+            <div id="heatmap-wrap" style="overflow-x:auto;-webkit-overflow-scrolling:touch;"></div>
+          </div>
+
+          <!-- Hizmet popülerlik -->
+          <div style="background:var(--bg-elevated);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px;margin-bottom:12px;">
+            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;">🌟 Popüler Hizmetler</div>
+            <div id="services-breakdown" style="display:flex;flex-direction:column;gap:6px;"></div>
+          </div>
+
+          <!-- Müşteri segment donut -->
+          <div style="background:var(--bg-elevated);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px;margin-bottom:12px;">
+            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;">👥 Müşteri Segmentleri</div>
+            <div style="position:relative;height:200px;"><canvas id="chart-segments"></canvas></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- BAŞVURU FORMU -->
@@ -1820,10 +2025,10 @@ html,body{
   <!-- İŞLETME NAV -->
   <div class="bottom-nav" id="owner-nav" style="display:none">
     <button class="nav-btn active" id="onav-dash" onclick="ownerNavTo('s-dash','onav-dash')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-package"/></svg></span><span class="nav-lbl">Panel</span><span class="nav-badge" id="pending-badge"></span></button>
+    <button class="nav-btn" id="onav-analytics" onclick="ownerNavTo('s-analytics','onav-analytics')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-clipboard"/></svg></span><span class="nav-lbl">Analiz</span></button>
+    <button class="nav-btn" id="onav-cust" onclick="ownerNavTo('s-customers','onav-cust')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-users"/></svg></span><span class="nav-lbl">Müşteriler</span></button>
     <button class="nav-btn" id="onav-svc" onclick="ownerNavTo('s-services','onav-svc')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-sparkles"/></svg></span><span class="nav-lbl">Hizmetler</span></button>
     <button class="nav-btn" id="onav-shop" onclick="ownerNavTo('s-my-shop','onav-shop')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-store"/></svg></span><span class="nav-lbl">İşletmem</span></button>
-    <button class="nav-btn" id="onav-cust" onclick="ownerNavTo('s-customers','onav-cust')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-users"/></svg></span><span class="nav-lbl">Müşteriler</span></button>
-    <button class="nav-btn" id="onav-profile" onclick="ownerNavTo('s-profile','onav-profile')"><span class="nav-ico"><svg class="icon icon-lg"><use href="#i-user"/></svg></span><span class="nav-lbl">Profil</span></button>
   </div>
 
   <!-- ADMİN NAV -->
@@ -2019,7 +2224,21 @@ html,body{
   </div>
 </div>
 
+<!-- MÜŞTERİ DETAY MODAL (Owner) -->
+<div class="modal-back" id="customer-detail-modal" onclick="if(event.target===this)closeCustomerDetail()">
+  <div class="modal-card" style="max-width:520px;">
+    <div class="modal-head">
+      <h3 id="cd-title">Müşteri Detayı</h3>
+      <button class="modal-close" onclick="closeCustomerDetail()"><svg class="icon icon-md"><use href="#i-x"/></svg></button>
+    </div>
+    <div id="cd-content" style="max-height:70vh;overflow-y:auto;">
+      <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px;">Yükleniyor...</div>
+    </div>
+  </div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
@@ -2041,7 +2260,7 @@ let shops=[], selectedShop=null, selectedService=null, selectedDate=0;
 let selectedPickup=null, selectedDropoff=null, timeTab='pickup';
 let pickupAddress={lat:null, lng:null, note:''};
 let selectedVehicle=null;
-let myVehicles=[], allCustomers=[], customers=[];
+let myVehicles=[];
 let confirmationResult=null;
 let shopServices=[];          // dukkana ait dinamik hizmet listesi
 let myShopServices=[];        // owner kendi hizmetleri
@@ -2304,6 +2523,7 @@ window.ownerNavTo=function(screenId,navId){
   if(screenId==='s-customers') loadCustomers();
   if(screenId==='s-services') loadMyServices();
   if(screenId==='s-my-shop') loadMyShopForm();
+  if(screenId==='s-analytics') loadAnalytics();
 };
 
 // LOGIN
@@ -3994,65 +4214,8 @@ window.changeStatus=async function(id,status){
   try{await PATCH(`/bookings/${id}/status`,{status});showNotif(status);toast('Durum güncellendi','success');loadDashboard();}catch(e){toast('Güncellenemedi: '+e.message,'error');}
 };
 
-// MÜŞTERİLER
-async function loadCustomers(){
-  try{
-    // Bookings'ten unique müşterileri çıkar
-    const bookings = await GET('/bookings/');
-    const map = new Map();
-    bookings.forEach(b => {
-      const key = b.user_id;
-      if(!map.has(key)){
-        map.set(key, {
-          id: b.user_id,
-          name: b.customer_name || '—',
-          phone: b.customer_phone || '',
-          bookings: [],
-          total_count: 0,
-          total_spent: 0,
-        });
-      }
-      const c = map.get(key);
-      c.bookings.push(b);
-      c.total_count++;
-      if(b.price) c.total_spent += parseFloat(b.price);
-    });
-    allCustomers = Array.from(map.values());
-    customers = [...allCustomers];
-    renderCustomers();
-  }catch(e){
-    console.warn(e);
-    allCustomers = []; customers = [];
-    renderCustomers();
-  }
-}
-function renderCustomers(){
-  const wrap=document.getElementById('cust-list');
-  if(!customers.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-ico"><svg class="icon icon-3xl" style="color:var(--text-subtle)"><use href="#i-users"/></svg></div><p>Henüz müşteri yok.</p></div>`;return;}
-  wrap.innerHTML='';
-  customers.forEach(c=>{
-    const row=document.createElement('div');row.className='cust-row';
-    const init=(c.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    const plates=(c.vehicles||[]).map(v=>v.plate).join(', ')||'—';
-    row.innerHTML=`<div class="cust-avatar">${init}</div><div class="cust-info"><div class="cust-name">${c.name||'—'}</div><div class="cust-meta">${c.phone||''} · ${plates}</div></div><div class="cust-right"><div class="cust-count">${c.total_appts||0} işlem</div><div class="cust-date">${c.last_date||'—'}</div></div>`;
-    row.onclick=()=>openDetail(c);wrap.appendChild(row);
-  });
-}
-window.filterCustomers=function(){
-  const q=document.getElementById('cust-search').value.toLowerCase().trim();
-  customers=q?allCustomers.filter(c=>`${c.name||''} ${c.phone||''} ${(c.vehicles||[]).map(v=>v.plate).join(' ')}`.toLowerCase().includes(q)):[...allCustomers];
-  renderCustomers();
-};
-
-function openDetail(c){
-  const init=(c.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  document.getElementById('dp-av').textContent=init;
-  document.getElementById('dp-name').textContent=c.name||'—';
-  document.getElementById('dp-phone').textContent=c.phone||'—';
-  document.getElementById('dp-chips').innerHTML=(c.vehicles||[]).map(v=>`<span class="badge badge-blue">${v.brand||''} ${v.model||''} · ${v.plate}</span>`).join('')+`<span class="badge badge-gray">${c.total_appts||0} işlem</span>`;
-  document.getElementById('dp-txns').innerHTML=(c.bookings||c.appointments||[]).map(a=>`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:4px;flex-shrink:0;"></div><div style="flex:1"><div style="font-size:13px;font-weight:500">${a.service?.name_tr||a.shop?.name||'Hizmet'}</div><div style="font-size:11px;color:var(--text-muted)">${a.booking_date||a.appt_date} ${a.start_time||a.pickup_time||''}</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:700">${a.price?'₺'+a.price:'—'}</div></div></div>`).join('');
-  document.getElementById('detail-overlay').classList.add('open');
-}
+// MÜŞTERİLER — yeni sistem aşağıda (loadCustomers, renderCustomers, openCustomerDetail).
+// Eski openDetail'in kullandığı detail-overlay artık kullanılmıyor.
 window.closeDetail=function(e){if(e.target===document.getElementById('detail-overlay'))document.getElementById('detail-overlay').classList.remove('open');};
 
 // BİLDİRİM
@@ -4763,6 +4926,9 @@ async function updateReviewableBadge(){
     }
   }catch(e){}
 }
+// =============================================================
+// OWNER — Manuel Rezervasyon Ekleme
+// =============================================================
 window.openManualBooking = async function(){
   if(!ownerShop){
     toast('İşletme bilgisi yüklenmedi','error');
@@ -4855,6 +5021,393 @@ window.saveManualBooking = async function(){
   }catch(e){
     toast('Eklenemedi: '+e.message,'error');
   }
+};
+
+
+// =============================================================
+// OWNER — ANALİZ PANELİ
+// =============================================================
+let analyticsPeriod = 30;  // gün
+let chartRevenue = null, chartBookings = null, chartSegments = null;
+
+async function loadAnalytics(){
+  // KPI'ları her zaman yükle (free + premium)
+  try{
+    const data = await GET('/analytics/overview');
+    renderKpiGrid(data);
+    renderAnalyticsPlanRow(data);
+    // Premium ise grafikleri yükle, free ise teaser göster
+    if(data.is_premium){
+      document.getElementById('analytics-period-row').style.display = 'block';
+      document.getElementById('premium-teaser').style.display = 'none';
+      document.getElementById('premium-content').style.display = 'block';
+      loadAnalyticsCharts();
+    } else {
+      document.getElementById('analytics-period-row').style.display = 'none';
+      document.getElementById('premium-teaser').style.display = 'block';
+      document.getElementById('premium-content').style.display = 'none';
+    }
+  }catch(e){
+    document.getElementById('kpi-grid').innerHTML = `<div class="loading-kpi" style="color:var(--red)">Yüklenemedi: ${e.message}</div>`;
+  }
+}
+
+function renderAnalyticsPlanRow(data){
+  const row = document.getElementById('analytics-plan-row');
+  if(!row) return;
+  if(data.is_premium){
+    row.innerHTML = `<div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-muted);"><span class="premium-pill">⭐ Premium</span><span>Tam analiz aktif</span></div>`;
+  } else {
+    row.innerHTML = `<div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-muted);"><span style="background:var(--bg-muted);padding:2px 8px;border-radius:var(--radius-full);font-weight:600;">Ücretsiz Plan</span><span>Temel KPI'lar görünür</span></div>`;
+  }
+}
+
+function renderKpiGrid(d){
+  const grid = document.getElementById('kpi-grid');
+  if(!grid) return;
+  const t = d.today, y = d.yesterday, w = d.week, m = d.month;
+
+  // Bugün vs dün delta
+  function deltaTxt(curr, prev){
+    if(prev === 0 && curr === 0) return {cls:'flat', txt:'—'};
+    if(prev === 0) return {cls:'up', txt:'↑ yeni'};
+    const pct = ((curr - prev) / prev) * 100;
+    if(Math.abs(pct) < 1) return {cls:'flat', txt:'≈ değişim yok'};
+    const dir = pct > 0 ? 'up' : 'down';
+    const sign = pct > 0 ? '↑' : '↓';
+    return {cls:dir, txt:`${sign} ${Math.abs(pct).toFixed(0)}%`};
+  }
+
+  const revDelta   = deltaTxt(t.revenue, y.revenue);
+  const totalDelta = deltaTxt(t.total,   y.total);
+
+  grid.innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-label">Bugünün Geliri</div>
+      <div class="kpi-value">₺${t.revenue.toLocaleString('tr-TR')}</div>
+      <div class="kpi-delta ${revDelta.cls}">${revDelta.txt}</div>
+      <div class="kpi-sub">Dün: ₺${y.revenue.toLocaleString('tr-TR')}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Bugünün Randevuları</div>
+      <div class="kpi-value">${t.total}</div>
+      <div class="kpi-delta ${totalDelta.cls}">${totalDelta.txt}</div>
+      <div class="kpi-sub">${t.completed} tamam · ${t.cancelled} iptal</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Bu Hafta</div>
+      <div class="kpi-value">₺${w.revenue.toLocaleString('tr-TR')}</div>
+      <div class="kpi-sub">${w.total} randevu</div>
+      <div class="kpi-sub">Tamamlanma: %${w.completion_rate}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Bu Ay</div>
+      <div class="kpi-value">₺${m.revenue.toLocaleString('tr-TR')}</div>
+      <div class="kpi-sub">${m.total} randevu</div>
+      <div class="kpi-sub">${d.avg_rating ? `★ ${d.avg_rating} (${d.review_count} yorum)` : 'Henüz yorum yok'}</div>
+    </div>
+  `;
+}
+
+window.setAnalyticsPeriod = function(days){
+  analyticsPeriod = days;
+  document.querySelectorAll('.period-pill').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.days) === days);
+  });
+  loadAnalyticsCharts();
+};
+
+async function loadAnalyticsCharts(){
+  // Paralel yükleme
+  try{
+    const [revData, bookData, hmData, svcData, segData] = await Promise.all([
+      GET(`/analytics/revenue?days=${analyticsPeriod}`).catch(_ => null),
+      GET(`/analytics/bookings?days=${analyticsPeriod}`).catch(_ => null),
+      GET(`/analytics/heatmap`).catch(_ => null),
+      GET(`/analytics/services?days=${analyticsPeriod}`).catch(_ => null),
+      GET(`/analytics/customers/segments`).catch(_ => null),
+    ]);
+
+    if(revData)  renderRevenueChart(revData);
+    if(bookData) renderBookingsChart(bookData);
+    if(hmData)   renderHeatmap(hmData);
+    if(svcData)  renderServicesBreakdown(svcData);
+    if(segData)  renderSegmentsChart(segData);
+  }catch(e){
+    console.warn('Chart loading error:', e);
+  }
+}
+
+function renderRevenueChart(data){
+  const total = data.series.reduce((s,d) => s + d.revenue, 0);
+  document.getElementById('chart-revenue-total').textContent = `Toplam: ₺${total.toLocaleString('tr-TR')}`;
+  const ctx = document.getElementById('chart-revenue');
+  if(!ctx || typeof Chart === 'undefined') return;
+  if(chartRevenue){ chartRevenue.destroy(); }
+  const labels = data.series.map(d => {
+    const dt = new Date(d.date);
+    return dt.toLocaleDateString('tr-TR', {day:'numeric', month:'short'});
+  });
+  chartRevenue = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Gelir (₺)',
+        data: data.series.map(d => d.revenue),
+        borderColor: '#5b8def',
+        backgroundColor: 'rgba(91,141,239,0.15)',
+        tension: 0.3,
+        fill: true,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks:{ font:{size:10}, callback: v => '₺' + v } },
+        x: { ticks:{ font:{size:9}, maxRotation:0, autoSkip:true, maxTicksLimit:8 } },
+      },
+    },
+  });
+}
+
+function renderBookingsChart(data){
+  const ctx = document.getElementById('chart-bookings');
+  if(!ctx || typeof Chart === 'undefined') return;
+  if(chartBookings){ chartBookings.destroy(); }
+  const labels = data.series.map(d => {
+    const dt = new Date(d.date);
+    return dt.toLocaleDateString('tr-TR', {day:'numeric', month:'short'});
+  });
+  chartBookings = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {label:'Tamamlandı', data: data.series.map(d=>d.completed), backgroundColor:'#16a34a'},
+        {label:'Bekleyen',   data: data.series.map(d=>d.pending),   backgroundColor:'#f59e0b'},
+        {label:'İptal',      data: data.series.map(d=>d.cancelled), backgroundColor:'#dc2626'},
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { font:{size:10}, boxWidth:10 } } },
+      scales: {
+        x: { stacked: true, ticks:{ font:{size:9}, maxRotation:0, autoSkip:true, maxTicksLimit:8 } },
+        y: { stacked: true, beginAtZero: true, ticks:{ font:{size:10} } },
+      },
+    },
+  });
+}
+
+function renderHeatmap(data){
+  const wrap = document.getElementById('heatmap-wrap');
+  if(!wrap) return;
+  const matrix = data.matrix; // [7][24]
+  const days   = data.day_labels;
+  // Max bul
+  let max = 0;
+  matrix.forEach(row => row.forEach(v => { if(v > max) max = v; }));
+  function cellClass(v){
+    if(v === 0) return '';
+    const pct = v / max;
+    if(pct >= 0.8) return 'h5';
+    if(pct >= 0.6) return 'h4';
+    if(pct >= 0.4) return 'h3';
+    if(pct >= 0.2) return 'h2';
+    return 'h1';
+  }
+  // Sadece çalışma saatleri (07:00 - 23:00 görüntü)
+  const startHour = 7, endHour = 23;
+  let html = '<table class="heatmap-table"><thead><tr><th></th>';
+  for(let h = startHour; h <= endHour; h++){
+    html += `<th>${h}</th>`;
+  }
+  html += '</tr></thead><tbody>';
+  for(let d = 0; d < 7; d++){
+    html += `<tr><th>${days[d]}</th>`;
+    for(let h = startHour; h <= endHour; h++){
+      const v = matrix[d][h];
+      html += `<td class="${cellClass(v)}" title="${days[d]} ${h}:00 → ${v} randevu">${v || ''}</td>`;
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function renderServicesBreakdown(data){
+  const wrap = document.getElementById('services-breakdown');
+  if(!wrap) return;
+  if(!data.services.length){
+    wrap.innerHTML = `<div style="text-align:center;padding:14px;color:var(--text-muted);font-size:11px;">Bu dönemde hizmet bazlı veri yok.</div>`;
+    return;
+  }
+  const max = data.services[0].count;
+  wrap.innerHTML = data.services.map(s => {
+    const pct = max > 0 ? (s.count / max * 100) : 0;
+    return `
+      <div class="svc-bd-row">
+        <div class="svc-bd-name">${s.name}</div>
+        <div class="svc-bd-bar-wrap"><div class="svc-bd-bar" style="width:${pct}%;"></div></div>
+        <div class="svc-bd-cnt">${s.count}x</div>
+        <div class="svc-bd-rev">₺${s.revenue.toLocaleString('tr-TR')}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderSegmentsChart(data){
+  const ctx = document.getElementById('chart-segments');
+  if(!ctx || typeof Chart === 'undefined') return;
+  if(chartSegments){ chartSegments.destroy(); }
+  const s = data.segments;
+  chartSegments = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['⭐ VIP', 'Düzenli', 'Yeni', 'Kayıp'],
+      datasets: [{
+        data: [s.vip, s.regular, s.new, s.lost],
+        backgroundColor: ['#f59e0b','#5b8def','#16a34a','#dc2626'],
+        borderWidth: 0,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { font:{size:10}, boxWidth:10, padding:8 } } },
+    },
+  });
+}
+
+
+// =============================================================
+// OWNER — MÜŞTERİLER LİSTESİ
+// =============================================================
+let allCustomers = [];
+let currentCustSegment = 'all';
+
+async function loadCustomers(){
+  const list = document.getElementById('cust-list');
+  if(!list) return;
+  list.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-muted);font-size:12px;">Yükleniyor...</div>`;
+  try{
+    const data = await GET('/customers/');
+    allCustomers = data.customers || [];
+    renderCustomers();
+  }catch(e){
+    list.innerHTML = `<div style="text-align:center;padding:30px;color:var(--red);font-size:12px;">Yüklenemedi: ${e.message}</div>`;
+  }
+}
+
+window.filterCustSegment = function(seg){
+  currentCustSegment = seg;
+  document.querySelectorAll('.seg-pill').forEach(b => {
+    b.classList.toggle('active', b.dataset.seg === seg);
+  });
+  renderCustomers();
+};
+
+window.filterCustomers = function(){
+  renderCustomers();
+};
+
+function renderCustomers(){
+  const list = document.getElementById('cust-list');
+  if(!list) return;
+  const q = (document.getElementById('cust-search')?.value || '').trim().toLowerCase();
+  let arr = allCustomers;
+  if(currentCustSegment !== 'all'){
+    arr = arr.filter(c => c.segment === currentCustSegment);
+  }
+  if(q){
+    arr = arr.filter(c => (c.name||'').toLowerCase().includes(q) || (c.phone||'').includes(q));
+  }
+  if(!arr.length){
+    list.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text-muted);font-size:12px;border:1px dashed var(--border);border-radius:var(--radius-md);">Bu filtrede müşteri yok.</div>`;
+    return;
+  }
+  list.innerHTML = arr.map(c => {
+    const initial = (c.name || '?').charAt(0).toUpperCase();
+    const segLabel = {vip:'⭐ VIP', regular:'Düzenli', new:'Yeni', lost:'Kayıp'}[c.segment] || '';
+    const lastVisit = c.last_visit ? new Date(c.last_visit).toLocaleDateString('tr-TR',{day:'numeric',month:'short'}) : '—';
+    return `
+      <div class="cust-card" onclick="openCustomerDetail(${c.user_id || 'null'}, '${(c.name||'').replace(/'/g,"\\'")}')">
+        <div class="cust-avatar">${initial}</div>
+        <div class="cust-body">
+          <div class="cust-name">
+            ${c.name}
+            <span class="cust-segment-badge seg-${c.segment}">${segLabel}</span>
+          </div>
+          <div class="cust-meta">${c.phone || '—'} · Son: ${lastVisit}</div>
+        </div>
+        <div class="cust-stats">
+          <div class="cust-amount">₺${c.total_spent.toLocaleString('tr-TR')}</div>
+          <div class="cust-visits">${c.visits} ziyaret</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+window.openCustomerDetail = async function(userId, name){
+  if(!userId){ toast('Bu müşteri kayıtsız (telefonla), detay yok','info'); return; }
+  document.getElementById('cd-title').textContent = name || 'Müşteri Detayı';
+  document.getElementById('cd-content').innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px;">Yükleniyor...</div>`;
+  document.getElementById('customer-detail-modal').classList.add('show');
+  try{
+    const d = await GET(`/customers/${userId}`);
+    const segLabel = {vip:'⭐ VIP', regular:'Düzenli', new:'Yeni', lost:'Kayıp'}[d.segment] || '';
+    const lastVisit = d.last_visit ? new Date(d.last_visit).toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'}) : '—';
+    const firstVisit = d.first_visit ? new Date(d.first_visit).toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'}) : '—';
+
+    const bookingsHtml = d.bookings.map(b => {
+      const statusBadge = {
+        completed: '<span style="font-size:10px;background:rgba(34,197,94,0.1);color:#16a34a;padding:2px 7px;border-radius:var(--radius-full);font-weight:600;">Tamamlandı</span>',
+        delivered: '<span style="font-size:10px;background:rgba(34,197,94,0.1);color:#16a34a;padding:2px 7px;border-radius:var(--radius-full);font-weight:600;">Teslim</span>',
+        cancelled: '<span style="font-size:10px;background:rgba(239,68,68,0.1);color:#dc2626;padding:2px 7px;border-radius:var(--radius-full);font-weight:600;">İptal</span>',
+        no_show:   '<span style="font-size:10px;background:rgba(239,68,68,0.1);color:#dc2626;padding:2px 7px;border-radius:var(--radius-full);font-weight:600;">Gelmedi</span>',
+        pending:   '<span style="font-size:10px;background:rgba(245,158,11,0.1);color:#b45309;padding:2px 7px;border-radius:var(--radius-full);font-weight:600;">Bekliyor</span>',
+      }[b.status] || `<span style="font-size:10px;color:var(--text-muted);">${b.status}</span>`;
+      const dt = b.booking_date ? new Date(b.booking_date).toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'}) : '';
+      return `
+        <div style="padding:10px 12px;background:var(--bg-elevated);border:0.5px solid var(--border);border-radius:var(--radius-md);margin-bottom:6px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;">
+            <div style="font-size:12px;font-weight:600;">${dt} · ${b.start_time||''}</div>
+            ${statusBadge}
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);">${b.service_name||'Hizmet'}${b.price?` · ₺${b.price}`:''}</div>
+          ${b.notes?`<div style="font-size:10px;color:var(--text-muted);margin-top:3px;font-style:italic;">"${b.notes}"</div>`:''}
+        </div>`;
+    }).join('');
+
+    document.getElementById('cd-content').innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <!-- Özet kutusu -->
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
+          <div class="kpi-card"><div class="kpi-label">Toplam Ziyaret</div><div class="kpi-value">${d.visits}</div><div class="kpi-sub">${d.completed_visits} tamamlandı</div></div>
+          <div class="kpi-card"><div class="kpi-label">Toplam Harcama</div><div class="kpi-value">₺${d.total_spent.toLocaleString('tr-TR')}</div><div class="kpi-sub">Ortalama: ₺${d.completed_visits ? (d.total_spent/d.completed_visits).toFixed(0) : 0}</div></div>
+        </div>
+        <div style="background:var(--bg-muted);padding:10px 12px;border-radius:var(--radius-md);font-size:11px;color:var(--text-muted);">
+          ${segLabel ? `<span class="cust-segment-badge seg-${d.segment}">${segLabel}</span> · ` : ''}
+          📞 ${d.phone || '—'} · İlk: ${firstVisit} · Son: ${lastVisit}
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;">Geçmiş Randevular (${d.bookings.length})</div>
+          ${bookingsHtml || '<div style="text-align:center;padding:14px;color:var(--text-muted);font-size:12px;">Henüz randevu yok</div>'}
+        </div>
+      </div>
+    `;
+  }catch(e){
+    document.getElementById('cd-content').innerHTML = `<div style="text-align:center;padding:20px;color:var(--red);font-size:12px;">Yüklenemedi: ${e.message}</div>`;
+  }
+};
+
+window.closeCustomerDetail = function(){
+  document.getElementById('customer-detail-modal').classList.remove('show');
 };
 
 </script>
