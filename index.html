@@ -203,17 +203,18 @@ html,body{
 .avatar-btn:active{transform:scale(0.95);}
 
 .avatar-dropdown{
-  position:absolute;top:calc(100% + 8px);right:0;
-  min-width:230px;
+  position:fixed;
+  min-width:240px;max-width:280px;
   background:var(--bg-elevated);
   border:0.5px solid var(--border);
   border-radius:var(--radius-lg);
-  box-shadow:0 8px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
-  z-index:1000;
+  box-shadow:0 10px 30px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.08);
+  z-index:9999;
   opacity:0;visibility:hidden;
   transform:translateY(-6px) scale(0.96);
   transition:all var(--dur-fast) var(--ease-out);
   overflow:hidden;
+  /* position koordinatları JS ile set edilir (toggle anında) */
 }
 .avatar-dropdown.show{
   opacity:1;visibility:visible;
@@ -2720,8 +2721,22 @@ function updateAvatarMenu(){
 window.toggleAvatarMenu = function(e){
   if(e){ e.stopPropagation(); }
   const dd = document.getElementById('avatar-dropdown');
-  if(!dd) return;
-  dd.classList.toggle('show');
+  const btn = document.getElementById('avatar-btn');
+  if(!dd || !btn) return;
+  if(dd.classList.contains('show')){
+    dd.classList.remove('show');
+    return;
+  }
+  // Pozisyonu butona göre fixed olarak hesapla
+  const rect = btn.getBoundingClientRect();
+  const dropdownWidth = 250;  // approx
+  // Sağa yakın açılır (sağdan en az 10px boşluk bırak)
+  let right = window.innerWidth - rect.right;
+  if(right < 8) right = 8;
+  dd.style.top   = (rect.bottom + 8) + 'px';
+  dd.style.right = right + 'px';
+  dd.style.left  = 'auto';  // sadece right kullanılsın
+  dd.classList.add('show');
 };
 
 window.closeAvatarMenu = function(){
@@ -2734,6 +2749,10 @@ document.addEventListener('click', (e) => {
   const menu = document.getElementById('avatar-menu');
   if(menu && !menu.contains(e.target)) closeAvatarMenu();
 });
+
+// Scroll veya resize → menüyü kapat (pozisyon kayma sorunu olmasın)
+window.addEventListener('scroll',  () => closeAvatarMenu(), true);
+window.addEventListener('resize', () => closeAvatarMenu());
 
 // Genis ekranda sidebar layout, dar ekranda klasik mobil layout
 function applyResponsiveLayout(){
