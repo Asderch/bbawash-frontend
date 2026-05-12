@@ -863,6 +863,82 @@ html,body{
 }
 .sd-cta-btn:hover{transform:translateY(-1px);}
 
+/* YORUM SİSTEMİ — yıldız ve kartlar */
+.stars-row{display:inline-flex;align-items:center;gap:1px;}
+.star{font-size:14px;line-height:1;color:#e5e7eb;}
+.star.filled{color:#fbbf24;}
+.star.half{
+  background:linear-gradient(90deg,#fbbf24 50%,#e5e7eb 50%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+.rating-summary{
+  display:flex;align-items:center;gap:8px;
+}
+.rating-summary .num{
+  font-size:18px;font-weight:700;color:var(--text);
+}
+.rating-summary .count{
+  font-size:11px;color:var(--text-muted);
+}
+
+/* Review card */
+.review-card{
+  background:var(--bg-elevated);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius-md);
+  padding:12px 14px;
+  margin-bottom:8px;
+}
+.review-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:6px;
+}
+.review-author{font-size:12px;font-weight:600;color:var(--text);}
+.review-date{font-size:10px;color:var(--text-muted);}
+.review-comment{
+  font-size:12px;color:var(--text);line-height:1.5;margin-top:4px;
+}
+.review-reply{
+  margin-top:8px;
+  padding:8px 12px;
+  background:var(--brand-50);
+  border-left:2px solid var(--accent);
+  border-radius:var(--radius-sm);
+  font-size:11px;color:var(--text);
+  line-height:1.5;
+}
+.review-reply .lbl{
+  font-weight:700;color:var(--accent);
+  font-size:10px;text-transform:uppercase;letter-spacing:0.4px;
+}
+
+/* Shop kart üzerinde rating rozeti */
+.rating-pill{
+  display:inline-flex;align-items:center;gap:2px;
+  background:rgba(251,191,36,0.12);
+  color:#b45309;
+  padding:2px 7px;border-radius:var(--radius-full);
+  font-size:10px;font-weight:700;
+}
+.rating-pill .star.filled{font-size:10px;}
+
+/* Yorum yazma — rating picker */
+.rating-picker{
+  display:flex;gap:6px;justify-content:center;
+  padding:16px;background:var(--bg-muted);
+  border-radius:var(--radius-md);
+}
+.rating-picker .star-btn{
+  font-size:32px;line-height:1;cursor:pointer;
+  background:transparent;border:none;color:#e5e7eb;
+  transition:transform var(--dur-fast) var(--ease-out);
+  padding:4px;
+}
+.rating-picker .star-btn.filled{color:#fbbf24;}
+.rating-picker .star-btn:hover{transform:scale(1.15);}
+.rating-picker .star-btn:active{transform:scale(0.95);}
+
 .shop-card.shop-premium{
   border-color:rgba(245,158,11,0.3);
   background:linear-gradient(180deg,rgba(251,191,36,0.04) 0%,var(--bg-elevated) 30%);
@@ -1418,6 +1494,9 @@ html,body{
         <div class="profile-row" onclick="navTo('s-history','nav-history')">
           <svg class="icon icon-md" style="color:var(--text-muted)"><use href="#i-clipboard"/></svg><span style="flex:1;font-size:14px">Randevu Geçmişim</span><svg class="icon icon-sm" style="color:var(--text-muted)"><use href="#i-chevron-right"/></svg>
         </div>
+        <div class="profile-row" onclick="openReviewable()">
+          <svg class="icon icon-md" style="color:var(--text-muted)"><use href="#i-sparkles"/></svg><span style="flex:1;font-size:14px">Yorum Yapabileceklerim</span><span id="reviewable-badge" style="display:none;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:var(--radius-full);"></span><svg class="icon icon-sm" style="color:var(--text-muted)"><use href="#i-chevron-right"/></svg>
+        </div>
       </div>
       <div class="card" style="margin:0 18px 24px;">
         <div class="profile-row" onclick="logout()" style="color:var(--red)">
@@ -1890,6 +1969,56 @@ html,body{
   </div>
 </div>
 
+<!-- YORUM YAPILABİLECEKLER LİSTE MODAL -->
+<div class="modal-back" id="reviewable-modal" onclick="if(event.target===this)closeReviewable()">
+  <div class="modal-card" style="max-width:480px;">
+    <div class="modal-head">
+      <h3>Yorum Yapabileceğin Randevular</h3>
+      <button class="modal-close" onclick="closeReviewable()"><svg class="icon icon-md"><use href="#i-x"/></svg></button>
+    </div>
+    <div id="reviewable-list" style="display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow-y:auto;">
+      <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px;">Yükleniyor...</div>
+    </div>
+  </div>
+</div>
+
+<!-- YORUM YAZMA MODAL -->
+<div class="modal-back" id="review-write-modal" onclick="if(event.target===this)closeReviewWrite()">
+  <div class="modal-card" style="max-width:460px;">
+    <div class="modal-head">
+      <h3>Deneyimini Paylaş</h3>
+      <button class="modal-close" onclick="closeReviewWrite()"><svg class="icon icon-md"><use href="#i-x"/></svg></button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div id="rw-shop-info" style="text-align:center;padding-bottom:8px;border-bottom:0.5px solid var(--border);">
+        <div id="rw-shop-name" style="font-size:15px;font-weight:700;color:var(--text);"></div>
+        <div id="rw-booking-info" style="font-size:11px;color:var(--text-muted);margin-top:2px;"></div>
+      </div>
+
+      <div>
+        <div class="f-label" style="text-align:center;">Puanın Nedir?</div>
+        <div class="rating-picker" id="rw-stars">
+          <button type="button" class="star-btn" data-r="1" onclick="setRwRating(1)">★</button>
+          <button type="button" class="star-btn" data-r="2" onclick="setRwRating(2)">★</button>
+          <button type="button" class="star-btn" data-r="3" onclick="setRwRating(3)">★</button>
+          <button type="button" class="star-btn" data-r="4" onclick="setRwRating(4)">★</button>
+          <button type="button" class="star-btn" data-r="5" onclick="setRwRating(5)">★</button>
+        </div>
+        <div id="rw-rating-label" style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:6px;">Puan seç</div>
+      </div>
+
+      <div>
+        <div class="f-label">Yorum (opsiyonel)</div>
+        <textarea class="addr-textarea" id="rw-comment" placeholder="Deneyimini birkaç cümleyle paylaş..." style="min-height:90px;"></textarea>
+      </div>
+
+      <button class="btn btn-accent" onclick="submitReview()" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg class="icon icon-md"><use href="#i-check"/></svg>Yorumu Gönder
+      </button>
+    </div>
+  </div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <script type="module">
@@ -2163,6 +2292,7 @@ window.navTo=function(screenId,navId){
   if(screenId==='s-history') loadHistory();
   if(screenId==='s-my-vehicles') loadMyVehicles();
   if(screenId==='s-track') loadTrack();
+  if(screenId==='s-profile') updateReviewableBadge();
 };
 window.ownerNavTo=function(screenId,navId){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -2508,6 +2638,25 @@ async function loadShops(categoryCode){
   }
   renderShops();
 }
+// Yıldız HTML helper
+function renderStars(rating, size){
+  // rating: 0-5 (ondalık olabilir, 0.5 yarım gösterimi)
+  const r = parseFloat(rating) || 0;
+  size = size || 12;
+  let html = '<div class="stars-row" style="font-size:'+size+'px;">';
+  for(let i=1;i<=5;i++){
+    if(r >= i){
+      html += '<span class="star filled">★</span>';
+    } else if(r >= i-0.5){
+      html += '<span class="star half">★</span>';
+    } else {
+      html += '<span class="star">★</span>';
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
 function renderShops(){
   const wrap=document.getElementById('shop-list');if(!wrap) return;
   wrap.innerHTML='';
@@ -2530,6 +2679,11 @@ function renderShops(){
     const priceRange = s.price_range ? '$'.repeat(s.price_range) : '';
     const tagsLine = (s.tags && s.tags.length) ? `<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">${s.tags.slice(0,3).map(t => `<span style="font-size:10px;background:var(--bg-muted);color:var(--text-muted);padding:2px 7px;border-radius:var(--radius-full)">${t}</span>`).join('')}</div>` : '';
     const premiumBadge = s.is_premium ? `<span class="premium-pill">⭐ Premium</span>` : '';
+    // Rating rozeti
+    let ratingPill = '';
+    if(s.review_count && s.review_count > 0 && s.avg_rating){
+      ratingPill = `<span class="rating-pill"><span class="star filled">★</span> ${s.avg_rating.toFixed(1)} <span style="color:var(--text-muted);font-weight:500">(${s.review_count})</span></span>`;
+    }
     // İlk fotoğrafı kapak olarak göster
     const coverPhoto = (s.photos && s.photos.length)
       ? (s.photos.find(p=>p.photo_type==='cover') || s.photos[0])
@@ -2537,7 +2691,7 @@ function renderShops(){
     const imgHtml = coverPhoto
       ? `<div class="shop-img" style="background-image:url('${coverPhoto.url}');background-size:cover;background-position:center;"></div>`
       : `<div class="shop-img">${svgIcon(ico,'2xl','color:var(--accent)')}</div>`;
-    c.innerHTML=`${imgHtml}<div class="shop-body"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><div class="shop-name">${s.name}</div>${premiumBadge}</div>${subtype?`<div style="margin-bottom:4px">${subtype}</div>`:''}<div class="shop-addr">${s.address||''}</div><div style="display:flex;gap:10px;align-items:center;"><svg class="icon icon-xs" style="color:var(--text-muted)"><use href="#i-clock"/></svg><span style="font-size:11px;color:var(--text-muted)">${s.open_time}–${s.close_time}</span>${priceRange?`<span style="font-size:11px;color:var(--accent);font-weight:700">${priceRange}</span>`:''}</div>${tagsLine}</div><div class="shop-footer"><span class="badge badge-green">Açık</span><span class="shop-cta" style="display:flex;align-items:center;gap:4px;">Seç<svg class="icon icon-xs"><use href="#i-arrow-right"/></svg></span></div>`;
+    c.innerHTML=`${imgHtml}<div class="shop-body"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><div class="shop-name">${s.name}</div>${premiumBadge}${ratingPill}</div>${subtype?`<div style="margin-bottom:4px">${subtype}</div>`:''}<div class="shop-addr">${s.address||''}</div><div style="display:flex;gap:10px;align-items:center;"><svg class="icon icon-xs" style="color:var(--text-muted)"><use href="#i-clock"/></svg><span style="font-size:11px;color:var(--text-muted)">${s.open_time}–${s.close_time}</span>${priceRange?`<span style="font-size:11px;color:var(--accent);font-weight:700">${priceRange}</span>`:''}</div>${tagsLine}</div><div class="shop-footer"><span class="badge badge-green">Açık</span><span class="shop-cta" style="display:flex;align-items:center;gap:4px;">Seç<svg class="icon icon-xs"><use href="#i-arrow-right"/></svg></span></div>`;
     c.onclick=()=>onShopSelected(s);
     wrap.appendChild(c);
   });
@@ -2552,10 +2706,63 @@ function onShopSelected(s){
   // Önce detay sayfasına git (eski direkt hizmet ekranına atlama yerine)
   renderShopDetail(s);
   navTo('s-shop-detail');
-  // Hizmetleri arka planda yükle
+  // Hizmetleri ve yorumları arka planda yükle
   loadShopServices(s.id);
+  loadShopReviews(s.id);
   // Harita için biraz gecikme
   setTimeout(initShopDetailMap, 200);
+}
+
+// Shop yorumlarını yükle ve detay sayfasında göster
+async function loadShopReviews(shopId){
+  try{
+    const data = await GET(`/reviews/shop/${shopId}`);
+    renderShopReviewsList(data);
+  }catch(e){
+    const list = document.getElementById('sd-reviews-list');
+    if(list) list.innerHTML = `<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:12px;">Yorumlar yüklenemedi.</div>`;
+  }
+}
+
+function renderShopReviewsList(data){
+  const list = document.getElementById('sd-reviews-list');
+  const summary = document.getElementById('sd-rating-summary');
+  if(!list) return;
+  const reviews = (data && data.reviews) || [];
+  const avg = data?.avg_rating;
+  const count = data?.review_count || 0;
+  // Ortalama özet (yıldız + sayı)
+  if(summary){
+    if(count > 0){
+      summary.innerHTML = `<span class="rating-summary">${renderStars(avg, 13)} <span class="num">${avg.toFixed(1)}</span> <span class="count">(${count})</span></span>`;
+    } else {
+      summary.innerHTML = `<span style="font-size:10px;color:var(--text-muted);">Henüz yorum yok</span>`;
+    }
+  }
+  if(!reviews.length){
+    list.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px;border:1px dashed var(--border);border-radius:var(--radius-md);">Bu işletme için henüz yorum yapılmamış. İlk yorum yapan siz olun!</div>`;
+    return;
+  }
+  list.innerHTML = reviews.map(r => {
+    const dateTxt = r.created_at ? new Date(r.created_at).toLocaleDateString('tr-TR', {day:'numeric', month:'short', year:'numeric'}) : '';
+    const replyHtml = r.owner_reply ? `
+      <div class="review-reply">
+        <div class="lbl">İşletme Cevabı</div>
+        <div style="margin-top:3px;">${r.owner_reply}</div>
+      </div>` : '';
+    return `
+      <div class="review-card">
+        <div class="review-head">
+          <div>
+            <div class="review-author">${r.user_name || 'Anonim'}</div>
+            <div style="margin-top:2px;">${renderStars(r.rating, 12)}</div>
+          </div>
+          <div class="review-date">${dateTxt}</div>
+        </div>
+        ${r.comment ? `<div class="review-comment">${r.comment}</div>` : ''}
+        ${replyHtml}
+      </div>`;
+  }).join('');
 }
 
 // "Randevu Al" CTA — detay ekranından hizmet ekranına geç
@@ -2586,6 +2793,11 @@ function renderShopDetail(s){
 
   // Hero
   const heroStyle = cover ? `style="background-image:url('${cover.url}')"` : '';
+
+  // Hero rating
+  const heroRating = (s.review_count && s.review_count > 0 && s.avg_rating)
+    ? `<span style="display:inline-flex;align-items:center;gap:3px;background:rgba(0,0,0,0.4);padding:2px 8px;border-radius:var(--radius-full);backdrop-filter:blur(8px);"><span style="color:#fbbf24;">★</span><span style="color:#fff;font-size:12px;font-weight:700;">${s.avg_rating.toFixed(1)}</span><span style="color:rgba(255,255,255,0.7);font-size:10px;">(${s.review_count})</span></span>`
+    : '';
 
   // Tags
   const tagsHtml = (s.tags && s.tags.length)
@@ -2651,7 +2863,7 @@ function renderShopDetail(s){
       <button class="sd-hero-back" onclick="navTo('s-book-shop')"><svg class="icon icon-md"><use href="#i-chevron-right"/></svg></button>
       <div class="sd-hero-info">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
-          ${premiumBadge}
+          ${premiumBadge}${heroRating}
         </div>
         <div class="sd-hero-name">${s.name || s.name_tr}</div>
         <div class="sd-hero-sub">
@@ -2683,6 +2895,17 @@ function renderShopDetail(s){
       <div class="sd-section">
         <div class="sd-section-title"><svg class="icon icon-sm"><use href="#i-droplet"/></svg>Hizmetler</div>
         ${servicesPlaceholder}
+      </div>
+
+      <!-- YORUMLAR -->
+      <div class="sd-section">
+        <div class="sd-section-title" style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="display:flex;align-items:center;gap:6px;"><svg class="icon icon-sm"><use href="#i-sparkles"/></svg>Yorumlar</span>
+          <span id="sd-rating-summary"></span>
+        </div>
+        <div id="sd-reviews-list">
+          <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:12px;">Yorumlar yükleniyor...</div>
+        </div>
       </div>
 
       <div class="sd-section">
@@ -4439,8 +4662,107 @@ window.clearSeed = async function(){
 
 
 // =============================================================
-// OWNER — Manuel Rezervasyon Ekleme
+// YORUM SİSTEMİ
 // =============================================================
+let rwBookingId = null;
+let rwRating    = 0;
+
+window.openReviewable = async function(){
+  document.getElementById('reviewable-modal').classList.add('show');
+  const list = document.getElementById('reviewable-list');
+  list.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px;">Yükleniyor...</div>`;
+  try{
+    const items = await GET('/reviews/eligible');
+    if(!items.length){
+      list.innerHTML = `<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:12px;">Henüz yorum yapabileceğin tamamlanmış randevu yok.</div>`;
+      return;
+    }
+    list.innerHTML = items.map(b => {
+      const dateTxt = b.booking_date ? new Date(b.booking_date).toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'}) : '';
+      return `
+        <div onclick="openReviewWrite(${b.id}, '${(b.shop_name||'').replace(/'/g,"\\'")}', '${dateTxt} ${b.start_time||''}')" style="padding:12px 14px;background:var(--bg-elevated);border:0.5px solid var(--border);border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;gap:10px;transition:all var(--dur-fast) var(--ease-out);">
+          <div style="width:36px;height:36px;border-radius:var(--radius-md);background:var(--accent-l);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg class="icon icon-md"><use href="#i-sparkles"/></svg>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:600;">${b.shop_name||''}</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${dateTxt} · ${b.start_time||''}${b.service_name?' · '+b.service_name:''}</div>
+          </div>
+          <svg class="icon icon-sm" style="color:var(--text-muted)"><use href="#i-chevron-right"/></svg>
+        </div>`;
+    }).join('');
+  }catch(e){
+    list.innerHTML = `<div style="text-align:center;padding:20px;color:var(--red);font-size:12px;">Yüklenemedi: ${e.message}</div>`;
+  }
+};
+
+window.closeReviewable = function(){
+  document.getElementById('reviewable-modal').classList.remove('show');
+};
+
+window.openReviewWrite = function(bookingId, shopName, info){
+  rwBookingId = bookingId;
+  rwRating    = 0;
+  document.getElementById('rw-shop-name').textContent    = shopName;
+  document.getElementById('rw-booking-info').textContent = info;
+  document.getElementById('rw-comment').value = '';
+  document.getElementById('rw-rating-label').textContent = 'Puan seç';
+  document.querySelectorAll('#rw-stars .star-btn').forEach(b => b.classList.remove('filled'));
+  // Önce reviewable'ı kapat, sonra yazma modali aç
+  document.getElementById('reviewable-modal').classList.remove('show');
+  document.getElementById('review-write-modal').classList.add('show');
+};
+
+window.closeReviewWrite = function(){
+  document.getElementById('review-write-modal').classList.remove('show');
+  rwBookingId = null;
+  rwRating    = 0;
+};
+
+window.setRwRating = function(r){
+  rwRating = r;
+  const labels = ['','Kötü','İdare eder','İyi','Çok iyi','Mükemmel!'];
+  document.getElementById('rw-rating-label').textContent = labels[r] || '';
+  document.querySelectorAll('#rw-stars .star-btn').forEach(b => {
+    const v = parseInt(b.dataset.r);
+    b.classList.toggle('filled', v <= r);
+  });
+};
+
+window.submitReview = async function(){
+  if(!rwBookingId){ toast('Randevu seçilmedi','warn'); return; }
+  if(!rwRating){ toast('Lütfen puan ver','warn'); return; }
+  const comment = document.getElementById('rw-comment').value.trim();
+  try{
+    await POST('/reviews/', {
+      booking_id: rwBookingId,
+      rating:     rwRating,
+      comment:    comment || null,
+    });
+    toast('Yorumunuz için teşekkürler!','success');
+    closeReviewWrite();
+    // Badge güncelle
+    updateReviewableBadge();
+  }catch(e){
+    toast('Gönderilemedi: '+e.message,'error');
+  }
+};
+
+// Profil ekranında badge: kaç randevu için yorum yazılabilir
+async function updateReviewableBadge(){
+  try{
+    const items = await GET('/reviews/eligible');
+    const badge = document.getElementById('reviewable-badge');
+    if(badge){
+      if(items.length > 0){
+        badge.textContent = items.length;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  }catch(e){}
+}
 window.openManualBooking = async function(){
   if(!ownerShop){
     toast('İşletme bilgisi yüklenmedi','error');
